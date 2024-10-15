@@ -19,7 +19,6 @@ import {
 } from "@mui/material";
 import { MoreVert } from "@mui/icons-material";
 import CustomSelectDropdown from "../common/CustomSelectDropdown";
-import AddVehicle from "./AddVehicle";
 import LoadingAnimation from "./../common/LoadingAnimation";
 import vehiclesIcon from "../../assets/vehicle.svg";
 import carImage from "../../assets/carImage.png";

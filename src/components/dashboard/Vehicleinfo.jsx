@@ -10,6 +10,7 @@ import uncheckedIcon from "../../assets/unchecked.svg";
 // import { useUpdateVehicleMutation } from "../../features/Vehicle/vehicleSlice";
 import callicon from "../../assets/calliconsa.svg";
 import msgicon from "../../assets/messageiconsa.svg";
+import { useGetSinglevehicleQuery } from "../../features/Vehicle/vehicleSlice";
 
 const DynamicButton = styled(Button)(({ theme, bgColor }) => ({
     fontFamily: "Red Hat Display, sans-serif",
@@ -44,6 +45,8 @@ const VehicleInfo = ({
   const [formData, setFormData] = useState({});
   const [savebuttondisable, setsavebuttondisable] = useState(true)
   const [isApproved, setIsApproved] = useState(false);
+  console.log(selectedVehicleId)
+  const { data: Vehicledata, error:vehiclefetcherror, isLoading } = useGetSinglevehicleQuery(selectedVehicleId);
 //   const [updateVehicle] = useUpdateVehicleMutation();
 
 const handleClick = () => {
@@ -99,33 +102,46 @@ const handleClick = () => {
     </Box>
   );
 
-  const fetchVehicleData = useCallback(async () => {
-    const orgId = localStorage.getItem("org_id");
-    const url = `https://boldrides.com/api/boldriders/organization/${orgId}/vehicle?vid=${selectedVehicleId}`;
-    setLoading(true);
-    try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        setError("Error in fetching vehicle details!");
-        setLoading(false);
-        return;
-      }
-      const response = await res.json();
-      console.log(response.vehicle)
-      setVehicleDetails(response.vehicle);
+  // const fetchVehicleData = useCallback(async () => {
+  //   const orgId = localStorage.getItem("org_id");
+  //   const url = `https://boldrides.com/api/boldriders/organization/${orgId}/vehicle?vid=${selectedVehicleId}`;
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch(url);
+  //     if (!res.ok) {
+  //       setError("Error in fetching vehicle details!");
+  //       setLoading(false);
+  //       return;
+  //     }
+  //     const response = await res.json();
+  //     console.log(response.vehicle)
+  //     setVehicleDetails(response.vehicle);
+  //     setFormData({
+  //       rent_hourly_charges:response.vehicle?.rent_hourly_charges || 0,
+  //       pet_friendly:response.vehicle?.pet_friendly || false,
+  //       rentable:response.vehicle?.rental || false,
+  //       jump_start:response.vehicle?.jump_start ||false
+  //    })
+  //     setDriverDetails(response.assigned_driver);
+  //   } catch (err) {
+  //     setError(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, [selectedVehicleId]);
+
+  useEffect(() => {
+    if (Vehicledata) {
+      setVehicleDetails(Vehicledata.vehicle);
       setFormData({
-        rent_hourly_charges:response.vehicle?.rent_hourly_charges || 0,
-        pet_friendly:response.vehicle?.pet_friendly || false,
-        rentable:response.vehicle?.rental || false,
-        jump_start:response.vehicle?.jump_start ||false
+        rent_hourly_charges:Vehicledata?.vehicle?.rent_hourly_charges || 0,
+        pet_friendly:Vehicledata?.vehicle?.pet_friendly || false,
+        rentable:Vehicledata?.vehicle?.rental || false,
+        jump_start:Vehicledata?.vehicle?.jump_start ||false
      })
-      setDriverDetails(response.assigned_driver);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
+      setDriverDetails(Vehicledata.assigned_driver||null);
     }
-  }, [selectedVehicleId]);
+  }, [Vehicledata]);
 
   const handleHourlycharges =(e)=>{
       setFormData({...formData,rent_hourly_charges:parseInt(e.target.value)})
@@ -203,11 +219,11 @@ const handleClick = () => {
     fileInput.click();
   };
 
-  useEffect(() => {
-    setRemoveError("");
-    setAssignError("");
-    fetchVehicleData();
-  }, [fetchVehicleData]);
+  // useEffect(() => {
+  //   setRemoveError("");
+  //   setAssignError("");
+  //   fetchVehicleData();
+  // }, [fetchVehicleData]);
 
   const removeDriver = async () => {
     setRemoveLoading(true);

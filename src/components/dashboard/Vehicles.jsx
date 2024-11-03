@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import { useCallback, useEffect, useState } from "react";
 import {
   Button,
@@ -32,6 +30,7 @@ import twoRight from "../../assets/twoRight.svg";
 import redDot from "../../assets/redDot.svg";
 import greenDot from "../../assets/greenDot.svg";
 import organisatiologo from "../../assets/organisationlogo.jpeg";
+import { useGetVehiclesdataQuery } from "../../features/Vehicle/vehicleSlice";
 
 const ColorButton = styled(Button)(({ theme }) => ({
   fontFamily: "Red Hat Display, sans-serif",
@@ -100,132 +99,143 @@ const Vehicles = ({ onVehicleClick , selectedVehicleId }) => {
   }
 ]);
 
-  const fetchVehiclesData = useCallback(async () => {
-    const orgId = localStorage.getItem("org_id");
-    const url = `https://boldrides.com/api/boldriders/organization/${orgId}/vehicles`;
-    setLoading(true);
-    setCategoryError(false);
-    try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        setError("Error in fetching vehicles!");
-        setLoading(false);
-        return;
-      }
-      const response = await res.json();
-      setFetchedVehicles(response.vehicles);
-      setFilteredVehicles(response.vehicles);
-    } catch (err) {
-      setError(err || "An unexpected error occurred.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+const { data: Vehicles, error:vehiclefetcherror, isLoading } = useGetVehiclesdataQuery();
 
-  const fetchVehicleCategories = useCallback(async () => {
-    const orgId = localStorage.getItem("org_id");
-    const url = `https://boldrides.com/api/boldriders/organization/${orgId}/vehicleCategories`;
-    setLoading(true);
-    setCategoryError(false);
-    try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        setCategoryError(true);
-        setLoading(false);
-        return;
-      }
-      const response = await res.json();
-      setVehicleCategories(response.categories);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // const fetchVehiclesData = useCallback(async () => {
+  //   const orgId = localStorage.getItem("org_id");
+  //   const url = `https://boldrides.com/api/boldriders/organization/${orgId}/vehicles`;
+  //   setLoading(true);
+  //   setCategoryError(false);
+  //   try {
+  //     const res = await fetch(url);
+  //     if (!res.ok) {
+  //       setError("Error in fetching vehicles!");
+  //       setLoading(false);
+  //       return;
+  //     }
+  //     const response = await res.json();
+  //     setFetchedVehicles(response.vehicles);
+  //     setFilteredVehicles(response.vehicles);
+  //   } catch (err) {
+  //     setError(err || "An unexpected error occurred.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   useEffect(() => {
-    fetchVehiclesData();
-    fetchVehicleCategories();
-  }, [fetchVehiclesData, fetchVehicleCategories]);
-
-  const handleFilter = useCallback(() => {
-    let filtered = fetchedVehicles;
-
-    if (!showAll) {
-      if (state) {
-        filtered = filtered.filter((vehicle) => {
-          const docs = vehicle?.documents || {};
-          const docCount = Object.keys(docs).length;
-          const approvedCount = Object.values(docs).filter(
-            (doc) => doc.status === "APPROVED"
-          ).length;
-
-          if (state === "Active") {
-            return docCount === 4 && approvedCount === 4;
-          }
-          if (state === "Inactive") {
-            return !(docCount === 4 && approvedCount === 4);
-          }
-          return true;
-        });
-      }
-      if (assignment) {
-        assignment === "Not assigned"
-          ? (filtered = filtered.filter(
-              (vehicle) => vehicle?.assigned_driver_id === null
-            ))
-          : (filtered = filtered.filter(
-              (vehicle) => vehicle?.assigned_driver_id !== null
-            ));
-      }
-      if (documents) {
-        filtered = filtered.filter((vehicle) => {
-          const docs = vehicle?.documents || {};
-          const docCount = Object.keys(docs).length;
-          const approvedCount = Object.values(docs).filter(
-            (doc) => doc.status === "APPROVED"
-          ).length;
-          const pendingCount = Object.values(docs).filter(
-            (doc) => doc.status === "PENDING"
-          ).length;
-
-          if (documents === "Approved") {
-            return docCount === 4 && approvedCount === 4;
-          }
-          if (documents === "Pending") {
-            return pendingCount > 0;
-          }
-          if (documents === "Lacking") {
-            return docCount < 4;
-          }
-          return true;
-        });
-      }
+    if (Vehicles) {
+      setFilteredVehicles(Vehicles.vehicles);
     }
+  }, [Vehicles]);
 
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filtered = filtered.filter((vehicle) => {
-        const yearStr = vehicle?.year?.toString().toLowerCase() || "";
-        const modelStr = vehicle?.vehicle_model?.toLowerCase() || "";
-        const vinStr = vehicle?.vin?.toLowerCase() || "";
-        const makeStr = vehicle?.make?.toLowerCase() || "";
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error in fetching vehicles!</p>;
 
-        return (
-          yearStr.includes(searchLower) ||
-          modelStr.includes(searchLower) ||
-          vinStr.includes(searchLower) ||
-          makeStr.includes(searchLower)
-        );
-      });
-    }
+  // const fetchVehicleCategories = useCallback(async () => {
+  //   const orgId = localStorage.getItem("org_id");
+  //   const url = `https://boldrides.com/api/boldriders/organization/${orgId}/vehicleCategories`;
+  //   setLoading(true);
+  //   setCategoryError(false);
+  //   try {
+  //     const res = await fetch(url);
+  //     if (!res.ok) {
+  //       setCategoryError(true);
+  //       setLoading(false);
+  //       return;
+  //     }
+  //     const response = await res.json();
+  //     setVehicleCategories(response.categories);
+  //   } catch (err) {
+  //     setError(err);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
-    setFilteredVehicles(filtered);
-  }, [showAll, state, assignment, search, documents, fetchedVehicles]);
+  // useEffect(() => {
+  //   fetchVehiclesData();
+  //   fetchVehicleCategories();
+  // }, [fetchVehiclesData, fetchVehicleCategories]);
 
-  useEffect(() => {
-    handleFilter();
-  }, [showAll, state, assignment, search, handleFilter]);
+  // const handleFilter = useCallback(() => {
+  //   let filtered = fetchedVehicles;
+
+  //   if (!showAll) {
+  //     if (state) {
+  //       filtered = filtered.filter((vehicle) => {
+  //         const docs = vehicle?.documents || {};
+  //         const docCount = Object.keys(docs).length;
+  //         const approvedCount = Object.values(docs).filter(
+  //           (doc) => doc.status === "APPROVED"
+  //         ).length;
+
+  //         if (state === "Active") {
+  //           return docCount === 4 && approvedCount === 4;
+  //         }
+  //         if (state === "Inactive") {
+  //           return !(docCount === 4 && approvedCount === 4);
+  //         }
+  //         return true;
+  //       });
+  //     }
+  //     if (assignment) {
+  //       assignment === "Not assigned"
+  //         ? (filtered = filtered.filter(
+  //             (vehicle) => vehicle?.assigned_driver_id === null
+  //           ))
+  //         : (filtered = filtered.filter(
+  //             (vehicle) => vehicle?.assigned_driver_id !== null
+  //           ));
+  //     }
+  //     if (documents) {
+  //       filtered = filtered.filter((vehicle) => {
+  //         const docs = vehicle?.documents || {};
+  //         const docCount = Object.keys(docs).length;
+  //         const approvedCount = Object.values(docs).filter(
+  //           (doc) => doc.status === "APPROVED"
+  //         ).length;
+  //         const pendingCount = Object.values(docs).filter(
+  //           (doc) => doc.status === "PENDING"
+  //         ).length;
+
+  //         if (documents === "Approved") {
+  //           return docCount === 4 && approvedCount === 4;
+  //         }
+  //         if (documents === "Pending") {
+  //           return pendingCount > 0;
+  //         }
+  //         if (documents === "Lacking") {
+  //           return docCount < 4;
+  //         }
+  //         return true;
+  //       });
+  //     }
+  //   }
+
+  //   if (search) {
+  //     const searchLower = search.toLowerCase();
+  //     filtered = filtered.filter((vehicle) => {
+  //       const yearStr = vehicle?.year?.toString().toLowerCase() || "";
+  //       const modelStr = vehicle?.vehicle_model?.toLowerCase() || "";
+  //       const vinStr = vehicle?.vin?.toLowerCase() || "";
+  //       const makeStr = vehicle?.make?.toLowerCase() || "";
+
+  //       return (
+  //         yearStr.includes(searchLower) ||
+  //         modelStr.includes(searchLower) ||
+  //         vinStr.includes(searchLower) ||
+  //         makeStr.includes(searchLower)
+  //       );
+  //     });
+  //   }
+
+  //   setFilteredVehicles(filtered);
+  // }, [showAll, state, assignment, search, documents, fetchedVehicles]);
+
+  // useEffect(() => {
+  //   handleFilter();
+  // }, [showAll, state, assignment, search, handleFilter]);
 
   const handleStateChange = (event) => {
     const value = event.target.value;
@@ -622,9 +632,11 @@ const Vehicles = ({ onVehicleClick , selectedVehicleId }) => {
                   const { status, notUploadedCount, pendingCount } =
                     getVerificationStatus(documents);
 
+                    console.log(vehicle.vehicle_id)
+
                   return (
-                    <TableRow key={index}>
-                      <TableCell onClick={() => onVehicleClick(vehicle?._id)}>
+                    <TableRow key={index} onClick={() => onVehicleClick(vehicle?.vehicle_id)}>
+                      <TableCell >
                         <div className="flex items-center cursor-pointer">
                           <img src={carImage} alt="vehicle" className="mr-2" />
                           <p className="font-redHat font-bold text-base">
@@ -660,14 +672,14 @@ const Vehicles = ({ onVehicleClick , selectedVehicleId }) => {
                       </TableCell>
                       <TableCell>
                         <p className="font-redhat text-base font-semibold">
-                          {vehicle?.assigned_driver_id !== "undefined" ||
-                          vehicle?.assigned_driver_id === null
+                          {
+                          vehicle?.organization_name=== null
                             ? "Not assigned"
-                            : "Assigned"}
+                            : vehicle.organization_name}
                         </p>
                       </TableCell>
                       <TableCell>
-                        {status ? (
+                        {!vehicle?.active ? (
                           <span className="flex gap-2">
                             <img src={greenDot} alt="greenDot" />
                             <p className="font-redhat text-base font-semibold">

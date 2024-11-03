@@ -3,10 +3,10 @@ export const getOrgId = () => localStorage.getItem('org_id');
 
 export const zonesSlice = createApi({
   reducerPath: 'zonesApi',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://boldrides.com/api/boldriders/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://dev.boldrides.com/api/boldriders/super/' }),
   endpoints: (builder) => ({
     getZones: builder.query({
-      query: () => `/organization/${getOrgId()}/zones`,
+      query: () => `zones`,
     }),
     updateZone: builder.mutation({
       query: ({ id, updatedZone }) => ({
@@ -17,20 +17,20 @@ export const zonesSlice = createApi({
     }),
     deleteZone: builder.mutation({
       query: (id) => ({
-        url: `organization/${getOrgId()}/zone/${id}`,
+        url: `zones/${id}/deleteZone`,
         method: 'DELETE',
       }),
     }),
     toggleZoneStatus: builder.mutation({
       query: ({ id, is_active }) => ({
-        url: `organization/${getOrgId()}/toggleZoneStatus/${id}`,
-        method: 'POST',
+        url: `zones/${id}/toggle-status`,
+        method: 'PUT',
         body: { is_active },
       }),
     }),
     addZone: builder.mutation({
       query: (newZone) => ({
-        url: `organization/${getOrgId()}/createZone`, 
+        url: `createZone`, 
         method: 'POST',
         body: newZone,
       }),

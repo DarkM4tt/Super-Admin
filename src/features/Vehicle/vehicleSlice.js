@@ -4,14 +4,20 @@ import { getOrgId } from '../Zones/zonesSlice';
 
 export const vehicleSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://boldrides.com/api/boldriders/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://dev.boldrides.com/api/boldriders/super/' }),
   endpoints: (builder) => ({
     getCarCategories: builder.query({
-      query: () => `organization/${getOrgId()}/vehicleCategories`,
+      query: () => `getVehiclesData`,
+    }),
+    getVehiclesdata: builder.query({
+      query: () => `getVehiclesData`,
+    }),
+    getSinglevehicle: builder.query({
+      query: (vehicleId) => `getVehicleById/${vehicleId}`,
     }),
     updateVehicle: builder.mutation({
       query: ({ vehicleId, data }) => ({
-        url: `/organization/${getOrgId()}/vehicle/${vehicleId}`,
+        url: `vehicle/${vehicleId} `,
         method: 'PUT',
         body: data,
       }),
@@ -19,4 +25,4 @@ export const vehicleSlice = createApi({
   }),
 });
 
-export const { useGetCarCategoriesQuery, useUpdateVehicleMutation} = vehicleSlice;
+export const { useGetCarCategoriesQuery, useGetVehiclesdataQuery, useGetSinglevehicleQuery, useUpdateVehicleMutation} = vehicleSlice;

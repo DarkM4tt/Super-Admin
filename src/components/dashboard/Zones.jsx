@@ -143,8 +143,8 @@ const Zones = () => {
 
   useEffect(() => {
     if (fetchedZones) {
-      console.log(fetchedZones.zones);
-      setZoneData(fetchedZones.zones);
+      console.log(fetchedZones);
+      setZoneData(fetchedZones);
     }
   }, [fetchedZones]);
 

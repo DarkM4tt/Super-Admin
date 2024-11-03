@@ -36,6 +36,7 @@ import Rentalorganisation from "../components/dashboard/Rentalorganisation";
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+  const [selectedOrg,setselectedOrg]= useState(null);
   const [selectedDriverId, setSelectedDriverId] = useState(null);
   const [notification, setnotification] = useState(null);
   const [showsidebar, setshowsidebar] = useState(false);
@@ -66,11 +67,11 @@ const Home = () => {
       case "Fleets":
         return <Fleets />;
       case "Organisations":
-        return <Organisations onMenuItemClick={handleMenuItemClick} />;
+        return <Organisations onMenuItemClick={handleMenuItemClick} setselectedOrg={setselectedOrg} />;
       case "Organisationinfo":
-        return <Organisationinfo onMenuItemClick={handleMenuItemClick} />;
+        return <Organisationinfo onMenuItemClick={handleMenuItemClick} selectedOrg={selectedOrg} />;
       case "Neworganisationinfo":
-        return <Neworganisationinfo onMenuItemClick={handleMenuItemClick} />;
+        return <Neworganisationinfo onMenuItemClick={handleMenuItemClick} selectedOrg={selectedOrg} />;
       case "Intercityinfo":
         return <IntercityModal onMenuItemClick={handleMenuItemClick} />;
       case "Vehicles":
@@ -136,12 +137,12 @@ const Home = () => {
   };
 
   useEffect(() => {
-    generateToken();
-    onMessage(messaging, (payload) => {
-      console.log(payload);
-      setnotification(payload.notification.body);
-    });
-  }, []);
+  generateToken();
+  onMessage(messaging, (payload) => {
+    console.log(payload);
+    setnotification(payload.notification.body);
+  });
+}, [setnotification]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

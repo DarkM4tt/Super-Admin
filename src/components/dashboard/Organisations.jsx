@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useCallback, useEffect, useState } from "react";
+import { useGetOrganizationsQuery } from "../../features/Organisations/organisationSlice";
 import { useNavigate } from "react-router-dom";
 import {
   Button,
@@ -24,7 +25,6 @@ import twoLeft from "../../assets/twoLeft.svg";
 import oneLeft from "../../assets/oneLeft.svg";
 import twoRight from "../../assets/twoRight.svg";
 import CustomSelectDropdown from "../common/CustomSelectDropdown";
-// import RideModal from "./RideModal";
 import wrongIcon from "../../assets/wrongIcon.svg";
 import infoYellow from "../../assets/infoYellow.svg";
 import LoadingAnimation from "../common/LoadingAnimation";
@@ -36,38 +36,38 @@ const ColorButton = styled(Button)(({ theme }) => ({
   fontFamily: "Red Hat Display, sans-serif",
 }));
 
-const Organisation = ({ onMenuItemClick}) => {
+const Organisation = ({ onMenuItemClick , setselectedOrg}) => {
   const [showAddFleetModal, setShowAddFleetModal] = useState(false);
   const [allRides, setAllRides] = useState([]);
-  const [filteredRides, setFilteredRides] = useState([{
-      name: "Reliance Industries Ltd.",
-      totalVehicles: 100,
-      totalDrivers: 80,
-      DOR: "01/01/2024", // Assuming it's a date of registration
-      verificationStatus: { errors: 1, warnings: 4 }
-    },
-    {
-      name: "Reliance Industries Ltd.",
-      totalVehicles: 150,
-      totalDrivers: 120,
-      DOR: "15/03/2024",
-      verificationStatus: { errors: 0, warnings: 0 }
-    },
-    {
-      name: "Reliance Industries Ltd.",
-      totalVehicles: 200,
-      totalDrivers: 180,
-      DOR: "20/05/2024",
-      verificationStatus: { errors: 0, warnings: 0 }
-    },
-    {
-      name: "Reliance Industries Ltd.",
-      totalVehicles: 50,
-      totalDrivers: 45,
-      DOR: "10/07/2024",
-      verificationStatus: { errors: 1, warnings: 4 }
-    }
-  ]);
+  // const [filteredRides, setFilteredRides] = useState([{
+  //     name: "Reliance Industries Ltd.",
+  //     totalVehicles: 100,
+  //     totalDrivers: 80,
+  //     DOR: "01/01/2024", // Assuming it's a date of registration
+  //     verificationStatus: { errors: 1, warnings: 4 }
+  //   },
+  //   {
+  //     name: "Reliance Industries Ltd.",
+  //     totalVehicles: 150,
+  //     totalDrivers: 120,
+  //     DOR: "15/03/2024",
+  //     verificationStatus: { errors: 0, warnings: 0 }
+  //   },
+  //   {
+  //     name: "Reliance Industries Ltd.",
+  //     totalVehicles: 200,
+  //     totalDrivers: 180,
+  //     DOR: "20/05/2024",
+  //     verificationStatus: { errors: 0, warnings: 0 }
+  //   },
+  //   {
+  //     name: "Reliance Industries Ltd.",
+  //     totalVehicles: 50,
+  //     totalDrivers: 45,
+  //     DOR: "10/07/2024",
+  //     verificationStatus: { errors: 1, warnings: 4 }
+  //   }
+  // ]);
   const [showAll, setShowAll] = useState(true);
   const [state, setState] = useState("");
   const [current, setCurrent] = useState("");
@@ -80,119 +80,84 @@ const Organisation = ({ onMenuItemClick}) => {
   const [fromandtolocation, setfromandtoloaction] = useState(null);
   const [notUploadedCount, setnotUploadedCount] = useState(2);
   const [pendingCount, setpendingCount] = useState(3);
-  const [allornew, setallornew] = useState("All")
+  const { data: organizations = [], isLoading, error:organisationerror } = useGetOrganizationsQuery();
+  const [allornew, setAllOrNew] = useState('All');
   const navigate = useNavigate();
 
+  const filteredOrganizations = organizations.filter(org => 
+    allornew === 'New' ? !org.active : org.active
+  );
 
-  const getAddress = useCallback(async (latitude, longitude, rideId, type) => {
-    const apiKey = "AIzaSyADUMklpWkHyXBGAWiMIXS5-dseLt5Q314";
-    const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
+  if (isLoading) return <p>Loading...</p>;
+  if (organisationerror) return <p>Error loading organizations.</p>;
 
-    try {
-      const response = await fetch(url);
-      const data = await response.json();
-      if (data.status === "OK") {
-        setAddresses((prev) => ({
-          ...prev,
-          [rideId]: {
-            ...prev[rideId],
-            [type]: data.results[0].formatted_address,
-          },
-        }));
-      } else {
-        setAddresses((prev) => ({
-          ...prev,
-          [rideId]: {
-            ...prev[rideId],
-            [type]: "Unable to fetch address",
-          },
-        }));
-      }
-    } catch (error) {
-      setAddresses((prev) => ({
-        ...prev,
-        [rideId]: {
-          ...prev[rideId],
-          [type]: "Error fetching data",
-        },
-      }));
-    }
-  }, []);
 
-  const handleRide = (rideId) => {
-    // Assuming you want to navigate to a page based on the ride ID
-    onMenuItemClick("Organisationinfo")
+
+  // const getAddress = useCallback(async (latitude, longitude, rideId, type) => {
+  //   const apiKey = "AIzaSyADUMklpWkHyXBGAWiMIXS5-dseLt5Q314";
+  //   const url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
+
+  //   try {
+  //     const response = await fetch(url);
+  //     const data = await response.json();
+  //     if (data.status === "OK") {
+  //       setAddresses((prev) => ({
+  //         ...prev,
+  //         [rideId]: {
+  //           ...prev[rideId],
+  //           [type]: data.results[0].formatted_address,
+  //         },
+  //       }));
+  //     } else {
+  //       setAddresses((prev) => ({
+  //         ...prev,
+  //         [rideId]: {
+  //           ...prev[rideId],
+  //           [type]: "Unable to fetch address",
+  //         },
+  //       }));
+  //     }
+  //   } catch (error) {
+  //     setAddresses((prev) => ({
+  //       ...prev,
+  //       [rideId]: {
+  //         ...prev[rideId],
+  //         [type]: "Error fetching data",
+  //       },
+  //     }));
+  //   }
+  // }, []);
+
+  const handleRide = (orgId,navigatepage="Organisationinfo") => {
+    setselectedOrg(orgId)
+    onMenuItemClick(navigatepage)
+
   };
 
 
-  // const fetchRidesData = useCallback(async () => {
-  //   const orgId = localStorage.getItem("org_id");
-  //   const url = `https://boldrides.com/api/boldriders/organization/${orgId}/getallRides`;
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch(url);
-  //     if (!res.ok) {
-  //       setError("Error in fetching vehicles!");
-  //       setLoading(false);
-  //       return;
+  // const handleFilter = useCallback(() => {
+  //   let filtered = allRides;
+
+  //   if (!showAll) {
+  //     if (state) {
+  //       filtered = filtered.filter((ride) => {
+  //         return ride?.status.toLowerCase() === state.toLowerCase();
+  //       });
   //     }
-  //     const response = await res.json();
-  //     setAllRides(response.rides);
-  //     setFilteredRides(response.rides);
-
-  //     // Fetch addresses for all rides
-  //     response.rides.forEach((ride) => {
-  //       if (ride.pickup_location) {
-  //         getAddress(
-  //           ride.pickup_location.latitude,
-  //           ride.pickup_location.longitude,
-  //           ride._id,
-  //           "pickup"
-  //         );
-  //       }
-  //       if (ride.dropoff_location) {
-  //         getAddress(
-  //           ride.dropoff_location.latitude,
-  //           ride.dropoff_location.longitude,
-  //           ride._id,
-  //           "dropoff"
-  //         );
-  //       }
-  //     });
-  //   } catch (err) {
-  //     setError(err);
-  //   } finally {
-  //     setLoading(false);
+  //     if (current) {
+  //       console.log(current);
+  //     }
   //   }
-  // }, [getAddress]);
 
-  // useEffect(() => {
-  //   fetchRidesData();
-  // }, [fetchRidesData]);
+  //   if (search) {
+  //     const searchLower = search.toLowerCase();
+  //     filtered = filtered.filter((ride) => {
+  //       return ride?.driver_id?.full_name.toLowerCase() === searchLower;
+  //     });
+  //   }
 
-  const handleFilter = useCallback(() => {
-    let filtered = allRides;
-
-    if (!showAll) {
-      if (state) {
-        filtered = filtered.filter((ride) => {
-          return ride?.status.toLowerCase() === state.toLowerCase();
-        });
-      }
-      if (current) {
-        console.log(current);
-      }
-    }
-
-    if (search) {
-      const searchLower = search.toLowerCase();
-      filtered = filtered.filter((ride) => {
-        return ride?.driver_id?.full_name.toLowerCase() === searchLower;
-      });
-    }
-
-    setFilteredRides(filtered);
-  }, [showAll, state, current, search, allRides]);
+  //   setFilteredRides(filtered);
+  // }, [showAll, state, current, search, allRides]);
 
   // useEffect(() => {
   //   handleFilter();
@@ -359,10 +324,10 @@ const Organisation = ({ onMenuItemClick}) => {
       </div>
 
       <div className="flex gap-6">
-        <div className={`pb-[6px] pr-3 ${allornew==="All"?"border-b-[3px] border-[#18C4B8]":""}`} onClick={()=>setallornew("All")}>
+        <div className={`pb-[6px] pr-3 ${allornew==="All"?"border-b-[3px] border-[#18C4B8]":""}`}  onClick={() => setAllOrNew('All')}>
           <p className={`font-redhat font-bold text-base ${allornew!=="All"?"text-[#777777] font-normal":""}`}>All</p>
         </div>
-        <div className={`pb-[6px] pr-3 ${allornew==="New"?"border-b-[3px] border-[#18C4B8]":""}`} onClick={()=>setallornew("New")}>
+        <div className={`pb-[6px] pr-3 ${allornew==="New"?"border-b-[3px] border-[#18C4B8]":""}`} onClick={()=>setAllOrNew("New")}>
           <p className={`font-redhat font-bold text-base ${allornew!=="New"?"text-[#777777] font-normal":""}`}>New</p>
         </div>
       </div>
@@ -425,28 +390,28 @@ const Organisation = ({ onMenuItemClick}) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredRides.map((ride, index) => {
-              console.log(ride)
+            {organizations.map((org, index) => {
+              console.log(org)
              return <TableRow
                 // onClick={(e) => handleRideClick(ride?._id)}
-                onClick={() => handleRide()}
+                onClick={() => handleRide("671225394d3b2a6d22155076")}
                 key={index}
                 sx={{ cursor: "pointer" }}
               >
                 <TableCell >
-                  <p className="font-bold text-base">{ride.name}</p>
+                  <p className="font-bold text-base">{org.organization_name}</p>
                 </TableCell>
                 <TableCell>
-                  <p className="font-bold text-base">{ride.totalVehicles}</p>
+                  <p className="font-bold text-base">{org.vehicle_count}</p>
                 </TableCell>
                 <TableCell>
                   <p className="font-bold text-base">
-                    {ride.totalDrivers}
+                    {org.driver_count}
                   </p>
                 </TableCell>
                 <TableCell>
                   <p className="font-semibold text-base">
-                    {ride.DOR}
+                    {org.DOR}
                   </p>
                 </TableCell>
                 
@@ -510,8 +475,8 @@ const Organisation = ({ onMenuItemClick}) => {
           </TableBody>
         </Table>
       </TableContainer>:<>
-      {filteredRides.map((org)=>{
-       return <div className="py-6 border-b border-[#DDDDDD] flex justify-between items-center " onClick={()=>onMenuItemClick("Neworganisationinfo")}>
+      {filteredOrganizations.map((org)=>{
+       return <div className="py-6 border-b border-[#DDDDDD] flex justify-between items-center " onClick={()=> handleRide("671225394d3b2a6d22155076","Neworganisationinfo")}>
            <div className="flex gap-3 ">
               <img
                 src={organisatiologo}
@@ -520,12 +485,12 @@ const Organisation = ({ onMenuItemClick}) => {
               />
               <div className="flex flex-col justify-between py-1">
                 {" "}
-                <p className="font-bold text-base font-redhat ">{org.name}</p>
+                <p className="font-bold text-base font-redhat ">{org.organization_name}</p>
                 <p className="font-bold text-base font-redhat">
-                  Driver: {org.totalDrivers}
+                  Driver: {org.driver_count}
                 </p>
                 <p className="font-bold text-base font-redhat">
-                Vehicles: {org.totalVehicles}
+                Vehicles: {org.vehicle_count}
                 </p>
               </div>
             </div>

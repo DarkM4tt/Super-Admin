@@ -221,7 +221,7 @@ const Zoneslist = ({ sampleData, carOptions }) => {
   };
 
   const filteredData = zones.filter((zone) =>
-    zone.zone_name.toLowerCase().includes(search.toLowerCase())
+    zone?.zone_name?.toLowerCase().includes(search.toLowerCase())
   );
 
   useEffect(() => {

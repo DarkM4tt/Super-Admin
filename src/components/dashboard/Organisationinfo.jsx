@@ -24,6 +24,7 @@ import { Doughnut } from "react-chartjs-2";
 import CustomSelectDropdown from "../common/CustomSelectDropdown";
 import calenderone from "../../assets/superadmincalender.svg";
 import useGoogleMapsLoader from "../../useGoogleMapsLoader";
+import { useGetSingleOrganizationQuery } from "../../features/Organisations/organisationSlice";
 import {
     GoogleMap,
   } from "@react-google-maps/api";
@@ -48,9 +49,15 @@ import {
     ]
 
 const Organisationinfo = ({
-  onMenuItemClick
+  onMenuItemClick,
+  selectedOrg
 }) => {
+
+  const { data: orgDetails, error, isLoading } = useGetSingleOrganizationQuery(selectedOrg);
     const { isLoaded, loadError } = useGoogleMapsLoader();
+
+    if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error fetching organization details</p>;
   const data = {
     labels: ["Complete", "Incomplete"],
     datasets: [
@@ -97,9 +104,9 @@ const Organisationinfo = ({
               />
               <div className="pt-2">
                 {" "}
-                <p className="font-bold text-2xl ">ABC Company Pvt. Ltd</p>
+                <p className="font-bold text-2xl ">{orgDetails.organization.organization_name||"ABC Company Pvt. Ltd"}</p>
                 <p className="font-semibold text-base text-[#777777] pt-2">
-                  Operating at : Porto, Portugal
+                  Operating at : {orgDetails.organization.country}
                 </p>
               </div>
             </div>

@@ -7,6 +7,7 @@ import carImage from "../../assets/carBigImage.png";
 import LoadingAnimation from "../common/LoadingAnimation";
 import callicon from "../../assets/calliconsa.svg";
 import msgicon from "../../assets/messageiconsa.svg";
+import { useGetDriverbyIDQuery, useActivateDriverMutation } from "../../features/Driver/driverSlice";
 
 
 const DynamicButton = styled(Button)(({ theme, bgColor, padding, btntext="black" }) => ({
@@ -28,35 +29,27 @@ const DriverInfo = ({
   setActiveComponent,
   setSelectedDriver,
 }) => {
-  const [driverDetails, setDriverDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   // eslint-disable-next-line no-unused-vars
   const [viewError, setViewError] = useState("");
 
-  const fetchDriverData = useCallback(async () => {
-    const orgId = localStorage.getItem("org_id");
-    const url = `https://boldrides.com/api/boldriders/organization/${orgId}/driver/${selectedDriverId}`;
-    setLoading(true);
-    try {
-      const res = await fetch(url);
-      if (!res.ok) {
-        setError("Error in fetching driver details!");
-        setLoading(false);
-        return;
-      }
-      const response = await res.json();
-      setDriverDetails(response.driver);
-    } catch (err) {
-      setError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedDriverId]);
+  const { data: driverDetails, error:vehiclefetcherror, isLoading } = useGetDriverbyIDQuery(selectedDriverId);
+  const [activateDriver, { isLoading: isActivating, error: activateError }] = useActivateDriverMutation();
 
-  useEffect(() => {
-    fetchDriverData();
-  }, [fetchDriverData]);
+  const handleApproveDriver = async () => {
+    try {
+      await activateDriver(selectedDriverId).unwrap();
+      alert("Driver has been approved successfully!");
+    } catch (error) {
+      console.error("Failed to approve driver:", error);
+      alert("Please verify All documents. Please try again.");
+    }
+  };
+
+ 
+
+
 
   if (loading) {
     return (
@@ -87,7 +80,8 @@ const DriverInfo = ({
         </div>
         <div className="flex gap-6 ">
             <DynamicButton bgColor={"white"} padding={"12px 15px"}>Ask for review</DynamicButton>
-            <DynamicButton bgColor={"#00000080"} padding={"12px 70px"} btntext={"white"}>Approve driver</DynamicButton>
+            <DynamicButton bgColor={"#00000080"} padding={"12px 70px"} btntext={"white"}  onClick={handleApproveDriver}
+            disabled={isActivating}> {isActivating ? "Approving..." : "Approve driver"}</DynamicButton>
         </div>
       </div>
       <div className="mb-10 flex justify-between">
@@ -105,7 +99,7 @@ const DriverInfo = ({
                 Phone Number
               </Typography>
               <Typography variant="body1" fontWeight="600">
-                {driverDetails?.phone_number}
+                {driverDetails?.phone}
               </Typography>
             </div>
             <div className="flex flex-col">

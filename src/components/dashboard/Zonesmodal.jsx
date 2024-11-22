@@ -108,6 +108,8 @@ const CustomSelectDropdown = ({
 const style = {
   position: "absolute",
   overflow: "auto",
+  maxHeight: '90vh', // Limits the height of the modal
+  overflowY: 'auto', 
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -191,9 +193,9 @@ const ZonesModal = ({ open, handleClose, zoneName, carOptions }) => {
   };
 
   return (
-    <div>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style} className="space-y-4">
+    <div >
+      <Modal open={open} onClose={handleClose} className="">
+        <Box sx={style} className="space-y-4 ">
           <div className="flex justify-between items-center pb-4">
             <h2 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold font-redhat">
               New business zone created successfully!

@@ -126,8 +126,8 @@ const Zones = () => {
       console.log("Polygon Coordinates:", polygon);
       search && polygon && setOpen(true);
     } else {
-      setOpen(true);
-      console.log("No polygon drawn");
+      // setOpen(true);
+      alert("No polygon drawn");
     }
   };
 

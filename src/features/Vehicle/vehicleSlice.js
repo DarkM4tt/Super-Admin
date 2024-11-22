@@ -4,10 +4,10 @@ import { getOrgId } from '../Zones/zonesSlice';
 
 export const vehicleSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: 'https://dev.boldrides.com/api/boldriders/super/' }),
+  baseQuery: fetchBaseQuery({ baseUrl: 'https://dev.boldrides.com/api/boldriders/' }),
   endpoints: (builder) => ({
     getCarCategories: builder.query({
-      query: () => `getVehiclesData`,
+      query: () => `organization/vehicleCategories`,
     }),
     getVehiclesdata: builder.query({
       query: () => `getVehiclesData`,

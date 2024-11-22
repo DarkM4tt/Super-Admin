@@ -1,5 +1,3 @@
-
-
 import { configureStore } from "@reduxjs/toolkit";
 import { authSlice } from "../features/auth/authSlice";
 import { zonesSlice } from "../features/Zones/zonesSlice";
@@ -14,8 +12,8 @@ export const store = configureStore({
     [authSlice.reducerPath]: authSlice.reducer,
     [zonesSlice.reducerPath]: zonesSlice.reducer,
     [vehicleSlice.reducerPath]: vehicleSlice.reducer,
-    [OrganisationSlice.reducerPath]:OrganisationSlice.reducer,
-    [driverSlice.reducerPath]:driverSlice.reducer,
+    [OrganisationSlice.reducerPath]: OrganisationSlice.reducer,
+    [driverSlice.reducerPath]: driverSlice.reducer,
     // [ridesSlice.reducerPath]: ridesSlice.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling, and other features of RTK Query
@@ -25,8 +23,7 @@ export const store = configureStore({
       zonesSlice.middleware,
       vehicleSlice.middleware,
       OrganisationSlice.middleware,
-      driverSlice.middleware,
+      driverSlice.middleware
       // ridesSlice.middleware
     ),
 });
-

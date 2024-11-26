@@ -169,10 +169,15 @@ const Zones = () => {
   }
 
   const getCenter = () => {
+    if (polygon) {
+      return { lat: polygon[0][0], lng: polygon[0][1] };
+    }
     return { lat: 40.756795, lng: -73.954298 };
   };
 
   console.log("POLYGON DETAILS: ", polygon);
+  console.log("POLYGON LAT: ", polygon[0][0]);
+  console.log("POLYGON LNG: ", polygon[0][1]);
 
   return (
     <div className="p-6">
@@ -231,7 +236,7 @@ const Zones = () => {
         <GoogleMap
           mapContainerStyle={{ height: "500px", width: "" }}
           center={getCenter()}
-          zoom={10}
+          zoom={5}
           onLoad={(map) => (mapRef.current = map)}
         >
           <DrawingManager

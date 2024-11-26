@@ -168,6 +168,12 @@ const Zones = () => {
     <p className="text-red-500 text-lg">{error || "Error occurred"}</p>;
   }
 
+  const getCenter = () => {
+    return { lat: 40.756795, lng: -73.954298 };
+  };
+
+  console.log("POLYGON DETAILS: ", polygon);
+
   return (
     <div className="p-6">
       <p className="font-bold text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-black font-redhat">
@@ -224,8 +230,8 @@ const Zones = () => {
         </div>
         <GoogleMap
           mapContainerStyle={{ height: "500px", width: "" }}
-          center={{ lat: 40.756795, lng: -73.954298 }}
-          zoom={13}
+          center={getCenter()}
+          zoom={10}
           onLoad={(map) => (mapRef.current = map)}
         >
           <DrawingManager

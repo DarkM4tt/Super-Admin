@@ -170,7 +170,7 @@ const Zones = () => {
 
   const getCenter = () => {
     if (polygon.length > 0) {
-      return { lat: polygon[0][0], lng: polygon[0][1] };
+      return { lat: polygon[0][1], lng: polygon[0][0] };
     }
     return { lat: 41.902782, lng: 12.496366 };
   };

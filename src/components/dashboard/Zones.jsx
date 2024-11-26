@@ -236,7 +236,7 @@ const Zones = () => {
         <GoogleMap
           mapContainerStyle={{ height: "500px", width: "" }}
           center={getCenter()}
-          zoom={polygon.length > 0 ? 8 : 2}
+          zoom={polygon.length > 0 ? 8 : 4}
           onLoad={(map) => (mapRef.current = map)}
         >
           <DrawingManager

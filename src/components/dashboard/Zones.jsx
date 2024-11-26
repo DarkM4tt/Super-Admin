@@ -169,15 +169,15 @@ const Zones = () => {
   }
 
   const getCenter = () => {
-    if (polygon) {
+    if (polygon.length > 0) {
       return { lat: polygon[0][0], lng: polygon[0][1] };
     }
     return { lat: 40.756795, lng: -73.954298 };
   };
 
   console.log("POLYGON DETAILS: ", polygon);
-  console.log("POLYGON LAT: ", polygon[0][0]);
-  console.log("POLYGON LNG: ", polygon[0][1]);
+  polygon.length > 0 && console.log("POLYGON LAT: ", polygon[0][0]);
+  polygon.length > 0 && console.log("POLYGON LNG: ", polygon[0][1]);
 
   return (
     <div className="p-6">

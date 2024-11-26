@@ -86,7 +86,7 @@ const Zones = () => {
       const coordinates = [];
       for (let i = 0; i < path.getLength(); i++) {
         const point = path.getAt(i);
-        coordinates.push([point.lat(), point.lng()]);
+        coordinates.push([point.lng(), point.lat()]);
       }
 
       // Ensure the polygon is closed

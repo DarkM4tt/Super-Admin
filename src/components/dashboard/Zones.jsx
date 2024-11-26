@@ -145,13 +145,6 @@ const Zones = () => {
     }
   };
 
-  const getCenter = () => {
-    // if (polygon) {
-    //   return { lat: polygon[0][0][0], lng: polygon[0][0][1] };
-    // }
-    return { lat: 40.756795, lng: -73.954298 };
-  };
-
   useEffect(() => {
     if (fetchedZones) {
       console.log(fetchedZones);
@@ -174,8 +167,6 @@ const Zones = () => {
   if (error) {
     <p className="text-red-500 text-lg">{error || "Error occurred"}</p>;
   }
-
-  console.log("Polygon Value: ", polygon);
 
   return (
     <div className="p-6">
@@ -233,8 +224,8 @@ const Zones = () => {
         </div>
         <GoogleMap
           mapContainerStyle={{ height: "500px", width: "" }}
-          center={getCenter}
-          zoom={10}
+          center={{ lat: 40.756795, lng: -73.954298 }}
+          zoom={13}
           onLoad={(map) => (mapRef.current = map)}
         >
           <DrawingManager

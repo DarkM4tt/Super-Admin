@@ -146,9 +146,9 @@ const Zones = () => {
   };
 
   const getCenter = () => {
-    if (polygon) {
-      return { lat: polygon[0][0][0], lng: polygon[0][0][1] };
-    }
+    // if (polygon) {
+    //   return { lat: polygon[0][0][0], lng: polygon[0][0][1] };
+    // }
     return { lat: 40.756795, lng: -73.954298 };
   };
 
@@ -174,6 +174,8 @@ const Zones = () => {
   if (error) {
     <p className="text-red-500 text-lg">{error || "Error occurred"}</p>;
   }
+
+  console.log("Polygon Value: ", polygon);
 
   return (
     <div className="p-6">

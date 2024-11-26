@@ -14,9 +14,7 @@ import Zones from "./../components/dashboard/Zones";
 import Campaigns from "./../components/dashboard/Campaigns";
 import Balance from "./../components/dashboard/Balance";
 import Intercity from "../components/dashboard/Intercity";
-import { generateToken, messaging } from "../firebase";
-import { onMessage } from "firebase/messaging";
-import toast, { Toaster } from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import Organisations from "../components/dashboard/Organisations";
 import Organisationinfo from "../components/dashboard/Organisationinfo";
 import IntercityModal from "../components/dashboard/Rideintercitymodal";
@@ -36,7 +34,7 @@ import Rentalorganisation from "../components/dashboard/Rentalorganisation";
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
-  const [selectedOrg,setselectedOrg]= useState(null);
+  const [selectedOrg, setselectedOrg] = useState(null);
   const [selectedDriverId, setSelectedDriverId] = useState(null);
   const [notification, setnotification] = useState(null);
   const [showsidebar, setshowsidebar] = useState(false);
@@ -67,11 +65,26 @@ const Home = () => {
       case "Fleets":
         return <Fleets />;
       case "Organisations":
-        return <Organisations onMenuItemClick={handleMenuItemClick} setselectedOrg={setselectedOrg} />;
+        return (
+          <Organisations
+            onMenuItemClick={handleMenuItemClick}
+            setselectedOrg={setselectedOrg}
+          />
+        );
       case "Organisationinfo":
-        return <Organisationinfo onMenuItemClick={handleMenuItemClick} selectedOrg={selectedOrg} />;
+        return (
+          <Organisationinfo
+            onMenuItemClick={handleMenuItemClick}
+            selectedOrg={selectedOrg}
+          />
+        );
       case "Neworganisationinfo":
-        return <Neworganisationinfo onMenuItemClick={handleMenuItemClick} selectedOrg={selectedOrg} />;
+        return (
+          <Neworganisationinfo
+            onMenuItemClick={handleMenuItemClick}
+            selectedOrg={selectedOrg}
+          />
+        );
       case "Intercityinfo":
         return <IntercityModal onMenuItemClick={handleMenuItemClick} />;
       case "Vehicles":
@@ -137,12 +150,12 @@ const Home = () => {
   };
 
   useEffect(() => {
-  generateToken();
-  onMessage(messaging, (payload) => {
-    console.log(payload);
-    setnotification(payload.notification.body);
-  });
-}, [setnotification]);
+    // generateToken();
+    // onMessage(messaging, (payload) => {
+    //   console.log(payload);
+    //   setnotification(payload.notification.body);
+    // });
+  }, [setnotification]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

@@ -1,11 +1,5 @@
 import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import {
-  getAuth,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth";
-import { app } from "../../firebase";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import LoadingAnimation from "../common/LoadingAnimation";
@@ -17,30 +11,8 @@ function LoginForm() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [sendEmailOTP] = useSendEmailOTPMutation();
-  const auth = getAuth(app);
 
-  const handlePhoneSignIn = async () => {
-    window.recaptchaVerifier = new RecaptchaVerifier(
-      auth,
-      "recaptcha-container",
-      {}
-    );
-    const appVerifier = window.recaptchaVerifier;
-    setLoading(true);
-    const confirmationResult = await signInWithPhoneNumber(
-      auth,
-      input,
-      appVerifier
-    );
-    console.log("RES: ", confirmationResult);
-    sessionStorage.setItem("verificationId", confirmationResult.verificationId);
-    navigate("/otp", {
-      state: {
-        input,
-        isEmail: false,
-      },
-    });
-  };
+  const handlePhoneSignIn = async () => {};
 
   const handleEmailContinue = async () => {
     setError(false);

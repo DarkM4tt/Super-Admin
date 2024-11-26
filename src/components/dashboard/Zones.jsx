@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import {
   GoogleMap,
   Polygon,
@@ -16,7 +16,7 @@ import {
 import useGoogleMapsLoader from "../../useGoogleMapsLoader";
 import { useGetCarCategoriesQuery } from "../../features/Vehicle/vehicleSlice";
 
-const ColorButton = styled(Button)(({ theme }) => ({
+const ColorButton = styled(Button)(() => ({
   fontSize: "16px",
   fontFamily: "Red Hat Display, sans-serif",
 }));
@@ -39,12 +39,12 @@ const Zones = () => {
 
   useEffect(() => {
     if (data) {
-      console.log(data)
+      console.log(data);
       const carOptionsData = data?.categories?.map((carobject) => ({
         carType: carobject.name,
         vehicle_category: carobject._id,
       }));
-      console.log(carOptions)
+      console.log(carOptions);
       setcaroptions(carOptionsData);
     }
   }, [data]);
@@ -56,7 +56,7 @@ const Zones = () => {
       const zonePayload = {
         zone_name: search,
         prices: newZone?.prices?.map((price) => ({
-          vehicle_category: price.carType, // replace this with actual vehicle category ID
+          vehicle_category: price.carType,
           price_per_km: parseFloat(price.perKmCharges),
           waiting_per_minute: parseFloat(price.waitingCharges),
         })),
@@ -122,6 +122,10 @@ const Zones = () => {
   };
 
   const handleSubmit = () => {
+    if (!search) {
+      alert("Enter zone name");
+      return;
+    }
     if (polygon.length > 0) {
       console.log("Polygon Coordinates:", polygon);
       search && polygon && setOpen(true);
@@ -141,6 +145,13 @@ const Zones = () => {
     }
   };
 
+  const getCenter = () => {
+    if (polygon) {
+      return { lat: polygon[0][0][0], lng: polygon[0][0][1] };
+    }
+    return { lat: 40.756795, lng: -73.954298 };
+  };
+
   useEffect(() => {
     if (fetchedZones) {
       console.log(fetchedZones);
@@ -152,7 +163,7 @@ const Zones = () => {
     return <div>Error loading maps</div>;
   }
 
-  if (!isLoaded) {
+  if (!isLoaded || isAdding || isLoading) {
     return (
       <div>
         <LoadingAnimation height={500} width={500} />
@@ -160,7 +171,11 @@ const Zones = () => {
     );
   }
 
-  return ( 
+  if (error) {
+    <p className="text-red-500 text-lg">{error || "Error occurred"}</p>;
+  }
+
+  return (
     <div className="p-6">
       <p className="font-bold text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-black font-redhat">
         Business zone name (Default)
@@ -216,8 +231,8 @@ const Zones = () => {
         </div>
         <GoogleMap
           mapContainerStyle={{ height: "500px", width: "" }}
-          center={{ lat: 40.756795, lng: -73.954298 }}
-          zoom={13}
+          center={getCenter}
+          zoom={10}
           onLoad={(map) => (mapRef.current = map)}
         >
           <DrawingManager

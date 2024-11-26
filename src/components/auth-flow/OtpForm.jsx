@@ -4,14 +4,6 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FooterButtons from "./FooterButtons";
 import SignupHeader from "../common/SignupHeader";
-import { app } from "../../firebase";
-import {
-  getAuth,
-  PhoneAuthProvider,
-  signInWithCredential,
-  RecaptchaVerifier,
-  signInWithPhoneNumber,
-} from "firebase/auth";
 import {
   useVerifyEmailOTPMutation,
   useLazyLoginWithEmailQuery,
@@ -31,13 +23,10 @@ function OtpForm() {
   const [resendTimer, setResendTimer] = useState(0);
   const inputRefs = useRef([]);
   const navigate = useNavigate();
-  const auth = getAuth(app);
   const [verifyEmailOTP] = useVerifyEmailOTPMutation();
   const [sendEmailOTP] = useSendEmailOTPMutation();
-  const [triggerLoginWithEmail, { data: loginData, error: loginError }] =
-    useLazyLoginWithEmailQuery();
-  const [verifyPhoneNumber, { isLoading, isError, data }] =
-    useVerifyPhoneNumberMutation();
+  const [triggerLoginWithEmail] = useLazyLoginWithEmailQuery();
+  const [verifyPhoneNumber] = useVerifyPhoneNumberMutation();
 
   const handleChange = (e, index) => {
     const value = e.target.value;
@@ -92,11 +81,6 @@ function OtpForm() {
   const handleMobileNumberVerify = async () => {
     setLoading(true);
     try {
-      const verificationId = sessionStorage.getItem("verificationId");
-      const credential = PhoneAuthProvider.credential(verificationId, otp);
-      const result = await signInWithCredential(auth, credential);
-      console.log("Otp Verfied: ", result);
-
       const phoneData = { phone_number: input };
       const phoneVerificationResponse = await verifyPhoneNumber(
         phoneData
@@ -146,24 +130,8 @@ function OtpForm() {
       }
       setLoading(false);
     } else {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        "recaptcha-container",
-        {}
-      );
-      const appVerifier = window.recaptchaVerifier;
       setLoading(true);
       try {
-        const confirmationResult = await signInWithPhoneNumber(
-          auth,
-          input,
-          appVerifier
-        );
-        console.log("RES: ", confirmationResult);
-        sessionStorage.setItem(
-          "verificationId",
-          confirmationResult.verificationId
-        );
         setResendTimer(30);
       } catch (error) {
         console.error("Error: ", error);

@@ -533,8 +533,11 @@ const Drivers = ({ onDriverClick }) => {
                       const { status, notUploadedCount, pendingCount } =
                         getVerificationStatus(documents);
                       return (
-                        <TableRow key={index} onClick={()=>onDriverClick(driver?.driver_id)}>
-                          <TableCell >
+                        <TableRow
+                          key={index}
+                          onClick={() => onDriverClick(driver?.driver_id)}
+                        >
+                          <TableCell>
                             <div className="flex items-center cursor-pointer">
                               <img
                                 src={driverImage}
@@ -542,7 +545,7 @@ const Drivers = ({ onDriverClick }) => {
                                 className="mr-2"
                               />
                               <p className="font-redHat font-bold text-base">
-                                {driver?.driver_id}
+                                {driver?.driver_name}
                               </p>
                             </div>
                           </TableCell>
@@ -699,7 +702,7 @@ const Drivers = ({ onDriverClick }) => {
             return (
               <div
                 className="py-6 border-b border-[#DDDDDD] flex justify-between items-center "
-                onClick={()=>onDriverClick(org?.driver_id)}
+                onClick={() => onDriverClick(org?.driver_id)}
               >
                 <div className="flex gap-3 ">
                   <img

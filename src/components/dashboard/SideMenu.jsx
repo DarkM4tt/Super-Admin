@@ -1,129 +1,155 @@
-import { useState } from "react";
-import arrowIndicator from "../../assets/arrowIndicator.svg";
-import downarrow from "../../assets/innersidemenuarrow.svg";
-import PropTypes from "prop-types";
-import "../extra.css"
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import superadminlogo from "../../assets/superadminlogo.png";
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-const menuItems = [
-  { name: "Dashboard" },
-  { name: "Organisations" },
-  { name: "Vehicles" },
-  { name: "Customer" },
-  { name: "Drivers" },
-  { name: "Rides", submenu: ["Intercity", "Cabs", "Rentals", "Packages"] },
-  { name: "Live Map" },
-  { name: "Zones" },
-  { name: "Reports" },
-  { name: "Documents" },
-  { name: "Packages" },
-  { name: "Campaigns" },
-  { name: "Balance" },
-  { name: "Settings" },
-];
 
-const SideMenu = ({ activeItem, onMenuItemClick }) => {
-  const [expandedMenu, setExpandedMenu] = useState(null);
 
-  const handleMenuItemClick = (itemName) => {
-    if (itemName === "Rides") {
-      // Set "Rides" as active even when expanding/collapsing the submenu
-      onMenuItemClick(itemName);
-      setExpandedMenu(expandedMenu === "Rides" ? null : "Rides");
-    } else {
-      setExpandedMenu(null); // Close submenu if another item is clicked
-      onMenuItemClick(itemName);
-    }
-  };
+const SideMenu = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [subindex, setSubindex] = useState(0);
+  const [activeDropdown, setActiveDropdown] = useState(null); // null | "services" | "internalteam"
 
-  return (
-    <div className="bg-themeBlue text-white h-full flex justify-between overflow-y-auto hidescrollbar box-border flex-col py-8">
-      <nav className="flex flex-col">
-        {menuItems.slice(0, -1).map((item, index) => (
-          <div key={index}>
-            <div
-              className={`${
-                activeItem === item.name && "bg-white-10"
-              } flex items-center justify-between pl-6 py-4 cursor-pointer hover:bg-white-10`}
-              onClick={() => handleMenuItemClick(item.name)}
-            >
-              <span
-                className={` flex gap-2 ${
-                  activeItem === item.name
-                    ? "font-bold text-xl font-redhat"
-                    : "font-semibold text-lg font-redhat"
-                }`}
-              >
-                {item.name}
-                {item.name === "Rides" && (
-                  <span
-                    className={`transform transition-transform duration-200 ${
-                      expandedMenu === "Rides" ? "rotate-0" : "rotate-180"
-                    }`}
-                  >
-                    <img src={downarrow} alt="downarrow" />
-                  </span>
-                )}
-              </span>
-              {item.name === activeItem && (
-                <img
-                  src={arrowIndicator}
-                  alt="arrowIndicator"
-                  className="transform transition-transform duration-200"
-                />
-              )}
-            </div>
-            {item.name === "Rides" && expandedMenu === "Rides" && (
-              <div className="pl-10">
-                {item.submenu.map((subItem, subIndex) => (
-                  <div
-                    key={subIndex}
-                    className={`p-2 cursor-pointer hover:bg-white-10 ${
-                      activeItem === subItem ? "bg-white-10" : ""
-                    }`}
-                    onClick={() => onMenuItemClick(subItem)}
-                  >
-                    <span
-                      className={`${
-                        activeItem === subItem
-                          ? "font-bold text-lg font-redhat "
-                          : "font-semibold text-base font-redhat"
-                      }`}
-                    >
-                      {subItem}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </nav>
-      <div
-        className={`${
-          activeItem === "Settings" && "bg-white-10"
-        } flex items-center justify-between pl-6 py-3 cursor-pointer hover:bg-white-10`}
-        onClick={() => onMenuItemClick("Settings")}
-      >
-        <span
-          className={`${
-            activeItem === "Settings"
-              ? "font-bold text-xl font-redhat"
-              : "font-semibold text-lg font-redhat"
-          }`}
-        >
-          Settings
-        </span>
-        {activeItem === "Settings" && (
-          <img src={arrowIndicator} alt="arrowIndicator" />
-        )}
+  const menuItems = [
+    { text: "Dashboard", },
+    {
+      text: "Services",
+      subItems: [
+        { text: "Overview", route: "/services/overview" },
+        { text: "Rentals", route: "/services/rentals" },
+        { text: "BOLD Ads", route: "/services/bold-ads" },
+        { text: "BOLD Promotions", route: "/services/bold-promotions" },
+        { text: "BOLD Business", route: "/services/bold-business" },
+        { text: "SoS", route: "/services/sos" },
+      ],
+    },
+    { text: "Partners", },
+    { text: "Fuel Card", },
+    { text: "Internal Team",
+      subItems: [
+        { text: "Overview", route: "/services/overview" },
+        { text: "Operations", route: "/services/rentals" },
+        { text: "Customer Support", route: "/services/bold-ads" },
+        { text: "Product Development", route: "/services/bold-promotions" },
+        { text: "Finance", route: "/services/bold-business" },
+        { text: "Compliance", route: "/services/sos" },
+      ],
+    },
+    { text: "Employees", },
+    { text: "Accounts", },
+    { text: "Settings",},
+    { text: "Trash",},
+   
+  ];
+
+
+  return(
+    <div className="bg-[#1C1B1B] text-white h-full px-10 py-8 overflow-y-hidden no-scrollbar flex flex-col flex-grow justify-between">
+    {/* Logo Section */}
+    <div className="flex flex-col overflow-y-auto no-scrollbar">
+      <div className="flex flex-col gap-2">
+        <img src={superadminlogo} alt="logo" className="w-[33%]" />
+        <p className="font-sans font-semibold text-sm">Super Admin Controls</p>
       </div>
-    </div>
-  );
-};
 
-SideMenu.propTypes = {
-  activeItem: PropTypes.string.isRequired,
-  onMenuItemClick: PropTypes.func.isRequired,
-};
+      {/* Menu Section */}
+      <ul className="mt-[5vh] flex-grow overflow-y-auto no-scrollbar ">
+        {menuItems.map((item, index) => {
+          if (item.text === "Services" || item.text === "Internal Team") {
+            const isDropdownOpen =
+              (item.text === "Services" && activeDropdown === "services") ||
+              (item.text === "Internal Team" &&
+                activeDropdown === "internalteam");
+
+            return (
+              <li key={index} className="relative hover:bg-transparent">
+                <div
+                  onClick={() => {
+                    setActiveIndex(index);
+                    setActiveDropdown(
+                      activeDropdown ===
+                        (item.text === "Services"
+                          ? "services"
+                          : "internalteam")
+                        ? null
+                        : item.text === "Services"
+                        ? "services"
+                        : "internalteam"
+                    );
+                  }}
+                  className={`flex hover:bg-transparent items-center gap-4 py-4 cursor-pointer rounded-lg ${
+                    activeIndex === index
+                      ? "text-white font-bold"
+                      : "text-[#777777] font-normal"
+                  } hover:bg-[#333]`}
+                >
+                  <span className="text-lg">{item.text}</span>
+                  <span className="cursor-pointer">
+                    {isDropdownOpen ? (
+                      <KeyboardArrowUpIcon />
+                    ) : (
+                      <KeyboardArrowDownIcon />
+                    )}
+                  </span>
+                </div>
+                {/* Dropdown */}
+                {isDropdownOpen && (
+                  <ul className="pl-6">
+                    {item.subItems.map((subItem, subIndex) => (
+                      <NavLink to={subItem.route} key={subIndex}>
+                        <div
+                          className={`border-l-4 ${
+                            subIndex === subindex
+                              ? "border-[#18C4B8]"
+                              : "border-[#2B2B2B]"
+                          }`}
+                          onClick={() => setSubindex(subIndex)}
+                        >
+                          <li
+                            className={`py-3 px-4 text-lg font-redhat rounded-lg ml-3 text-[#777777] hover:text-white  hover:bg-[#18C4B833] hover:font-semibold cursor-pointer ${
+                              subIndex === subindex
+                                ? "font-semibold text-white"
+                                : "font-normal"
+                            }`}
+                          >
+                            {subItem.text}
+                          </li>
+                        </div>
+                      </NavLink>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          }
+
+          return (
+            <NavLink to={item.route} key={index}>
+              <li
+                onClick={() => {setActiveIndex(index)
+                  setActiveDropdown(null)}
+                }
+                className={`flex items-center gap-4 py-4 cursor-pointer rounded-lg hover:bg-transparent ${
+                  activeIndex === index
+                    ? "text-white font-bold"
+                    : "text-[#777777] font-normal"
+                } hover:bg-[#333]`}
+              >
+                <div className="relative text-lg w-full">
+                  {item.text}
+                  {activeIndex === index && (
+                    <div className="absolute bottom-[-6px] left-0 transform  w-[10%] h-[4px] bg-[#18C4B8] rounded-full"></div>
+                  )}
+                </div>
+              </li>
+            </NavLink>
+          );
+        })}
+      </ul>
+    </div>
+  </div>
+  )
+}
 
 export default SideMenu;

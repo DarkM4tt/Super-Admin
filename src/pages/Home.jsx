@@ -159,11 +159,11 @@ const Home = () => {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
-      <HomeHeader
+      {/* <HomeHeader
         notification={notification}
         showsidebar={showsidebar}
         setshowsidebar={setshowsidebar}
-      />
+      /> */}
       <Toaster />
       <div className="flex flex-grow overflow-y-auto">
         <div

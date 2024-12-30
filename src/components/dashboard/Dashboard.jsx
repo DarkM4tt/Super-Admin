@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import 'chart.js/auto';
 import { Button, IconButton } from "@mui/material";
 import infoIcon from "../../assets/infoIcon.svg";
 import PropTypes from "prop-types";
@@ -8,16 +9,22 @@ import dashboardvehicle from "../../assets/dashboardvehicle.svg";
 import CircleIcon from '@mui/icons-material/Circle';
 import lowgraph from "../../assets/lowgraphdash.svg";
 import moderategraph from "../../assets/moderategrapgdash.svg"
-import { Doughnut } from 'react-chartjs-2';
+// import { Doughnut } from 'react-chartjs-2';
 // import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 import CancellationChart from './Dashboardcharts/Cancellationchart';
 import PerformanceChart from './Dashboardcharts/Companyperformance';
-import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
+// import { Chart, ArcElement, Tooltip, Legend,} from 'chart.js';
+import { Line } from "react-chartjs-2";
 import Dashboardzones from './Dashboardcharts/Dashboardzones';
 import Organisationreports from './Dashboardcharts/Organisationreports';
+import SearchIcon from '@mui/icons-material/Search';
+import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import AddIcon from '@mui/icons-material/Add';
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 
 // Register required chart.js components
-Chart.register(ArcElement, Tooltip, Legend);
+// Chart.register(ArcElement, Tooltip, Legend);
 
 const belowsampledata=[
 {
@@ -38,191 +45,91 @@ const belowsampledata=[
 },
 ]
 
-const Dashboard = ({ onMenuItemClick }) => {
+const Dashboard = () => {
 
+
+  const chartRef = useRef(null);
   const data = {
-    labels: ['Complete', 'Incomplete'],
+    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     datasets: [
       {
-        data: [54, 46], // You can adjust the percentage here
-        backgroundColor: ['#2dd4bf', '#f5f5dc'], // Adjust colors to match the design
-        borderWidth: 0,
+        data: [21, 22, 23, 21.5, 22.7, 22.9, 23],
+        borderColor: "#18C4B8",
+        backgroundColor: "rgba(24, 196, 184, 0.2)",
+        fill: true,
+        tension: 0.4, // Smooth line
       },
     ],
   };
 
   const options = {
-    cutout: '75%', // Adjust for inner white space (doughnut thickness)
     plugins: {
-      legend: {
-        display: false, // Disable legend if you don't need it
-      },
-      datalabels:{
-        display:false,
-      }
+      legend: { display: false }, // Hide legend
     },
+    scales: {
+      x: { display: false }, // Hide x-axis
+      y: { display: false }, // Hide y-axis
+    },
+    maintainAspectRatio: false,
   };
+
+  useEffect(() => {
+    // Cleanup old chart instance on unmount
+    return () => {
+      if (chartRef.current) {
+        chartRef.current.destroy();
+      }
+    };
+  }, []);
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex flex-col gap-2">
-          <h1 className="text-2xl font-bold font-redhat">
-            This week’s performance
-          </h1>
-          <p className="text-base font-semibold text-midGray">
-            06/24 00:00 - 06/25 11:06
-          </p>
-        </div>
-        <div className="flex space-x-4">
-          <Button
-            variant="contained"
-            sx={{
-              bgcolor: "#EEEEEE",
-              color: "#000",
-              fontSize: "16px",
-              fontWeight: "500",
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "#EEEEEE",
-              },
-            }}
-            onClick={() => onMenuItemClick("Vehicles")}
-          >
-            Vehicles online (1/9)
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              bgcolor: "#f0f0f0",
-              color: "#000",
-              fontSize: "16px",
-              fontWeight: "500",
-              textTransform: "none",
-              "&:hover": {
-                backgroundColor: "#EEEEEE",
-              },
-            }}
-            onClick={() => onMenuItemClick("Drivers")}
-          >
-            Online drivers (4/9)
-          </Button>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="border border-borderGray rounded-lg flex flex-col justify-between  p-4">
-         <div className="flex gap-2 ">
-          
-              <img src={Euroicon} alt="info" className="h-8 mt-2" />
-              <div>
-            <h1 className="text-4xl font-bold">3322</h1>
-            <p className="font-redhat text-sm font-semibold">Total earnings</p>
-            </div>
-         </div>
-
-         <div className="flex justify-end gap-2">
-         <img src={Upgraph} alt="info" className="w-[20%] mt-2" />
-              <div className="flex justify-end flex-col">
-            <p className="font-redhat text-sm font-semibold text-[#777777]">4% high</p>
-            </div>
-         </div>
-         
-        </div>
-        <div className="border border-borderGray rounded-lg flex flex-col justify-between  p-4">
-         <div className="flex gap-4 ">
-          
-              <img src={dashboardvehicle} alt="info" className="h-12 mt-1" />
-              <div>
-            <h1 className="text-4xl font-bold">60129</h1>
-            <p className="font-redhat text-sm font-semibold">Total trips</p>
-            </div>
-         </div>
-
-         <div className="flex justify-between">
-          <div className="flex gap-2 items-center">
-           <CircleIcon fontSize="8px" style={{color:"#2FCA16"}}/>
-           <p className="font-normal text-sm text-[#777777]">Ongoing  <span className="font-semibold text-[#484848]">221</span></p>
-          </div>
-
-          <div className="flex gap-2 items-center">
-           <CircleIcon fontSize="8px" style={{color:"#F81422"}}/>
-           <p className="font-normal text-sm text-[#777777]">Offline <span className="font-semibold text-[#484848]">380</span></p>
-          </div>
-         </div>
-         
-        </div>
-        <div className="border border-borderGray rounded-lg flex flex-col justify-between  p-4">
-         <div className="flex gap-2 ">
-              <div>
-            <h1 className="text-4xl font-bold">6.8</h1>
-            <p className="font-redhat text-sm font-semibold">SHpV</p>
-            </div>
-         </div>
-
-         <div className="flex justify-end gap-2 pt-4">
-         <img src={lowgraph} alt="info" className="w-[20%] mt-2" />
-              <div className="flex justify-end flex-col">
-            <p className="font-redhat text-sm font-semibold text-[#777777]">2% low</p>
-            </div>
-         </div>
-         
-        </div>
-        <div className="border border-borderGray rounded-lg flex justify-between  p-4">
-          <div className="leftonelast w-1/2 flex flex-col justify-between">
-         <div className="flex flex-col gap-2">
-         <p className="font-redhat text-sm font-semibold">Acceptance rate</p>
-         <p className="font-redhat text-sm font-semibold text-[#777777]">Moderately good</p>
-         </div>
-
-         <div className="flex justify-end gap-2 pt-4">
-         <img src={moderategraph} alt="info" className="w-[40%] mt-2" />
-              <div className="flex justify-end flex-col">
-            <p className="font-redhat text-sm font-semibold text-[#777777]">4% high</p>
-            </div>
-         </div>
-         </div>
-         <div className="rightonelast w-[35%]">
-         <div className="relative w-full">
-        {/* The Doughnut chart */}
-        <Doughnut data={data} options={options} />
-
-        {/* Inner text */}
-        <div className="absolute inset-0 flex justify-center items-center">
-          <span className="text-lg font-bold font-redhat">54%</span>
-        </div>
-      </div>
-      </div>
-        </div>
-      </div>
-
-      <div className="flex justify-evenly space-x-4 pt-12 ">
-      
-       <div className='flex-1 border rounded-lg border-[#DDDDDD] overflow-hidden'><Organisationreports/></div>
-       <div className='flex-1 border rounded-lg border-[#DDDDDD] overflow-hidden'><Dashboardzones/></div>
-       <div className='flex-1 border rounded-lg border-[#DDDDDD] overflow-hidden'> <PerformanceChart/></div>
-      </div>
-
-      <div className="lowerone flex justify-between pt-6 ">
-        <div className='pt-10 '>
-        <p className="upperbig font-redhat font-bold text-2xl">Ride overview</p>
-        <p className="font-redhat text-lg font-normal text-[#777777]">Total ride taken this month</p>
-     <div className='flex space-x-20 pt-8'>
-      {belowsampledata.map((category)=>{
-        return(<div>
-        <p className='font-redhat font-bold text-lg'>{category.head}</p>
-        <p className='font-redhat font-bold text-4xl pt-4'>{category.count}</p>
-        </div>)
-      })}
-      </div>
-      </div>
-      
-      <div className=' border rounded-lg border-[#DDDDDD] overflow-hidden w-[32%]'> <CancellationChart/></div>
+   <>
+   <div className="py-8 px-14 bg-[#F8F8F8]">
+    <div className="flex justify-between items-center font-redhat text-base font-semibold ">
+    {"> Dashboard"}
+      <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
+<SearchIcon/>
+<input type='text' placeholder='Search anything...' className='bg-transparent outline-none'></input>
       </div>
     </div>
-  );
-};
+    <p className="font-redhat font-semibold text-2xl pt-8">Overview</p>
+    <p className="font-redhat font-normal text-sm  text-[#777777] pt-2">This is the overall highlights which includes everything in the BOLD applications. </p>
 
-Dashboard.propTypes = {
-  onMenuItemClick: PropTypes.func.isRequired,
+    <div className="flex justify-between items-center">
+      <div className="flex items-center gap-4 pt-8">
+        <div className="py-3 px-4 text-sm font-redhat bg-white rounded-[40px]">622 fuel stations signup <span className='pl-2'> <KeyboardDoubleArrowRightIcon/></span> </div>
+        <div className="py-3 px-4 text-sm font-redhat bg-white rounded-[40px]">109 rentals signups <span className='pl-2'> <KeyboardDoubleArrowRightIcon/></span> </div>
+        <div className="py-3 px-4 text-sm font-redhat bg-white rounded-[40px]">221 M new users <span className='pl-2'> <KeyboardDoubleArrowRightIcon/></span>  </div>
+      </div>
+      <div className="flex items-center gap-6 pt-8">
+        <div className="py-3 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359]">Generate overview report</div>
+        <div className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px]"><span className='pr-1'> <AddIcon fontSize='small'/></span> Create zone  </div> 
+      </div>
+    </div>
+    <div className="flex gap-6 pt-8">
+      <div className="w-4/6">
+        <div className="flex justify-between ">
+          <div className="flex-1 p-4 bg-white rounded-lg">
+            <div className="flex justify-between items-center  ">
+            <p className="font-redhat font-semibold text-base">Total revenue</p>
+            <button ><MoreHorizIcon className='text-[#777777]'/></button>
+            </div>
+            <div className="flex gap-2 pt-2 items-center">
+              <p className="font-redhat font-bold text-2xl">€ 22.1 M</p>
+              <p className="font-redhat font-semibold text-xs text-[#777777]"> <span><TrendingUpIcon className='text-[#18C4B8] pr-2'/></span>2% UP</p>
+            </div>
+            <div className="mt-4 h-20">
+          <Line ref={chartRef} data={data} options={options} />
+        </div>
+            </div>
+          <div className="flex-1">one</div>
+          <div className="flex-1">one</div>
+        </div>
+      </div>
+      <div className=""></div>
+    </div>
+   </div>
+   </>
+  );
 };
 
 export default Dashboard;

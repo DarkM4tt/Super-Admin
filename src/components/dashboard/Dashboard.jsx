@@ -1,5 +1,15 @@
 import React, { useRef, useEffect } from 'react';
-import 'chart.js/auto';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+} from "chart.js";
 import { Button, IconButton } from "@mui/material";
 import infoIcon from "../../assets/infoIcon.svg";
 import PropTypes from "prop-types";
@@ -15,6 +25,7 @@ import CancellationChart from './Dashboardcharts/Cancellationchart';
 import PerformanceChart from './Dashboardcharts/Companyperformance';
 // import { Chart, ArcElement, Tooltip, Legend,} from 'chart.js';
 import { Line } from "react-chartjs-2";
+import { useState } from 'react';
 import Dashboardzones from './Dashboardcharts/Dashboardzones';
 import Organisationreports from './Dashboardcharts/Organisationreports';
 import SearchIcon from '@mui/icons-material/Search';
@@ -22,65 +33,105 @@ import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArro
 import AddIcon from '@mui/icons-material/Add';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import DirectionsCarFilledIcon from '@mui/icons-material/DirectionsCarFilled';
+import BusinessIcon from '@mui/icons-material/Business';
+
+import Acceptancechart from './Dashboardcharts/Acceptancechart';
+import Bookinggraph from './Dashboardcharts/Bookinggraph';
+import Saletypechart from './Dashboardcharts/Saletypechart';
 
 // Register required chart.js components
 // Chart.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler
+);
 
-const belowsampledata=[
-{
-  head:"Intercity",
-  count:3312
-},
-{
-  head:"Package",
-  count:2293
-},
-{
-  head:"Regular",
-  count:3312
-},
-{
-  head:"Rentals",
-  count:2293
-},
-]
 
 const Dashboard = () => {
 
 
   const chartRef = useRef(null);
+  const [gradient, setGradient] = useState(null);
+
+  useEffect(() => {
+    if (chartRef.current) {
+      const chart = chartRef.current;
+      const ctx = chart.ctx;
+
+      // Calculate the chart's dimensions for gradient bounds
+      const chartArea = chart.chartArea;
+      const gradientFill = ctx.createLinearGradient(
+        0, // x0
+        chartArea.top, // y0
+        0, // x1
+        chartArea.bottom // y1
+      );
+
+      gradientFill.addColorStop(0, "rgba(59, 130, 246, 0.5)"); // Blue with opacity
+      gradientFill.addColorStop(0.5, "rgba(59, 130, 246, 0.25)");
+      gradientFill.addColorStop(1, "rgba(59, 130, 246, 0)");
+      setGradient(gradientFill);
+    }
+  }, []);
+
   const data = {
-    labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+    labels: ["May", "Jun", "Jul", "Aug", "Sep"],
     datasets: [
       {
-        data: [21, 22, 23, 21.5, 22.7, 22.9, 23],
-        borderColor: "#18C4B8",
-        backgroundColor: "rgba(24, 196, 184, 0.2)",
+        label: "Last 6 months",
+        data: [200000, 250000, 150000, 270000, 230000],
+        borderColor: "#3B82F6", // Blue line color
+        backgroundColor: gradient || "rgba(59, 130, 246, 0.5)", // Fallback to solid color
+        tension: 0.4, // Curved line
         fill: true,
-        tension: 0.4, // Smooth line
+        borderWidth: 0.5,
       },
     ],
   };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: { display: false }, // Hide legend
+      datalabels: {
+        display: false, // This hides the data labels
+      },
+      legend: {
+        display: false, // Hide legend
+      },
+      tooltip: {
+        enabled: false, // Disable tooltips
+      },
     },
     scales: {
-      x: { display: false }, // Hide x-axis
-      y: { display: false }, // Hide y-axis
+      x: {
+        grid: {
+          display: false, // Hide gridlines
+        },
+        ticks: {
+          display: false, // Hide x-axis numbers
+        },
+      },
+      y: {
+        grid: {
+          display: false, // Hide gridlines
+        },
+        ticks: {
+          display: false, // Hide y-axis numbers
+        },
+      },
     },
-    maintainAspectRatio: false,
   };
 
-  useEffect(() => {
-    // Cleanup old chart instance on unmount
-    return () => {
-      if (chartRef.current) {
-        chartRef.current.destroy();
-      }
-    };
-  }, []);
+  
+  
   return (
    <>
    <div className="py-8 px-14 bg-[#F8F8F8]">
@@ -105,10 +156,10 @@ const Dashboard = () => {
         <div className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px]"><span className='pr-1'> <AddIcon fontSize='small'/></span> Create zone  </div> 
       </div>
     </div>
-    <div className="flex gap-6 pt-8">
+    <div className="flex justify-between pt-8">
       <div className="w-4/6">
         <div className="flex justify-between ">
-          <div className="flex-1 p-4 bg-white rounded-lg">
+          <div className="w-[30%] p-4 bg-white rounded-lg border-b border-[#1860C4]" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
             <div className="flex justify-between items-center  ">
             <p className="font-redhat font-semibold text-base">Total revenue</p>
             <button ><MoreHorizIcon className='text-[#777777]'/></button>
@@ -117,15 +168,83 @@ const Dashboard = () => {
               <p className="font-redhat font-bold text-2xl">€ 22.1 M</p>
               <p className="font-redhat font-semibold text-xs text-[#777777]"> <span><TrendingUpIcon className='text-[#18C4B8] pr-2'/></span>2% UP</p>
             </div>
-            <div className="mt-4 h-20">
+            <div className="mt-4 h-16">
           <Line ref={chartRef} data={data} options={options} />
         </div>
             </div>
-          <div className="flex-1">one</div>
-          <div className="flex-1">one</div>
+          <div className="w-[30%] p-6 flex gap-6 bg-white items-center rounded-lg border-b border-[#1860C4]" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
+  <div className="p-2 rounded-lg bg-[#F6A0171F] h-fit">
+    <DirectionsCarFilledIcon fontSize='medium' className='text-[#F6A017]'/>
+  </div>
+  <div className="">
+    <p className="font-redhat font-semibold text-base">Total vehicles</p>
+    <p className="pt-2 font-redhat font-bold text-2xl">22 k</p>
+    <p className="pt-2 text-sm text-[#777777]">18 k+ currently <span className='text-[#18C4B8]'>active</span></p>
+    <button className='pt-3 font-redhat text-sm font-light underline'>View list</button>
+  </div>
+
+          </div>
+          <div className="w-[30%] p-6 flex gap-6 bg-white items-center rounded-lg border-b border-[#1860C4]" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
+  <div className="p-2 rounded-lg bg-[#006AFF21] h-fit">
+    <BusinessIcon fontSize='medium' className='text-[#006AFF]'/>
+  </div>
+  <div className="">
+    <p className="font-redhat font-semibold text-base">Total users</p>
+    <p className="pt-2 font-redhat font-bold text-2xl">2210</p>
+    <p className="pt-2 text-sm text-[#777777]">including 320 rental org.</p>
+    <button className='pt-3 font-redhat text-sm font-light underline'>View list</button>
+  </div>
+
+          </div>
         </div>
+        <div className="flex justify-between pt-6 ">
+          <div className="w-[30%] flex p-4 bg-white rounded-lg border-b border-[#1860C4]" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
+          <Acceptancechart/>
+            </div>
+          <div className="w-[30%] p-6 flex gap-6 bg-white items-center rounded-lg border-b border-[#1860C4]" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
+  <div className="p-2 rounded-lg bg-[#F6A0171F] h-fit">
+    <DirectionsCarFilledIcon fontSize='medium' className='text-[#F6A017]'/>
+  </div>
+  <div className="">
+    <p className="font-redhat font-semibold text-base">Total vehicles</p>
+    <p className="pt-2 font-redhat font-bold text-2xl">22 k</p>
+    <p className="pt-2 text-sm text-[#777777]">18 k+ currently <span className='text-[#18C4B8]'>active</span></p>
+    <button className='pt-3 font-redhat text-sm font-light underline'>View list</button>
+  </div>
+
+          </div>
+          <div className="w-[30%] p-6 flex gap-6 bg-white items-center rounded-lg border-b border-[#1860C4]" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
+  <div className="p-2 rounded-lg bg-[#006AFF21] h-fit">
+    <BusinessIcon fontSize='medium' className='text-[#006AFF]'/>
+  </div>
+  <div className="">
+    <p className="font-redhat font-semibold text-base">Total users</p>
+    <p className="pt-2 font-redhat font-bold text-2xl">2210</p>
+    <p className="pt-2 text-sm text-[#777777]">including 320 rental org.</p>
+    <button className='pt-3 font-redhat text-sm font-light underline'>View list</button>
+  </div>
+
+          </div>
+        </div>
+        <Bookinggraph/>
       </div>
-      <div className=""></div>
+      <div className="w-[30%] flex flex-col">
+      <div className=" p-4 bg-white rounded-lg " style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
+            <div className="flex justify-between items-center  ">
+            <p className="font-redhat font-semibold text-base">Total revenue</p>
+            <button ><MoreHorizIcon className='text-[#777777]'/></button>
+            </div>
+            <div className="flex gap-2 pt-2 items-center">
+              <p className="font-redhat font-bold text-2xl">€ 22.1 M</p>
+              <p className="font-redhat font-semibold text-xs text-[#777777]"> <span><TrendingUpIcon className='text-[#18C4B8] pr-2'/></span>2% UP</p>
+            </div>
+            <p className="font-redhat text-base text-[#777777] pt-2">Including all sectors on BOLD app </p>
+            <div className="mt-4 h-24">
+          <Line ref={chartRef} data={data} options={options} />
+        </div>
+            </div>
+            <Saletypechart/>
+      </div>
     </div>
    </div>
    </>

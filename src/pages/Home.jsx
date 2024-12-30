@@ -55,7 +55,7 @@ const Home = () => {
       <Toaster />
       <div className="flex flex-grow overflow-y-auto">
         <div
-          className={`absolute sm:relative z-50 h-full w-2/5 sm:w-1/5 max-w-[280px] md:block text-white overflow-y-auto`}
+          className={`absolute sm:relative z-50 h-full w-2/5 sm:w-[18%] max-w-[280px] md:block text-white overflow-y-auto`}
         >
           <SideMenu
             onMenuItemClick={handleMenuItemClick}
@@ -64,7 +64,7 @@ const Home = () => {
         </div>
         <div className="w-4/5 flex-1 overflow-y-auto">
           <HomeHeader />
-          <div className="p-10">{renderActiveComponent()}</div>
+          <div className="">{renderActiveComponent()}</div>
         </div>
       </div>
     </div>

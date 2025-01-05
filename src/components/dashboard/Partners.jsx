@@ -9,7 +9,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TextField,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AppleIcon from "../../assets/apple.svg";
@@ -206,37 +205,19 @@ const Partners = ({ onPartnerClick }) => {
   };
 
   return (
-    <Box paddingBlock="32px" paddingInline="56px">
+    <div className="py-8 px-14 bg-backGround">
       {/* Partners Heading */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "20px",
-        }}
-      >
-        <Box sx={{ fontSize: "18px", fontWeight: "bold" }}>Partners</Box>
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            backgroundColor: "#f5f5f5",
-            border: "1px solid #d3d3d3",
-            borderRadius: "8px",
-            padding: "5px 10px",
-            width: "250px",
-          }}
-        >
-          <SearchIcon sx={{ color: "#9e9e9e", marginRight: "5px" }} />
-          <TextField
-            variant="standard"
+      <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
+        {"> Partners"}
+        <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
+          <SearchIcon />
+          <input
+            type="text"
             placeholder="Search anything..."
-            InputProps={{ disableUnderline: true }}
-            sx={{ flexGrow: 1 }}
-          />
-        </Box>
-      </Box>
+            className="bg-transparent outline-none"
+          ></input>
+        </div>
+      </div>
 
       {/* Manage Heading */}
       <Box sx={{ fontSize: "24px", fontWeight: "500", marginBottom: "20px" }}>
@@ -249,6 +230,7 @@ const Partners = ({ onPartnerClick }) => {
         onChange={handleTabChange}
         sx={{
           borderBottom: "1px solid #d3d3d3",
+          width: "fit-content",
           ".MuiTab-root": {
             textTransform: "none",
             fontWeight: 500,
@@ -268,7 +250,7 @@ const Partners = ({ onPartnerClick }) => {
         <Box
           sx={{
             marginTop: "20px",
-            padding: "5px",
+            padding: "10px",
             backgroundColor: "#fff",
             borderRadius: "8px",
             boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
@@ -277,7 +259,24 @@ const Partners = ({ onPartnerClick }) => {
           <TableContainer>
             <Table>
               {/* Table Header */}
-              <TableHead>
+              <TableHead
+                sx={{
+                  "& .MuiTableCell-root": {
+                    backgroundColor: "#EEEEEE",
+                    fontWeight: "600",
+                    fontSize: "16px",
+                    borderBottom: "none",
+                  },
+                  "& .MuiTableCell-root:first-of-type": {
+                    borderTopLeftRadius: "10px",
+                    borderBottomLeftRadius: "10px",
+                  },
+                  "& .MuiTableCell-root:last-of-type": {
+                    borderTopRightRadius: "10px",
+                    borderBottomRightRadius: "10px",
+                  },
+                }}
+              >
                 <TableRow>
                   {[
                     "ID",
@@ -288,22 +287,20 @@ const Partners = ({ onPartnerClick }) => {
                     "Listing drivers",
                     "Issues/queries",
                   ].map((header) => (
-                    <TableCell
-                      key={header}
-                      sx={{
-                        backgroundColor: "#f5f5f5",
-                        fontWeight: "bold",
-                        color: "#757575",
-                      }}
-                    >
-                      {header}
-                    </TableCell>
+                    <TableCell key={header}>{header}</TableCell>
                   ))}
                 </TableRow>
               </TableHead>
 
               {/* Table Body */}
-              <TableBody>
+              <TableBody
+                sx={{
+                  "& .MuiTableCell-root": {
+                    fontWeight: "600",
+                    fontSize: "16px",
+                  },
+                }}
+              >
                 {organizationsData.map((org) => (
                   <TableRow
                     key={org.id}
@@ -359,7 +356,7 @@ const Partners = ({ onPartnerClick }) => {
           New requests (11)
         </Box>
       )}
-    </Box>
+    </div>
   );
 };
 

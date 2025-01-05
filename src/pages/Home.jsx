@@ -5,10 +5,16 @@ import SideMenu from "../components/dashboard/SideMenu";
 import Dashboard from "../components/dashboard/Dashboard";
 import Partners from "../components/dashboard/Partners";
 import PartnerInfo from "../components/dashboard/PartnerInfo";
+import Vehicles from "./../components/dashboard/Vehicles";
+import Drivers from "./../components/dashboard/Drivers";
+import VehicleInfo from "./../components/dashboard/VehicleInfo";
+import DriverInfo from "./../components/dashboard/DriverInfo";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
   const [selectedOrgId, setSelectedOrgId] = useState(null);
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+  const [selectedDriverId, setSelectedDriverId] = useState(null);
   // const [selectedOrg, setselectedOrg] = useState(null);
   // const [selectedDriverId, setSelectedDriverId] = useState(null);
 
@@ -21,6 +27,16 @@ const Home = () => {
     setActiveComponent("PartnerInfo");
   };
 
+  const handleVehicleClick = (vehicleId) => {
+    setSelectedVehicleId(vehicleId);
+    setActiveComponent("VehicleInfo");
+  };
+
+  const handleDriverClick = (driverId) => {
+    setSelectedDriverId(driverId);
+    setActiveComponent("DriverInfo");
+  };
+
   const renderActiveComponent = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
@@ -28,6 +44,22 @@ const Home = () => {
           orgId={selectedOrgId}
           setActiveComponent={setActiveComponent}
           setSelectedOrg={setSelectedOrgId}
+        />
+      );
+    }
+    if (selectedVehicleId && activeComponent === "VehicleInfo") {
+      return (
+        <VehicleInfo
+          vehicleId={selectedVehicleId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
+    if (selectedDriverId && activeComponent === "DriverInfo") {
+      return (
+        <DriverInfo
+          driverId={selectedDriverId}
+          setActiveComponent={setActiveComponent}
         />
       );
     }
@@ -42,6 +74,10 @@ const Home = () => {
         );
       case "Partners":
         return <Partners onPartnerClick={handleOrgClick} />;
+      case "Vehicles":
+        return <Vehicles onVehicleClick={handleVehicleClick} />;
+      case "Drivers":
+        return <Drivers onDriverClick={handleDriverClick} />;
       default:
         return null;
     }

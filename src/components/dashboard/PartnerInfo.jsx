@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -13,17 +13,7 @@ import {
   Filler,
 } from "chart.js";
 import { Line } from "react-chartjs-2";
-import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import AddIcon from "@mui/icons-material/Add";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
-import BusinessIcon from "@mui/icons-material/Business";
-import Acceptancechart from "./Dashboardcharts/Acceptancechart";
-import Bookinggraph from "./Dashboardcharts/Bookinggraph";
-import Saletypechart from "./Dashboardcharts/Saletypechart";
 import {
   Box,
   Table,
@@ -33,6 +23,15 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
+import AddIcon from "@mui/icons-material/Add";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
+import BusinessIcon from "@mui/icons-material/Business";
+import Acceptancechart from "./Dashboardcharts/Acceptancechart";
+import Saletypechart from "./Dashboardcharts/Saletypechart";
+import BackArrow from "../../assets/leftArrowBlack.svg";
 
 ChartJS.register(
   CategoryScale,
@@ -244,9 +243,18 @@ const PartnerInfo = ({ orgId, setActiveComponent }) => {
   };
 
   return (
-    <div className="py-8 px-14 bg-[#F8F8F8]">
+    <div className="py-8 px-14 bg-backGround">
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
-        {"> Partners"}
+        <div className="flex gap-2">
+          <img
+            src={BackArrow}
+            alt="BackArrow"
+            width="15px"
+            className="cursor-pointer"
+            onClick={() => setActiveComponent("Partners")}
+          />
+          Partners
+        </div>
         <div className="flex gap-4">
           <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
             <SearchIcon />

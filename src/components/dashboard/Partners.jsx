@@ -206,7 +206,7 @@ const Partners = ({ onPartnerClick }) => {
   };
 
   return (
-    <Box>
+    <Box paddingBlock="32px" paddingInline="56px">
       {/* Partners Heading */}
       <Box
         sx={{

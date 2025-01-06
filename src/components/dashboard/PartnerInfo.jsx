@@ -32,6 +32,7 @@ import BusinessIcon from "@mui/icons-material/Business";
 import Acceptancechart from "./Dashboardcharts/Acceptancechart";
 import Saletypechart from "./Dashboardcharts/Saletypechart";
 import BackArrow from "../../assets/leftArrowBlack.svg";
+import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 
 ChartJS.register(
   CategoryScale,
@@ -199,7 +200,24 @@ const PartnerInfo = ({ orgId, setActiveComponent }) => {
         <TableContainer>
           <Table>
             {/* Table Header */}
-            <TableHead>
+            <TableHead
+              sx={{
+                "& .MuiTableCell-root": {
+                  backgroundColor: "#EEEEEE",
+                  fontWeight: "600",
+                  fontSize: "16px",
+                  borderBottom: "none",
+                },
+                "& .MuiTableCell-root:first-of-type": {
+                  borderTopLeftRadius: "10px",
+                  borderBottomLeftRadius: "10px",
+                },
+                "& .MuiTableCell-root:last-of-type": {
+                  borderTopRightRadius: "10px",
+                  borderBottomRightRadius: "10px",
+                },
+              }}
+            >
               <TableRow
                 sx={{
                   backgroundColor: "#f5f5f5",
@@ -449,35 +467,7 @@ const PartnerInfo = ({ orgId, setActiveComponent }) => {
 
         {/* Right Cards */}
         <div className="w-[30%] flex flex-col">
-          <div
-            className=" p-4 bg-white rounded-lg "
-            style={{ boxShadow: "4px 4px 33px 0px #0000000A" }}
-          >
-            <div className="flex justify-between items-center  ">
-              <p className="font-redhat font-semibold text-base">
-                Total revenue
-              </p>
-              <button>
-                <MoreHorizIcon className="text-[#777777]" />
-              </button>
-            </div>
-            <div className="flex gap-2 pt-2 items-center">
-              <p className="font-redhat font-bold text-2xl">€ 22.1 M</p>
-              <p className="font-redhat font-semibold text-xs text-[#777777]">
-                {" "}
-                <span>
-                  <TrendingUpIcon className="text-[#18C4B8] pr-2" />
-                </span>
-                2% UP
-              </p>
-            </div>
-            <p className="font-redhat text-base text-[#777777] pt-2">
-              Including all sectors on BOLD app{" "}
-            </p>
-            <div className="mt-4 h-24">
-              <Line ref={chartRef} data={data} options={options} />
-            </div>
-          </div>
+          <SubmittedDocumentsCard />
           <Saletypechart />
         </div>
       </div>

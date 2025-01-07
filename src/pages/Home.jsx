@@ -15,8 +15,6 @@ const Home = () => {
   const [selectedOrgId, setSelectedOrgId] = useState(null);
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [selectedDriverId, setSelectedDriverId] = useState(null);
-  // const [selectedOrg, setselectedOrg] = useState(null);
-  // const [selectedDriverId, setSelectedDriverId] = useState(null);
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
@@ -41,9 +39,11 @@ const Home = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
         <PartnerInfo
-          orgId={selectedOrgId}
-          setActiveComponent={setActiveComponent}
-          setSelectedOrg={setSelectedOrgId}
+          {...{
+            selectedOrgId,
+            setActiveComponent,
+            setSelectedOrgId,
+          }}
         />
       );
     }
@@ -75,9 +75,19 @@ const Home = () => {
       case "Partners":
         return <Partners onPartnerClick={handleOrgClick} />;
       case "Vehicles":
-        return <Vehicles onVehicleClick={handleVehicleClick} />;
+        return (
+          <Vehicles
+            onVehicleClick={handleVehicleClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       case "Drivers":
-        return <Drivers onDriverClick={handleDriverClick} />;
+        return (
+          <Drivers
+            onDriverClick={handleDriverClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       default:
         return null;
     }

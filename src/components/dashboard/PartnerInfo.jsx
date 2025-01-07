@@ -45,7 +45,11 @@ ChartJS.register(
   Filler
 );
 
-const PartnerInfo = ({ orgId, setActiveComponent }) => {
+const PartnerInfo = ({
+  selectedOrgId,
+  setActiveComponent,
+  setSelectedOrgId,
+}) => {
   const chartRef = useRef(null);
   const [gradient, setGradient] = useState(null);
 
@@ -269,7 +273,10 @@ const PartnerInfo = ({ orgId, setActiveComponent }) => {
             alt="BackArrow"
             width="15px"
             className="cursor-pointer"
-            onClick={() => setActiveComponent("Partners")}
+            onClick={() => {
+              setSelectedOrgId(null);
+              setActiveComponent("Partners");
+            }}
           />
           Partners
         </div>
@@ -319,7 +326,7 @@ const PartnerInfo = ({ orgId, setActiveComponent }) => {
         </div>
         <div className="flex items-center gap-6 pt-8">
           <div className="py-3 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359] cursor-pointer">
-            Generate overview report
+            Generate report
           </div>
           <div className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px]">
             <span className="pr-1">
@@ -355,7 +362,10 @@ const PartnerInfo = ({ orgId, setActiveComponent }) => {
                 <p className="pt-2 text-sm text-[#777777]">
                   18 k+ currently <span className="text-[#18C4B8]">active</span>
                 </p>
-                <button className="pt-3 font-redhat text-sm font-light border-b-[2px]">
+                <button
+                  className="pt-3 font-redhat text-sm font-light border-b-[2px]"
+                  onClick={() => setActiveComponent("Vehicles")}
+                >
                   View list
                 </button>
               </div>
@@ -375,7 +385,10 @@ const PartnerInfo = ({ orgId, setActiveComponent }) => {
                 <p className="pt-2 text-sm text-[#777777]">
                   including 320 rental org.
                 </p>
-                <button className="pt-3 font-redhat text-sm font-light border-b-[2px]">
+                <button
+                  className="pt-3 font-redhat text-sm font-light border-b-[2px]"
+                  onClick={() => setActiveComponent("Drivers")}
+                >
                   View list
                 </button>
               </div>

@@ -15,11 +15,11 @@ const SubmittedDocumentsCard = () => {
   return (
     <Card
       sx={{
-        maxWidth: 400,
+        // maxWidth: 400,
         borderRadius: 2,
       }}
     >
-      <CardContent>
+      <CardContent sx={{ paddingInline: "5%" }}>
         <div className="flex justify-between items-center">
           <p className="font-redhat font-semibold text-base">
             Submitted documents
@@ -37,7 +37,7 @@ const SubmittedDocumentsCard = () => {
           ))}
         </div>
       </CardContent>
-      <div className="px-4">
+      <div className="px-[5%]">
         <div className="border-t border-dashed border-gray-100 mt-2"></div>
       </div>
       <div className="p-4 mb-2">

@@ -33,6 +33,7 @@ import Acceptancechart from "./Dashboardcharts/Acceptancechart";
 import Saletypechart from "./Dashboardcharts/Saletypechart";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import SubmittedDocumentsCard from "../common/SubmittedDocuments";
+import StatusDropdown from "../common/StatusDropdown";
 
 ChartJS.register(
   CategoryScale,
@@ -328,13 +329,7 @@ const PartnerInfo = ({
           <div className="py-3 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359] cursor-pointer">
             Generate report
           </div>
-          <div className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px]">
-            <span className="pr-1">
-              {" "}
-              <AddIcon fontSize="small" />
-            </span>{" "}
-            Create zone{" "}
-          </div>
+          <StatusDropdown />
         </div>
       </div>
 

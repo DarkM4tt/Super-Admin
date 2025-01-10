@@ -266,7 +266,7 @@ const PartnerInfo = ({
   };
 
   return (
-    <div className="py-8 px-14 bg-backGround">
+    <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
         <div className="flex gap-2">
           <img
@@ -479,7 +479,7 @@ const PartnerInfo = ({
           <Saletypechart />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -187,7 +187,7 @@ const Drivers = ({ onDriverClick, setActiveComponent }) => {
   };
 
   return (
-    <div className="py-8 px-14 bg-backGround">
+    <>
       {/* Partners Heading */}
       <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
         {"> Partners"}
@@ -345,7 +345,7 @@ const Drivers = ({ onDriverClick, setActiveComponent }) => {
           New requests (11)
         </Box>
       )}
-    </div>
+    </>
   );
 };
 

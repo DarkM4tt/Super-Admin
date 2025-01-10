@@ -35,8 +35,25 @@ import BackArrow from "../../assets/leftArrowBlack.svg";
 import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import StatusDropdown from "../common/StatusDropdown";
 import CircularProgressBar from "../common/CircularProgressBar";
+import AddFuelCardModal from "./AddFuelCardModal";
 
 const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    cardName: "",
+    fuelType: "",
+    fuelCategory: "",
+    fuelStations: "",
+    cardLimit: "",
+    revenueNeeded: "",
+    amount: "",
+  });
+
+  const handleSave = () => {
+    console.log("Saved Data:", formData);
+    setModalOpen(false);
+  };
+
   const EntityTable = () => {
     const driversData = [
       {
@@ -181,7 +198,7 @@ const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
   };
 
   return (
-    <div className="py-8 px-14 bg-backGround">
+    <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
         <div className="flex gap-2 text-gray">{"> Fuel Card"}</div>
         <div className="flex gap-4">
@@ -193,7 +210,10 @@ const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
               className="bg-transparent outline-none"
             ></input>
           </div>
-          <div className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer">
+          <div
+            className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer"
+            onClick={() => setModalOpen(true)}
+          >
             <span className="pr-1">
               {" "}
               <AddIcon fontSize="small" />
@@ -290,12 +310,20 @@ const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
         </div>
 
         {/* Right Cards */}
-        <div className="w-[30%] flex flex-col">
+        <div className="w-[30%] flex flex-col gap-4">
           <SubmittedDocumentsCard />
           <Saletypechart />
         </div>
       </div>
-    </div>
+
+      <AddFuelCardModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        formData={formData}
+        setFormData={setFormData}
+        onSave={handleSave}
+      />
+    </>
   );
 };
 

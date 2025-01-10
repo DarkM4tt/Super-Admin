@@ -186,7 +186,7 @@ const Vehicles = ({ onVehicleClick, setActiveComponent }) => {
   };
 
   return (
-    <div className="py-8 px-14 bg-backGround">
+    <>
       {/* Vehicles Heading */}
       <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
         {"> Vehicles"}
@@ -339,7 +339,7 @@ const Vehicles = ({ onVehicleClick, setActiveComponent }) => {
           New requests (11)
         </Box>
       )}
-    </div>
+    </>
   );
 };
 

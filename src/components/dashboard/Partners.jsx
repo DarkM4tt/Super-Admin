@@ -205,7 +205,7 @@ const Partners = ({ onPartnerClick }) => {
   };
 
   return (
-    <div className="py-8 px-14 bg-backGround">
+    <Box > 
       {/* Partners Heading */}
       <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
         {"> Partners"}
@@ -356,7 +356,7 @@ const Partners = ({ onPartnerClick }) => {
           New requests (11)
         </Box>
       )}
-    </div>
+    </Box>
   );
 };
 

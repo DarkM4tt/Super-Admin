@@ -130,7 +130,7 @@ const Zones = () => {
       console.log("Polygon Coordinates:", polygon);
       search && polygon && setOpen(true);
     } else {
-      // setOpen(true);
+      setOpen(true);
       alert("No polygon drawn");
     }
   };
@@ -180,9 +180,9 @@ const Zones = () => {
   polygon.length > 0 && console.log("POLYGON LNG: ", polygon[0][1]);
 
   return (
-    <div className="p-6">
+    <div className="">
       <p className="font-bold text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-black font-redhat">
-        Business zone name (Default)
+      Enter zone name
       </p>
       <div className="py-4">
         <TextField
@@ -192,7 +192,7 @@ const Zones = () => {
           onChange={(e) => setSearch(e.target.value)}
           sx={{
             backgroundColor: "white",
-            width: "100%",
+            width: "30%",
             ".MuiOutlinedInput-input": {
               padding: "10px 16px",
             },
@@ -271,17 +271,19 @@ const Zones = () => {
             />
           )}
         </GoogleMap>
-        <div className="flex flex-row-reverse py-4 gap-4">
+        <div className="flex py-4 gap-4">
           <ColorButton
             variant="contained"
             sx={{
               backgroundColor: "black",
               fontWeight: 600,
+              fontSize:"18px",
+              width:"30%",
               color: "white",
               fontFamily: "Red Hat Display, sans-serif",
               textTransform: "none",
-              padding: "12px 24px",
-              borderRadius: "4px",
+              padding: "16px",
+              borderRadius: "8px",
               "&:hover": {
                 backgroundColor: "black",
               },
@@ -290,7 +292,7 @@ const Zones = () => {
           >
             Submit
           </ColorButton>
-          <ColorButton
+          {/* <ColorButton
             className="text-xs md:text-sm lg:text-base"
             variant="contained"
             sx={{
@@ -307,7 +309,7 @@ const Zones = () => {
             onClick={handleReset}
           >
             Reset
-          </ColorButton>
+          </ColorButton> */}
           <ZonesModal
             open={open}
             handleClose={handleClose}
@@ -318,13 +320,13 @@ const Zones = () => {
         </div>
       </div>
 
-      {zoneData && (
+      {/* {zoneData && (
         <Zoneslist
           sampleData={zoneData}
           openmodal={setOpen}
           carOptions={carOptions}
         />
-      )}
+      )} */}
     </div>
   );
 };

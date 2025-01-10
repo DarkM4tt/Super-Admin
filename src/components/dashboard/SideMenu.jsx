@@ -16,7 +16,7 @@ const SideMenu = ({ onMenuItemClick }) => {
       text: "Services",
       subItems: [
         { text: "Overview", route: "/services/overview" },
-        { text: "Rentals", route: "/services/rentals" },
+        { text: "Rentals",},
         { text: "BOLD Ads", route: "/services/bold-ads" },
         { text: "BOLD Promotions", route: "/services/bold-promotions" },
         { text: "BOLD Business", route: "/services/bold-business" },
@@ -71,6 +71,7 @@ const SideMenu = ({ onMenuItemClick }) => {
                   <div
                     onClick={() => {
                       setActiveIndex(index);
+                      handleMenuItemClick(item.text);
                       setActiveDropdown(
                         activeDropdown ===
                           (item.text === "Services"
@@ -101,7 +102,7 @@ const SideMenu = ({ onMenuItemClick }) => {
                   {isDropdownOpen && (
                     <ul className="pl-6">
                       {item.subItems.map((subItem, subIndex) => (
-                        <NavLink to={subItem.route} key={subIndex}>
+                        <NavLink key={subIndex}>
                           <div
                             className={`border-l-4 ${
                               subIndex === subindex
@@ -110,7 +111,9 @@ const SideMenu = ({ onMenuItemClick }) => {
                             }`}
                             onClick={() => setSubindex(subIndex)}
                           >
+                            
                             <li
+                            onClick={()=>onMenuItemClick(subItem.text)}
                               className={`py-3 px-4 text-lg font-redhat rounded-lg ml-3 text-[#777777] hover:text-white  hover:bg-[#18C4B833] hover:font-semibold cursor-pointer ${
                                 subIndex === subindex
                                   ? "font-semibold text-white"
@@ -129,7 +132,7 @@ const SideMenu = ({ onMenuItemClick }) => {
             }
 
             return (
-              <NavLink to={item.route} key={index}>
+              <NavLink  key={index}>
                 <li
                   onClick={() => {
                     setActiveIndex(index);

@@ -1,20 +1,3 @@
-// import React from 'react';
-// import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-
-// const Saletypechart = () => {
-//   return (
-//     <div className='px-4 py-6 bg-white rounded-lg mt-6'>
-//        <div className="flex justify-between items-center  ">
-//             <p className="font-redhat font-semibold text-base">Sale type</p>
-//             <button ><MoreHorizIcon className='text-[#777777]'/></button>
-//             </div>
-//     </div>
-//   )
-// }
-
-// export default Saletypechart
-
-// Import necessary modules
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
@@ -52,8 +35,10 @@ const Saletypechart = () => {
   };
 
   const options = {
-    rotation: -90, // Start angle for half doughnut
-    circumference: 180, // Half circle
+    rotation: -90,
+    responsive: true,
+    maintainAspectRatio: true,
+    circumference: 180, 
     cutout: "60%",
     
     plugins: {
@@ -70,7 +55,7 @@ const Saletypechart = () => {
   };
 
   return (
-    <div className="px-4 py-6 bg-white rounded-lg mt-6 flex-grow" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
+    <div className="px-4 py-6 bg-white rounded-lg flex-grow" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}ccccc>
          <div className="flex justify-between items-center  ">
              <p className="font-redhat font-semibold text-base">Sale type</p>
              <button ><MoreHorizIcon className='text-[#777777]'/></button>
@@ -78,11 +63,11 @@ const Saletypechart = () => {
       <div className="relative px-5">
         <Doughnut data={data} options={options} />
         <div className="absolute inset-0 top-[25%] flex flex-col items-center justify-center">
-          <p className="text-xl font-sans text-[#777777]">Bookings</p>
-          <p className="text-2xl font-semibold pt-1">92.6%</p>
+          <p className="font-sans text-xl text-[#777777]">Bookings</p>
+          <p className="font-redhat text-2xl font-semibold pt-1">92.6%</p>
         </div>
       </div>
-      <div className="flex justify-between mt-4 text-sm pb-5 border-b border-[#DDDDDD] border-dashed">
+      <div className="flex justify-between text-sm pb-5 border-b border-[#DDDDDD] border-dashed">
         <div className="">
       <p className="font-redhat text-sm text-[#777777]">
             <span className="pr-2">

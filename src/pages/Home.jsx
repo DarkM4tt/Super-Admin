@@ -5,6 +5,8 @@ import SideMenu from "../components/dashboard/SideMenu";
 import Dashboard from "../components/dashboard/Dashboard";
 import Partners from "../components/dashboard/Partners";
 import PartnerInfo from "../components/dashboard/PartnerInfo";
+import Services from "../components/dashboard/Services";
+import Rentals from "../components/dashboard/Seprateservices/Rentals";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -42,6 +44,10 @@ const Home = () => {
         );
       case "Partners":
         return <Partners onPartnerClick={handleOrgClick} />;
+      case "Services":
+        return <Services />;
+        case "Rentals":
+        return <Rentals />;
       default:
         return null;
     }
@@ -64,7 +70,7 @@ const Home = () => {
         </div>
         <div className="w-4/5 flex-1 overflow-y-auto">
           <HomeHeader />
-          <div className="">{renderActiveComponent()}</div>
+          <div className="py-8 px-14 bg-[#F8F8F8]">{renderActiveComponent()}</div>
         </div>
       </div>
     </div>

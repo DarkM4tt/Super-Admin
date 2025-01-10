@@ -43,11 +43,12 @@ const CustomSelectDropdown = ({
       }}
       sx={{
         width: "100%",
-        backgroundColor: value ? "black" : "#EEEEEE",
+        backgroundColor: "white",
+        border:"1px solid #DDDDDD",
         color: value ? "white" : "gray",
         borderRadius: "10px",
         ".MuiSvgIcon-root": {
-          color: value ? "white" : "black",
+          color: "black",
         },
         ".MuiOutlinedInput-notchedOutline": {
           borderColor: "transparent",
@@ -62,7 +63,8 @@ const CustomSelectDropdown = ({
         ".MuiSelect-select": {
           paddingInline: 2,
           paddingBlock: 1,
-          backgroundColor: value ? "black" : "#EEEEEE",
+          backgroundColor:"white",
+          color:"black",
           borderRadius: "10px",
         },
         ".MuiInputBase-root": {
@@ -108,8 +110,8 @@ const CustomSelectDropdown = ({
 const style = {
   position: "absolute",
   overflow: "auto",
-  maxHeight: '90vh', // Limits the height of the modal
-  overflowY: 'auto', 
+  maxHeight: "90vh",
+  overflowY: "auto",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -121,8 +123,12 @@ const style = {
 
 const ZonesModal = ({ open, handleClose, zoneName, carOptions }) => {
   const initialRow = { carType: "", waitingCharges: "", perKmCharges: "" };
-  console.log(carOptions);
-  const [rows, setRows] = useState([initialRow]);
+  const prefilledRows = [
+    { carType: "BOLD", waitingCharges: "", perKmCharges: "" },
+    { carType: "BOLD XL", waitingCharges: "", perKmCharges: "" },
+    { carType: "SAVE", waitingCharges: "", perKmCharges: "" },
+  ];
+  const [rows, setRows] = useState(prefilledRows);
   const [isSaveDisabled, setIsSaveDisabled] = useState(true);
 
   useEffect(() => {
@@ -137,12 +143,6 @@ const ZonesModal = ({ open, handleClose, zoneName, carOptions }) => {
     setIsSaveDisabled(!allFieldsFilled);
   }, [rows]);
 
-  const handleAddRow = () => {
-    if (rows.length < carOptions?.length) {
-      setRows([...rows, initialRow]);
-    }
-  };
-
   const handleChange = (index, field, value) => {
     const updatedRows = [...rows];
     updatedRows[index][field] = value;
@@ -150,7 +150,7 @@ const ZonesModal = ({ open, handleClose, zoneName, carOptions }) => {
   };
 
   const handleCancel = () => {
-    setRows([initialRow]);
+    setRows(prefilledRows);
     handleClose();
   };
 
@@ -161,7 +161,7 @@ const ZonesModal = ({ open, handleClose, zoneName, carOptions }) => {
       prices: rows,
     };
 
-    setRows([initialRow]);
+    setRows(prefilledRows);
     handleClose(zoneData);
   };
 
@@ -183,40 +183,27 @@ const ZonesModal = ({ open, handleClose, zoneName, carOptions }) => {
     }
   };
 
-  const getAvailableOptions = (currentIndex) => {
-    const selectedOptions = rows
-      .map((row, index) => index !== currentIndex && row.carType)
-      .filter(Boolean);
-    return carOptions?.filter(
-      (option) => !selectedOptions.includes(option?.vehicle_category)
-    );
-  };
-
   return (
-    <div >
-      <Modal open={open} onClose={handleClose} className="">
-        <Box sx={style} className="space-y-4 ">
+    <div>
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={style} className="space-y-4">
           <div className="flex justify-between items-center pb-4">
-            <h2 className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-bold font-redhat">
-              New business zone created successfully!
-            </h2>
+            <h2 className="text-xl font-bold">Create zone</h2>
             <IconButton onClick={handleClose}>
               <CloseIcon />
             </IconButton>
           </div>
-          <div className="border-[1px] border-[#DDDDDD] rounded-lg mt-4 overflow-hidden">
-            <div className="grid grid-cols-3 gap-4 text-gray-500 bg-[#F5F5F5] py-3 px-6">
-              <div className="font-bold text-sm font-redhat md:text-base lg:text-lg xl:text-xl">
-                Car type
-              </div>
-              <div className="font-bold text-sm font-redhat md:text-base lg:text-lg xl:text-xl">
-                Waiting charges
-              </div>
-              <div className="font-bold text-sm font-redhat md:text-base lg:text-lg xl:text-xl">
-                Per km charges
-              </div>
-            </div>
-            <div className="overflow-hidden p-6">
+          <p className="text-sm text-gray-500 mb-4">
+            Your zone has been created successfully, please fill in the below
+            details and submit.
+          </p>
+          <div className=" rounded-lg overflow-hidden">
+            {/* <div className="grid grid-cols-3 gap-4 text-gray-500 bg-[#F5F5F5] py-3 px-6">
+              <div className="font-bold text-sm">Car type</div>
+              <div className="font-bold text-sm">Waiting charges</div>
+              <div className="font-bold text-sm">Per km charges</div>
+            </div> */}
+            <div className="">
               {rows.map((row, index) => (
                 <div key={index} className="grid grid-cols-3 gap-4 mb-6">
                   <CustomSelectDropdown
@@ -225,10 +212,10 @@ const ZonesModal = ({ open, handleClose, zoneName, carOptions }) => {
                       handleChange(index, "carType", e.target.value)
                     }
                     name="Select car type"
-                    options={getAvailableOptions(index)}
+                    options={carOptions}
                     placeholderstyles={{
                       color: "#999999",
-                      fontSize: "16px",
+                      fontSize: "14px",
                       fontWeight: "600",
                     }}
                   />
@@ -272,63 +259,16 @@ const ZonesModal = ({ open, handleClose, zoneName, carOptions }) => {
                   />
                 </div>
               ))}
-              <div className="flex justify-between items-center gap-4 mb-6">
-            <p className="font-redhat text-base font-semibold px-4">Assist</p>
-            <TextField
-                  placeholder="Enter Assist Charges"
-                //   value={row.waitingCharges}
-                //   onChange={(e) =>
-                //     handleChange(index, "waitingCharges", e.target.value)
-                //   }
-                  inputMode="numeric"
-                  fullWidth
-                  InputProps={{
-                    inputProps: { pattern: "[0-9]*" },
-                    sx: {
-                      "& input::placeholder": {
-                        color: "#999999",
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        maxWidth:"50%"
-                      },
-                    },
-                  }}
-                //   onKeyDown={handleKeyDown}
-                />
-                </div>
-              <Button
-                onClick={handleAddRow}
-                variant="text"
-                sx={{
-                  backgroundColor: "#F5F5F5",
-                  fontWeight: 600,
-                  color: "black",
-                  width: "100%",
-                  fontSize: "16px",
-                  fontFamily: "Red Hat Display, sans-serif",
-                  textTransform: "none",
-                  padding: "12px 24px",
-                  borderRadius: "4px",
-                  "&:hover": {
-                    backgroundColor: "#F5F5F5",
-                  },
-                }}
-                className=""
-                disabled={rows.length >= carOptions?.length}
-              >
-                Add more row
-              </Button>
             </div>
           </div>
-          <div className="flex flex-row-reverse py-4 gap-4">
+          <div className="flex justify-end py-4">
             <Button
-              className="text-xs md:text-sm lg:text-base"
+              className="text-sm"
               variant="contained"
               sx={{
                 backgroundColor: "black",
                 fontWeight: 600,
                 color: "white",
-                fontFamily: "Red Hat Display, sans-serif",
                 textTransform: "none",
                 padding: "12px 24px",
                 borderRadius: "4px",
@@ -339,25 +279,7 @@ const ZonesModal = ({ open, handleClose, zoneName, carOptions }) => {
               onClick={handleSave}
               disabled={isSaveDisabled}
             >
-              Save
-            </Button>
-            <Button
-              className="text-xs md:text-sm lg:text-base"
-              variant="contained"
-              sx={{
-                backgroundColor: "#EEEEEE",
-                fontWeight: 600,
-                color: "black",
-                textTransform: "none",
-                padding: "12px 24px",
-                borderRadius: "4px",
-                "&:hover": {
-                  backgroundColor: "#EEEEEE",
-                },
-              }}
-              onClick={handleCancel}
-            >
-              Cancel
+              Save zone
             </Button>
           </div>
         </Box>

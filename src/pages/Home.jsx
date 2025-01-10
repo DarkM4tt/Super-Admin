@@ -50,7 +50,7 @@ const Home = () => {
     if (selectedVehicleId && activeComponent === "VehicleInfo") {
       return (
         <VehicleInfo
-          vehicleId={selectedVehicleId}
+          selectedVehicleId={selectedVehicleId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -58,7 +58,7 @@ const Home = () => {
     if (selectedDriverId && activeComponent === "DriverInfo") {
       return (
         <DriverInfo
-          driverId={selectedDriverId}
+          setSelectedDriverId={setSelectedDriverId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -110,7 +110,7 @@ const Home = () => {
         </div>
         <div className="w-4/5 flex-1 overflow-y-auto">
           <HomeHeader />
-          <div className="">{renderActiveComponent()}</div>
+          <div className="bg-backGround">{renderActiveComponent()}</div>
         </div>
       </div>
     </div>

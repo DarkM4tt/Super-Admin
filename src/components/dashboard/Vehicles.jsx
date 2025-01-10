@@ -178,7 +178,7 @@ const vehiclesData = [
   },
 ];
 
-const Vehicles = ({ onPartnerClick, setActiveComponent }) => {
+const Vehicles = ({ onVehicleClick, setActiveComponent }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -291,7 +291,7 @@ const Vehicles = ({ onPartnerClick, setActiveComponent }) => {
                 {vehiclesData.map((vehicle) => (
                   <TableRow
                     key={vehicle?.id}
-                    onClick={() => onPartnerClick(vehicle?.id)}
+                    onClick={() => onVehicleClick(vehicle?.id)}
                     sx={{
                       cursor: "pointer",
                     }}

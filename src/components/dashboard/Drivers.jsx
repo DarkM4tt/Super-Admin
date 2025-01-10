@@ -179,7 +179,7 @@ const driversData = [
   },
 ];
 
-const Drivers = ({ onPartnerClick, setActiveComponent }) => {
+const Drivers = ({ onDriverClick, setActiveComponent }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -188,9 +188,9 @@ const Drivers = ({ onPartnerClick, setActiveComponent }) => {
 
   return (
     <div className="py-8 px-14 bg-backGround">
-      {/* Drivers Heading */}
+      {/* Partners Heading */}
       <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
-        {"> Drivers"}
+        {"> Partners"}
         <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
           <SearchIcon />
           <input
@@ -292,7 +292,7 @@ const Drivers = ({ onPartnerClick, setActiveComponent }) => {
                 {driversData.map((driver) => (
                   <TableRow
                     key={driver.id}
-                    onClick={() => onPartnerClick(driver?.id)}
+                    onClick={() => onDriverClick(driver?.id)}
                     sx={{
                       cursor: "pointer",
                     }}

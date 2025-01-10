@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { useState } from "react";
 import {
   Box,
   Tab,
@@ -10,194 +11,175 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
+import { MoreHoriz } from "@mui/icons-material";
+import BackArrow from "../../assets/leftArrowBlack.svg";
 import AppleIcon from "../../assets/apple.svg";
-import { useState } from "react";
+import SearchIcon from "@mui/icons-material/Search";
 
-const organizationsData = [
+const driversData = [
   {
     id: 1,
-    name: "Oceanic Ventures",
-    operatingSince: "01 Jan, 2021",
-    totalDrivers: 150,
-    totalVehicles: 250,
-    listingDrivers: 100,
-    issuesQueries: 5,
+    name: "Nolan Lipshutz",
+    joinedOn: "12 Oct, 2024",
+    assignedVehicle: "KP 01M K209",
+    totalTrips: 400,
+    rating: "4.2/5",
   },
   {
     id: 2,
-    name: "Summit Transport",
-    operatingSince: "15 Feb, 2019",
-    totalDrivers: 320,
-    totalVehicles: 450,
-    listingDrivers: 200,
-    issuesQueries: 15,
+    name: "John Doe",
+    joinedOn: "10 Sep, 2024",
+    assignedVehicle: "KP 01M K210",
+    totalTrips: 350,
+    rating: "4.5/5",
   },
   {
     id: 3,
-    name: "Redwood Logistics",
-    operatingSince: "10 Mar, 2020",
-    totalDrivers: 275,
-    totalVehicles: 300,
-    listingDrivers: 180,
-    issuesQueries: 25,
+    name: "Jane Smith",
+    joinedOn: "5 Aug, 2024",
+    assignedVehicle: "KP 01M K211",
+    totalTrips: 290,
+    rating: "3.9/5",
   },
   {
     id: 4,
-    name: "Swift Cargo Movers",
-    operatingSince: "05 Apr, 2018",
-    totalDrivers: 140,
-    totalVehicles: 220,
-    listingDrivers: 110,
-    issuesQueries: 8,
+    name: "Robert Brown",
+    joinedOn: "2 Jul, 2024",
+    assignedVehicle: "KP 01M K212",
+    totalTrips: 500,
+    rating: "4.8/5",
   },
   {
     id: 5,
-    name: "Velocity Rides",
-    operatingSince: "20 May, 2022",
-    totalDrivers: 380,
-    totalVehicles: 480,
-    listingDrivers: 240,
-    issuesQueries: 12,
+    name: "Emily Johnson",
+    joinedOn: "18 Jun, 2024",
+    assignedVehicle: "KP 01M K213",
+    totalTrips: 250,
+    rating: "4.1/5",
   },
   {
     id: 6,
-    name: "Metro Transport Co.",
-    operatingSince: "12 Jun, 2020",
-    totalDrivers: 500,
-    totalVehicles: 600,
-    listingDrivers: 450,
-    issuesQueries: 20,
+    name: "Chris Williams",
+    joinedOn: "13 May, 2024",
+    assignedVehicle: "KP 01M K214",
+    totalTrips: 400,
+    rating: "4.0/5",
   },
   {
     id: 7,
-    name: "Evergreen Riders",
-    operatingSince: "15 Jul, 2016",
-    totalDrivers: 220,
-    totalVehicles: 310,
-    listingDrivers: 190,
-    issuesQueries: 10,
+    name: "Patricia Davis",
+    joinedOn: "30 Apr, 2024",
+    assignedVehicle: "KP 01M K215",
+    totalTrips: 450,
+    rating: "4.3/5",
   },
   {
     id: 8,
-    name: "Pacific Transports",
-    operatingSince: "01 Aug, 2023",
-    totalDrivers: 120,
-    totalVehicles: 200,
-    listingDrivers: 80,
-    issuesQueries: 2,
+    name: "Linda Miller",
+    joinedOn: "25 Mar, 2024",
+    assignedVehicle: "KP 01M K216",
+    totalTrips: 470,
+    rating: "4.4/5",
   },
   {
     id: 9,
-    name: "Northern Fleet",
-    operatingSince: "18 Sep, 2017",
-    totalDrivers: 300,
-    totalVehicles: 400,
-    listingDrivers: 280,
-    issuesQueries: 30,
+    name: "James Wilson",
+    joinedOn: "12 Feb, 2024",
+    assignedVehicle: "KP 01M K217",
+    totalTrips: 320,
+    rating: "4.6/5",
   },
   {
     id: 10,
-    name: "Global Express",
-    operatingSince: "25 Oct, 2015",
-    totalDrivers: 180,
-    totalVehicles: 250,
-    listingDrivers: 140,
-    issuesQueries: 5,
+    name: "David Moore",
+    joinedOn: "22 Jan, 2024",
+    assignedVehicle: "KP 01M K218",
+    totalTrips: 380,
+    rating: "3.7/5",
   },
   {
     id: 11,
-    name: "Royal Lineage Logistics",
-    operatingSince: "12 Dec, 2023",
-    totalDrivers: 200,
-    totalVehicles: 300,
-    listingDrivers: 150,
-    issuesQueries: 7,
+    name: "Mary Taylor",
+    joinedOn: "17 Dec, 2023",
+    assignedVehicle: "KP 01M K219",
+    totalTrips: 290,
+    rating: "4.0/5",
   },
   {
     id: 12,
-    name: "Trailblazer Transport",
-    operatingSince: "11 Nov, 2022",
-    totalDrivers: 210,
-    totalVehicles: 360,
-    listingDrivers: 200,
-    issuesQueries: 11,
+    name: "William Anderson",
+    joinedOn: "9 Nov, 2023",
+    assignedVehicle: "KP 01M K220",
+    totalTrips: 460,
+    rating: "4.3/5",
   },
   {
     id: 13,
-    name: "Silver Wave Logistics",
-    operatingSince: "14 Mar, 2023",
-    totalDrivers: 410,
-    totalVehicles: 500,
-    listingDrivers: 300,
-    issuesQueries: 15,
+    name: "Elizabeth Thomas",
+    joinedOn: "3 Oct, 2023",
+    assignedVehicle: "KP 01M K221",
+    totalTrips: 410,
+    rating: "4.7/5",
   },
   {
     id: 14,
-    name: "Future Transit",
-    operatingSince: "05 Oct, 2014",
-    totalDrivers: 340,
-    totalVehicles: 450,
-    listingDrivers: 320,
-    issuesQueries: 25,
+    name: "Charles Jackson",
+    joinedOn: "27 Sep, 2023",
+    assignedVehicle: "KP 01M K222",
+    totalTrips: 350,
+    rating: "3.8/5",
   },
   {
     id: 15,
-    name: "Alpha Freight Movers",
-    operatingSince: "09 Jan, 2019",
-    totalDrivers: 130,
-    totalVehicles: 220,
-    listingDrivers: 110,
-    issuesQueries: 0,
+    name: "Margaret White",
+    joinedOn: "15 Aug, 2023",
+    assignedVehicle: "KP 01M K223",
+    totalTrips: 420,
+    rating: "4.5/5",
   },
   {
     id: 16,
-    name: "Summit Logistics Hub",
-    operatingSince: "02 Apr, 2016",
-    totalDrivers: 250,
-    totalVehicles: 330,
-    listingDrivers: 230,
-    issuesQueries: 19,
+    name: "Joseph Harris",
+    joinedOn: "12 Jul, 2023",
+    assignedVehicle: "KP 01M K224",
+    totalTrips: 380,
+    rating: "4.1/5",
   },
   {
     id: 17,
-    name: "Nova Ride Solutions",
-    operatingSince: "22 May, 2021",
-    totalDrivers: 370,
-    totalVehicles: 470,
-    listingDrivers: 400,
-    issuesQueries: 12,
+    name: "Sophia Clark",
+    joinedOn: "10 Jun, 2023",
+    assignedVehicle: "KP 01M K225",
+    totalTrips: 330,
+    rating: "4.2/5",
   },
   {
     id: 18,
-    name: "Quantum Fleets",
-    operatingSince: "13 Jun, 2018",
-    totalDrivers: 190,
-    totalVehicles: 260,
-    listingDrivers: 130,
-    issuesQueries: 7,
+    name: "Mason Lewis",
+    joinedOn: "2 May, 2023",
+    assignedVehicle: "KP 01M K226",
+    totalTrips: 400,
+    rating: "4.0/5",
   },
   {
     id: 19,
-    name: "Urban Haul Transport",
-    operatingSince: "17 Aug, 2017",
-    totalDrivers: 300,
-    totalVehicles: 380,
-    listingDrivers: 250,
-    issuesQueries: 15,
+    name: "Olivia Robinson",
+    joinedOn: "26 Apr, 2023",
+    assignedVehicle: "KP 01M K227",
+    totalTrips: 350,
+    rating: "4.3/5",
   },
   {
     id: 20,
-    name: "Zenith Logistics",
-    operatingSince: "09 Sep, 2023",
-    totalDrivers: 160,
-    totalVehicles: 210,
-    listingDrivers: 120,
-    issuesQueries: 10,
+    name: "Ethan Walker",
+    joinedOn: "15 Mar, 2023",
+    assignedVehicle: "KP 01M K228",
+    totalTrips: 290,
+    rating: "3.9/5",
   },
 ];
 
-const Partners = ({ onPartnerClick }) => {
+const Drivers = ({ onDriverClick, setActiveComponent }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -205,7 +187,7 @@ const Partners = ({ onPartnerClick }) => {
   };
 
   return (
-    <Box > 
+    <div className="py-8 px-14 bg-backGround">
       {/* Partners Heading */}
       <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
         {"> Partners"}
@@ -219,9 +201,16 @@ const Partners = ({ onPartnerClick }) => {
         </div>
       </div>
 
+      <img
+        src={BackArrow}
+        alt="BackArrow"
+        className="mb-4 cursor-pointer"
+        onClick={() => setActiveComponent("PartnerInfo")}
+      />
+
       {/* Manage Heading */}
       <Box sx={{ fontSize: "24px", fontWeight: "500", marginBottom: "20px" }}>
-        Manage & find organisation
+        ABC Company Ltd &gt;&gt; List of drivers
       </Box>
 
       {/* Tabs */}
@@ -240,8 +229,8 @@ const Partners = ({ onPartnerClick }) => {
           ".MuiTabs-indicator": { backgroundColor: "#1976d2" },
         }}
       >
-        <Tab label="All organisations" />
-        <Tab label="Pending organisations" />
+        <Tab label="All drivers" />
+        <Tab label="Pending drivers" />
         <Tab label="New requests (11)" />
       </Tabs>
 
@@ -279,13 +268,12 @@ const Partners = ({ onPartnerClick }) => {
               >
                 <TableRow>
                   {[
-                    "ID",
                     "Name",
-                    "Operating since",
-                    "Total drivers",
-                    "Total vehicles",
-                    "Listing drivers",
-                    "Issues/queries",
+                    "Joined on",
+                    "Assigned vehicle",
+                    "Total trips",
+                    "Customer rating",
+                    "Options",
                   ].map((header) => (
                     <TableCell key={header}>{header}</TableCell>
                   ))}
@@ -301,26 +289,27 @@ const Partners = ({ onPartnerClick }) => {
                   },
                 }}
               >
-                {organizationsData.map((org) => (
+                {driversData.map((driver) => (
                   <TableRow
-                    key={org.id}
-                    onClick={() => onPartnerClick(org?.id)}
+                    key={driver.id}
+                    onClick={() => onDriverClick(driver?.id)}
                     sx={{
                       cursor: "pointer",
                     }}
                   >
-                    <TableCell>{org.id}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <img src={AppleIcon} alt="AppleIcon" />
-                        {org.name}
+                        {driver.name}
                       </div>
                     </TableCell>
-                    <TableCell>{org.operatingSince}</TableCell>
-                    <TableCell>{org.totalDrivers}</TableCell>
-                    <TableCell>{org.totalVehicles}</TableCell>
-                    <TableCell>{org.listingDrivers}</TableCell>
-                    <TableCell>{org.issuesQueries}</TableCell>
+                    <TableCell>{driver.joinedOn}</TableCell>
+                    <TableCell>{driver.assignedVehicle}</TableCell>
+                    <TableCell>{driver.totalTrips}</TableCell>
+                    <TableCell>{driver.rating}</TableCell>
+                    <TableCell>
+                      <MoreHoriz />
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -356,8 +345,8 @@ const Partners = ({ onPartnerClick }) => {
           New requests (11)
         </Box>
       )}
-    </Box>
+    </div>
   );
 };
 
-export default Partners;
+export default Drivers;

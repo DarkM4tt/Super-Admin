@@ -7,12 +7,16 @@ import Partners from "../components/dashboard/Partners";
 import PartnerInfo from "../components/dashboard/PartnerInfo";
 import Services from "../components/dashboard/Services";
 import Rentals from "../components/dashboard/Seprateservices/Rentals";
+import Vehicles from "./../components/dashboard/Vehicles";
+import Drivers from "./../components/dashboard/Drivers";
+import VehicleInfo from "./../components/dashboard/VehicleInfo";
+import DriverInfo from "./../components/dashboard/DriverInfo";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
   const [selectedOrgId, setSelectedOrgId] = useState(null);
-  // const [selectedOrg, setselectedOrg] = useState(null);
-  // const [selectedDriverId, setSelectedDriverId] = useState(null);
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+  const [selectedDriverId, setSelectedDriverId] = useState(null);
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
@@ -23,13 +27,41 @@ const Home = () => {
     setActiveComponent("PartnerInfo");
   };
 
+  const handleVehicleClick = (vehicleId) => {
+    setSelectedVehicleId(vehicleId);
+    setActiveComponent("VehicleInfo");
+  };
+
+  const handleDriverClick = (driverId) => {
+    setSelectedDriverId(driverId);
+    setActiveComponent("DriverInfo");
+  };
+
   const renderActiveComponent = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
         <PartnerInfo
-          orgId={selectedOrgId}
+          {...{
+            selectedOrgId,
+            setActiveComponent,
+            setSelectedOrgId,
+          }}
+        />
+      );
+    }
+    if (selectedVehicleId && activeComponent === "VehicleInfo") {
+      return (
+        <VehicleInfo
+          selectedVehicleId={selectedVehicleId}
           setActiveComponent={setActiveComponent}
-          setSelectedOrg={setSelectedOrgId}
+        />
+      );
+    }
+    if (selectedDriverId && activeComponent === "DriverInfo") {
+      return (
+        <DriverInfo
+          setSelectedDriverId={setSelectedDriverId}
+          setActiveComponent={setActiveComponent}
         />
       );
     }
@@ -48,6 +80,20 @@ const Home = () => {
         return <Services />;
         case "Rentals":
         return <Rentals />;
+      case "Vehicles":
+        return (
+          <Vehicles
+            onVehicleClick={handleVehicleClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
+      case "Drivers":
+        return (
+          <Drivers
+            onDriverClick={handleDriverClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       default:
         return null;
     }

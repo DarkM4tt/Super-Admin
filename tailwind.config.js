@@ -19,6 +19,7 @@ export default {
         themeBlue: "#1E293B",
         "white-10": "rgba(255, 255, 255, 0.1)",
         lightCyan: "rgba(24, 196, 184, 1)",
+        backGround: "#F8F8F8",
       },
       fontSize: {
         mxl: "32px",

@@ -9,6 +9,7 @@ import Vehicles from "./../components/dashboard/Vehicles";
 import Drivers from "./../components/dashboard/Drivers";
 import VehicleInfo from "./../components/dashboard/VehicleInfo";
 import DriverInfo from "./../components/dashboard/DriverInfo";
+import FuelCard from "../components/dashboard/FuelCard";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -88,6 +89,8 @@ const Home = () => {
             setActiveComponent={setActiveComponent}
           />
         );
+      case "Fuel Card":
+        return <FuelCard />;
       default:
         return null;
     }

@@ -16,6 +16,9 @@ import { Line } from "react-chartjs-2";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
+  Button,
+  MenuItem,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -36,6 +39,8 @@ import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import StatusDropdown from "../common/StatusDropdown";
 import CircularProgressBar from "../common/CircularProgressBar";
 import AddFuelCardModal from "./AddFuelCardModal";
+import FuelStationsRequestCard from "../common/FuelStationsRequestCard";
+import CircularProgress from "../common/CircularProgress";
 
 const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -48,6 +53,17 @@ const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
     revenueNeeded: "",
     amount: "",
   });
+  const [selectedFuelCard, setSelectedFuelCard] = useState("Gasolone85");
+
+  const fuelCardOptions = [
+    { title: "Gasolone85", value: "Gasolone85" },
+    { title: "DieselPlus", value: "DieselPlus" },
+    { title: "EcoFuel", value: "EcoFuel" },
+  ];
+
+  const handleChange = (event) => {
+    setSelectedFuelCard(event.target.value);
+  };
 
   const handleSave = () => {
     console.log("Saved Data:", formData);
@@ -123,7 +139,6 @@ const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
           flexDirection: "column",
           gap: "30px",
           borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
         <div className="flex justify-between">
@@ -305,13 +320,109 @@ const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
             </div>
           </div>
 
+          <div className="bg-white rounded-lg p-6 w-full mt-4">
+            {/* Heading */}
+            <h1 className="text-xl font-semibold text-black">
+              Details of all available fuel cards
+            </h1>
+            <p className="text-gray-500 mt-1">
+              Select the fuel card type from the drop down to view and manage
+              benefits.
+            </p>
+
+            {/* Dropdown and Manage Button */}
+            <div className="flex justify-between items-center gap-20">
+              <div className="flex-1">
+                <div className="flex items-center justify-between mt-4">
+                  <Select
+                    value={selectedFuelCard}
+                    onChange={handleChange}
+                    sx={{
+                      border: "1px solid #d9d9d9",
+                      borderRadius: "8px",
+                      "& .MuiSelect-icon": {
+                        color: "black",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        border: "none",
+                      },
+                      "& .MuiSelect-select": {
+                        padding: "8px 16px",
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                      },
+                    }}
+                  >
+                    {fuelCardOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.title}
+                      </MenuItem>
+                    ))}
+                  </Select>
+
+                  <Button
+                    sx={{
+                      color: "#f57c00",
+                      fontWeight: "bold",
+                      fontSize: "14px",
+                      textTransform: "none",
+                    }}
+                  >
+                    Manage card &nbsp; &gt;&gt;
+                  </Button>
+                </div>
+
+                {/* Dashed Line */}
+                <div className="border-t border-dashed border-gray-300 mt-4" />
+
+                {/* Stats */}
+                <div className="flex justify-between items-center mt-4">
+                  <div>
+                    <ul className="list-disc text-gray-700 space-y-2 pl-4">
+                      <li>
+                        <strong>12K +</strong> vehicles currently using
+                      </li>
+                      <li>
+                        <strong>820</strong> fuel stations signed for this fuel
+                        card type
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <ul className="list-disc text-gray-700 space-y-2 pl-4">
+                      <li>
+                        <strong>19 M</strong> litres of fuel purchased
+                      </li>
+                      <li>
+                        <strong>921 M</strong> total fuel spends
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Circular Progress Section */}
+              <div className="flex flex-col items-center justify-between mt-8 gap-4">
+                <div>
+                  <h2 className="text-sm font-medium text-gray-600">
+                    Max allotted limit
+                  </h2>
+                  <p className="text-xs text-gray-500">
+                    (of the total revenue earned)
+                  </p>
+                </div>
+                <CircularProgress value={32} />
+              </div>
+            </div>
+          </div>
+
           {/* Table */}
           <EntityTable />
         </div>
 
         {/* Right Cards */}
         <div className="w-[30%] flex flex-col gap-4">
-          <SubmittedDocumentsCard />
+          <FuelStationsRequestCard />
           <Saletypechart />
         </div>
       </div>

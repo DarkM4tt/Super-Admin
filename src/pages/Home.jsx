@@ -12,6 +12,7 @@ import Drivers from "./../components/dashboard/Drivers";
 import VehicleInfo from "./../components/dashboard/VehicleInfo";
 import DriverInfo from "./../components/dashboard/DriverInfo";
 import FuelCard from "../components/dashboard/FuelCard";
+import FuelStations from "../components/dashboard/FuelStations";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -79,7 +80,7 @@ const Home = () => {
         return <Partners onPartnerClick={handleOrgClick} />;
       case "Services":
         return <Services />;
-        case "Rentals":
+      case "Rentals":
         return <Rentals />;
       case "Vehicles":
         return (
@@ -96,7 +97,9 @@ const Home = () => {
           />
         );
       case "Fuel Card":
-        return <FuelCard />;
+        return <FuelCard setActiveComponent={setActiveComponent} />;
+      case "FuelStations":
+        return <FuelStations setActiveComponent={setActiveComponent} />;
       default:
         return null;
     }
@@ -119,7 +122,9 @@ const Home = () => {
         </div>
         <div className="w-4/5 flex-1 overflow-y-auto">
           <HomeHeader />
-          <div className="py-8 px-14 bg-[#F8F8F8]">{renderActiveComponent()}</div>
+          <div className="py-8 px-14 bg-[#F8F8F8]">
+            {renderActiveComponent()}
+          </div>
         </div>
       </div>
     </div>

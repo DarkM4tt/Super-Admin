@@ -64,7 +64,7 @@ import {
     },
   ];
   
-  const Rentals = ({ onPartnerClick }) => {
+  const Rentals = ({ handleRentalClick }) => {
     const [activeTab, setActiveTab] = useState(0);
   
     const handleTabChange = (event, newValue) => {
@@ -135,7 +135,18 @@ import {
             <TableContainer>
               <Table>
                 {/* Table Header */}
-                <TableHead>
+                <TableHead sx={
+                    {
+                        "& .MuiTableCell-root:first-of-type": {
+                    borderTopLeftRadius: "10px",
+                    borderBottomLeftRadius: "10px",
+                  },
+                  "& .MuiTableCell-root:last-of-type": {
+                    borderTopRightRadius: "10px",
+                    borderBottomRightRadius: "10px",
+                  }
+                    }
+                }>
                   <TableRow style={{ borderRadius: "8px" }}>
                     {[
                       "Name",
@@ -164,7 +175,7 @@ import {
                   {rentalPartnersData.map((partner) => (
                     <TableRow
                       key={partner.id}
-                      onClick={() => onPartnerClick(partner?.id)}
+                      onClick={() => handleRentalClick(partner?.id)}
                       sx={{ cursor: "pointer"}}
                     >
                       <TableCell sx={{fontSize:"16px" , fontWeight:"600"}}>{partner.name}</TableCell>

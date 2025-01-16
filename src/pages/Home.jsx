@@ -6,7 +6,7 @@ import Dashboard from "../components/dashboard/Dashboard";
 import Partners from "../components/dashboard/Partners";
 import PartnerInfo from "../components/dashboard/PartnerInfo";
 import Services from "../components/dashboard/Services";
-import Rentals from "../components/dashboard/Seprateservices/Rentals";
+import Rentals from "../components/dashboard/Seprateservices/Rental/Rentals";
 import Vehicles from "./../components/dashboard/Vehicles";
 import Drivers from "./../components/dashboard/Drivers";
 import VehicleInfo from "./../components/dashboard/VehicleInfo";
@@ -15,6 +15,7 @@ import FuelCard from "../components/dashboard/FuelCard";
 import FuelStations from "../components/dashboard/FuelStations";
 import Employees from "../components/dashboard/Employees";
 import EmployeeInfo from "../components/dashboard/EmployeeInfo";
+import Rentalinfo from "../components/dashboard/Seprateservices/Rental/Rentalinfo";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -22,6 +23,7 @@ const Home = () => {
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [selectedDriverId, setSelectedDriverId] = useState(null);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+  const [selectedRentalId, setSelectedRentalId] = useState(null);
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
@@ -30,6 +32,11 @@ const Home = () => {
   const handleOrgClick = (orgId) => {
     setSelectedOrgId(orgId);
     setActiveComponent("PartnerInfo");
+  };
+
+  const handleRentalClick = (rentalId) => {
+    setSelectedRentalId(rentalId);
+    setActiveComponent("RentalInfo");
   };
 
   const handleVehicleClick = (vehicleId) => {
@@ -97,7 +104,9 @@ const Home = () => {
       case "Services":
         return <Services />;
       case "Rentals":
-        return <Rentals />;
+        return <Rentals handleRentalClick={handleRentalClick} />;
+      case "RentalInfo":
+        return <Rentalinfo />;
       case "Vehicles":
         return (
           <Vehicles

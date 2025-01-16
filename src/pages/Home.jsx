@@ -13,12 +13,15 @@ import VehicleInfo from "./../components/dashboard/VehicleInfo";
 import DriverInfo from "./../components/dashboard/DriverInfo";
 import FuelCard from "../components/dashboard/FuelCard";
 import FuelStations from "../components/dashboard/FuelStations";
+import Employees from "../components/dashboard/Employees";
+import EmployeeInfo from "../components/dashboard/EmployeeInfo";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
   const [selectedOrgId, setSelectedOrgId] = useState(null);
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [selectedDriverId, setSelectedDriverId] = useState(null);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
@@ -37,6 +40,11 @@ const Home = () => {
   const handleDriverClick = (driverId) => {
     setSelectedDriverId(driverId);
     setActiveComponent("DriverInfo");
+  };
+
+  const handleEmployeeClick = (employeeId) => {
+    setSelectedEmployeeId(employeeId);
+    setActiveComponent("EmployeeInfo");
   };
 
   const renderActiveComponent = () => {
@@ -63,6 +71,14 @@ const Home = () => {
       return (
         <DriverInfo
           setSelectedDriverId={setSelectedDriverId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
+    if (selectedEmployeeId && activeComponent === "EmployeeInfo") {
+      return (
+        <EmployeeInfo
+          setSelectedEmployeeId={setSelectedEmployeeId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -100,12 +116,17 @@ const Home = () => {
         return <FuelCard setActiveComponent={setActiveComponent} />;
       case "FuelStations":
         return <FuelStations setActiveComponent={setActiveComponent} />;
+      case "Employees":
+        return (
+          <Employees
+            onEmployeeClick={handleEmployeeClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       default:
         return null;
     }
   };
-
-  console.log(activeComponent);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

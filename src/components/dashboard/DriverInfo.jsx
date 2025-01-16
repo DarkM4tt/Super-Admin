@@ -208,7 +208,7 @@ const DriverInfo = ({ setSelectedDriverId, setActiveComponent }) => {
   };
 
   return (
-    <div className="py-8 px-14 bg-backGround">
+    <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
         {"> Partners"}
         <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
@@ -254,7 +254,7 @@ const DriverInfo = ({ setSelectedDriverId, setActiveComponent }) => {
           <QuickConnect />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

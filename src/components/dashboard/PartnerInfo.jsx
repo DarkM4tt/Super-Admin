@@ -32,6 +32,7 @@ import Saletypechart from "./Dashboardcharts/Saletypechart";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import StatusDropdown from "../common/StatusDropdown";
+import CustomDropdown from "./../common/CustomDropdown";
 
 ChartJS.register(
   CategoryScale,
@@ -122,6 +123,11 @@ const PartnerInfo = ({
     },
   };
 
+  const dropdownOptions = [
+    { title: "Vehicles", value: "vehicles" },
+    { title: "Drivers", value: "drivers" },
+  ];
+
   const EntityTable = () => {
     const driversData = [
       {
@@ -198,7 +204,7 @@ const PartnerInfo = ({
           <p className="font-redhat font-semibold text-2xl">
             List of approved vehicles/drivers
           </p>
-          <p>drivers</p>
+          <CustomDropdown options={dropdownOptions} />
         </div>
         <TableContainer>
           <Table>
@@ -264,7 +270,7 @@ const PartnerInfo = ({
   };
 
   return (
-    <div className=" bg-backGround">
+    <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
         <div className="flex gap-2">
           <img
@@ -472,12 +478,12 @@ const PartnerInfo = ({
         </div>
 
         {/* Right Cards */}
-        <div className="w-[30%] flex flex-col">
+        <div className="w-[30%] flex flex-col gap-4">
           <SubmittedDocumentsCard />
           <Saletypechart />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

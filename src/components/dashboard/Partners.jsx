@@ -1,4 +1,5 @@
 /* eslint-disable react/prop-types */
+import { useState } from "react";
 import {
   Box,
   Tab,
@@ -12,7 +13,6 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import AppleIcon from "../../assets/apple.svg";
-import { useState } from "react";
 
 const organizationsData = [
   {
@@ -205,7 +205,7 @@ const Partners = ({ onPartnerClick }) => {
   };
 
   return (
-    <Box > 
+    <Box>
       {/* Partners Heading */}
       <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
         {"> Partners"}

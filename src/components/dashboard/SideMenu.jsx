@@ -20,6 +20,7 @@ const SideMenu = ({ onMenuItemClick }) => {
         { text: "BOLD Ads", route: "/services/bold-ads" },
         { text: "BOLD Promotions", route: "/services/bold-promotions" },
         { text: "BOLD Business", route: "/services/bold-business" },
+        { text: "BOLD 3rd Party", route: "/services/bold-business" },
         { text: "SoS", route: "/services/sos" },
       ],
     },
@@ -43,7 +44,28 @@ const SideMenu = ({ onMenuItemClick }) => {
   ];
 
   const handleMenuItemClick = (itemName) => {
+
+    if(itemName==="BOLD Ads"){
+      onMenuItemClick("Boldads");
+      return;
+    }
+
+    else if(itemName==="BOLD Promotions"){
+      onMenuItemClick("Promotion");
+      return;
+    }
+
+    else if(itemName==="BOLD Business"){
+      onMenuItemClick("Business");
+      return;
+    }
+
+    else if(itemName==="BOLD 3rd Party"){
+      onMenuItemClick("Thirdparty");
+      return;
+    }
     onMenuItemClick(itemName);
+
   };
 
   return (
@@ -113,7 +135,7 @@ const SideMenu = ({ onMenuItemClick }) => {
                           >
                             
                             <li
-                            onClick={()=>onMenuItemClick(subItem.text)}
+                            onClick={()=>handleMenuItemClick(subItem.text)}
                               className={`py-3 px-4 text-lg font-redhat rounded-lg ml-3 text-[#777777] hover:text-white  hover:bg-[#18C4B833] hover:font-semibold cursor-pointer ${
                                 subIndex === subindex
                                   ? "font-semibold text-white"

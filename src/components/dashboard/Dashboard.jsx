@@ -331,7 +331,7 @@ const Dashboard = () => {
         <Bookinggraph/>
       </div>
       <div className="w-[30%] flex flex-col gap-6">
-      <div className=" p-4 bg-white rounded-lg ccccccccc" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
+      <div className=" p-4 bg-white rounded-lg " style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
             <div className="flex justify-between items-center  ">
             <p className="font-redhat font-semibold text-base">Total revenue</p>
             <button><MoreHorizIcon className='text-[#777777]'/></button>

@@ -55,7 +55,7 @@ const Saletypechart = () => {
   };
 
   return (
-    <div className="px-4 py-6 bg-white rounded-lg flex-grow" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}ccccc>
+    <div className="px-4 py-6 bg-white rounded-lg flex-grow" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>
          <div className="flex justify-between items-center  ">
              <p className="font-redhat font-semibold text-base">Sale type</p>
              <button ><MoreHorizIcon className='text-[#777777]'/></button>

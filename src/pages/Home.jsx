@@ -12,6 +12,9 @@ import Drivers from "./../components/dashboard/Drivers";
 import VehicleInfo from "./../components/dashboard/VehicleInfo";
 import DriverInfo from "./../components/dashboard/DriverInfo";
 import FuelCard from "../components/dashboard/FuelCard";
+import FuelStations from "../components/dashboard/FuelStations";
+import Employees from "../components/dashboard/Employees";
+import EmployeeInfo from "../components/dashboard/EmployeeInfo";
 import Rentalinfo from "../components/dashboard/Seprateservices/Rental/Rentalinfo";
 import Boldads from "../components/dashboard/Seprateservices/BoldAds/Boldads";
 import Boldadsinfo from "../components/dashboard/Seprateservices/BoldAds/Boldadsinfo";
@@ -29,6 +32,7 @@ const Home = () => {
   const [selectedOrgId, setSelectedOrgId] = useState(null);
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [selectedDriverId, setSelectedDriverId] = useState(null);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedRentalId, setSelectedRentalId] = useState(null);
   const [selectedBoldadsId, setSelectedBoldadsId] = useState(null);
   const [selectedPromotionId, setSelectedPromotionId] = useState(null);
@@ -85,6 +89,11 @@ const Home = () => {
     setActiveComponent("DriverInfo");
   };
 
+  const handleEmployeeClick = (employeeId) => {
+    setSelectedEmployeeId(employeeId);
+    setActiveComponent("EmployeeInfo");
+  };
+
   const renderActiveComponent = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
@@ -109,6 +118,14 @@ const Home = () => {
       return (
         <DriverInfo
           setSelectedDriverId={setSelectedDriverId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
+    if (selectedEmployeeId && activeComponent === "EmployeeInfo") {
+      return (
+        <EmployeeInfo
+          setSelectedEmployeeId={setSelectedEmployeeId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -166,13 +183,20 @@ const Home = () => {
           />
         );
       case "Fuel Card":
-        return <FuelCard />;
+        return <FuelCard setActiveComponent={setActiveComponent} />;
+      case "FuelStations":
+        return <FuelStations setActiveComponent={setActiveComponent} />;
+      case "Employees":
+        return (
+          <Employees
+            onEmployeeClick={handleEmployeeClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       default:
         return null;
     }
   };
-
-  console.log(activeComponent);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

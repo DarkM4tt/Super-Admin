@@ -1,5 +1,9 @@
 /* eslint-disable react/prop-types */
-const CircularProgress = ({ value }) => {
+const CircularProgress = ({
+  value,
+  primaryColor = "#18C4B8",
+  secondaryColor = "#EEEEEE",
+}) => {
   const strokeWidth = 20;
   const radius = 50 - strokeWidth / 2; // Circle radius
   const circumference = 2 * Math.PI * radius;
@@ -19,7 +23,7 @@ const CircularProgress = ({ value }) => {
           cy="50"
           r={radius}
           fill="none"
-          stroke="#EEEEEE"
+          stroke={secondaryColor}
           strokeWidth={strokeWidth}
         />
         {/* Progress Circle */}
@@ -28,7 +32,7 @@ const CircularProgress = ({ value }) => {
           cy="50"
           r={radius}
           fill="none"
-          stroke="#18C4B8" // Cyan color for progress
+          stroke={primaryColor}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={circumference - progress}

@@ -1,18 +1,5 @@
 /* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
-import { useState, useRef, useEffect } from "react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-} from "chart.js";
-import { Line } from "react-chartjs-2";
+import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
@@ -29,20 +16,15 @@ import {
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import AddIcon from "@mui/icons-material/Add";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import BusinessIcon from "@mui/icons-material/Business";
-import Acceptancechart from "./Dashboardcharts/Acceptancechart";
 import Saletypechart from "./Dashboardcharts/Saletypechart";
-import BackArrow from "../../assets/leftArrowBlack.svg";
-import SubmittedDocumentsCard from "../common/SubmittedDocuments";
-import StatusDropdown from "../common/StatusDropdown";
 import CircularProgressBar from "../common/CircularProgressBar";
 import AddFuelCardModal from "./AddFuelCardModal";
 import FuelStationsRequestCard from "../common/FuelStationsRequestCard";
 import CircularProgress from "../common/CircularProgress";
 
-const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
+const FuelCard = ({ setActiveComponent }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     cardName: "",
@@ -283,7 +265,7 @@ const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
                 </p>
                 <button
                   className="pt-3 font-redhat text-sm font-light border-b-[2px]"
-                  onClick={() => setActiveComponent("Vehicles")}
+                  onClick={() => setActiveComponent("FuelStations")}
                 >
                   View list
                 </button>
@@ -306,7 +288,7 @@ const FuelCard = ({ selectedOrgId, setActiveComponent, setSelectedOrgId }) => {
                 </p>
                 <button
                   className="pt-3 font-redhat text-sm font-light border-b-[2px]"
-                  onClick={() => setActiveComponent("Drivers")}
+                  onClick={() => setActiveComponent("FuelStations")}
                 >
                   View list
                 </button>

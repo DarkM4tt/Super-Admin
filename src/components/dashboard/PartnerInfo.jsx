@@ -272,19 +272,7 @@ const PartnerInfo = ({
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
-        <div className="flex gap-2">
-          <img
-            src={BackArrow}
-            alt="BackArrow"
-            width="15px"
-            className="cursor-pointer"
-            onClick={() => {
-              setSelectedOrgId(null);
-              setActiveComponent("Partners");
-            }}
-          />
-          Partners
-        </div>
+        <span className="text-gray">{"> Partners"}</span>
         <div className="flex gap-4">
           <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
             <SearchIcon />
@@ -302,6 +290,18 @@ const PartnerInfo = ({
             Add New Employees{" "}
           </div>
         </div>
+      </div>
+
+      <div className="mt-8">
+        <img
+          src={BackArrow}
+          alt="BackArrow"
+          className="mb-4 cursor-pointer"
+          onClick={() => {
+            setSelectedOrgId(null);
+            setActiveComponent("Partners");
+          }}
+        />
       </div>
 
       <p className="font-redhat font-semibold text-2xl pt-8">ABC Company Ltd</p>

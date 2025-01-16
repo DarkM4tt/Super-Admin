@@ -4,9 +4,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import StatusDropdown from "../common/StatusDropdown";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import BackArrow from "../../assets/leftArrowBlack.svg";
-import Incoming from "../../assets/incoming.svg";
-import Outgoing from "../../assets/outgoing.svg";
-import Unanswered from "../../assets/unanswered.svg";
+import Incoming from "../../assets/Incoming.svg";
+import Outgoing from "../../assets/Outgoing.svg";
+import Unanswered from "../../assets/Unanswered.svg";
 import CircularProgress from "./../common/CircularProgress";
 import CustomerCard from "../common/CustomerCard";
 

@@ -1,5 +1,3 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable no-unused-vars */
 import { useState, useRef, useEffect } from "react";
 import {
   Chart as ChartJS,
@@ -266,7 +264,7 @@ const PartnerInfo = ({
   };
 
   return (
-    <div className="py-8 px-14 bg-backGround">
+    <div className=" bg-backGround">
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
         <div className="flex gap-2">
           <img

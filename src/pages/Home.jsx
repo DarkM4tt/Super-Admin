@@ -6,18 +6,21 @@ import Dashboard from "../components/dashboard/Dashboard";
 import Partners from "../components/dashboard/Partners";
 import PartnerInfo from "../components/dashboard/PartnerInfo";
 import Services from "../components/dashboard/Services";
-import Rentals from "../components/dashboard/Seprateservices/Rentals";
+import Rentals from "../components/dashboard/Seprateservices/Rental/Rentals";
 import Vehicles from "./../components/dashboard/Vehicles";
 import Drivers from "./../components/dashboard/Drivers";
 import VehicleInfo from "./../components/dashboard/VehicleInfo";
 import DriverInfo from "./../components/dashboard/DriverInfo";
 import FuelCard from "../components/dashboard/FuelCard";
+import Rentalinfo from "../components/dashboard/Seprateservices/Rental/Rentalinfo";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
   const [selectedOrgId, setSelectedOrgId] = useState(null);
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [selectedDriverId, setSelectedDriverId] = useState(null);
+  const [selectedRentalId, setSelectedRentalId] = useState(null);
+
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
@@ -27,6 +30,11 @@ const Home = () => {
     setSelectedOrgId(orgId);
     setActiveComponent("PartnerInfo");
   };
+
+  const handleRentalClick=(rentalId)=>{
+    setSelectedRentalId(rentalId);
+    setActiveComponent("RentalInfo");
+  }
 
   const handleVehicleClick = (vehicleId) => {
     setSelectedVehicleId(vehicleId);
@@ -80,7 +88,9 @@ const Home = () => {
       case "Services":
         return <Services />;
         case "Rentals":
-        return <Rentals />;
+        return <Rentals handleRentalClick={handleRentalClick} />;
+        case "RentalInfo":
+          return <Rentalinfo/>;
       case "Vehicles":
         return (
           <Vehicles

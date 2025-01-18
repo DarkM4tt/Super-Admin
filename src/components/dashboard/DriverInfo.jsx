@@ -32,6 +32,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import StarIcon from "@mui/icons-material/Star";
 import Rentalpartner from "../../assets/Rentalpartner.png";
 import partycar from "../../assets/partycar.png";
+import CustomDropdown from "../common/CustomDropdown";
 
 ChartJS.register(
   CategoryScale,
@@ -102,6 +103,10 @@ const DriverInfo = ({ setSelectedDriverId, setActiveComponent }) => {
         totalRides: 789,
       },
     ];
+    const dropdownOptions = [
+      { title: "Fuel Stations", value: "stations" },
+      { title: "Vehicles", value: "vehicles" },
+    ];
 
     return (
       <Box
@@ -115,9 +120,9 @@ const DriverInfo = ({ setSelectedDriverId, setActiveComponent }) => {
           borderRadius: "8px",
         }}
       >
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <p className="font-redhat font-semibold text-2xl">Ride history</p>
-          <p>drivers</p>
+          <CustomDropdown options={dropdownOptions} />
         </div>
         <TableContainer>
           <Table>

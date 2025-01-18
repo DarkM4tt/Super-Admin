@@ -14,6 +14,7 @@ import { Line } from "react-chartjs-2";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -33,6 +34,7 @@ import BackArrow from "../../assets/leftArrowBlack.svg";
 import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import StatusDropdown from "../common/StatusDropdown";
 import CustomDropdown from "./../common/CustomDropdown";
+import Locationmapcard from "./../common/locationmapcard";
 
 ChartJS.register(
   CategoryScale,
@@ -304,12 +306,31 @@ const PartnerInfo = ({
         />
       </div>
 
-      <p className="font-redhat font-semibold text-2xl pt-8">ABC Company Ltd</p>
-      <p className="font-redhat font-normal text-sm  text-[#777777] pt-2">
-        Please note that the status change will hinder the organisation
-        operations & any vehicle in the organisation may not receive the ride
-        request from BOLD app.{" "}
-      </p>
+      <div className="flex justify-between items-center">
+      <div className="flex flex-col">
+        <p className="font-redhat font-semibold text-2xl pt-8">ABC Company Ltd</p>
+        <p className="font-redhat font-normal text-sm  text-[#777777] pt-2">
+          Please note that the status change will hinder the organisation
+          operations & any vehicle in the organisation may not receive the ride
+          request from BOLD app.{" "}
+        </p>
+      </div>
+      <Button
+          variant="outlined"
+          sx={{
+            textTransform: "none",
+            borderColor: "black",
+            color: "black",
+            borderRadius: "20px",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+              borderColor: "black",
+            },
+          }}
+        >
+          Engage operations team
+        </Button>
+      </div>
 
       {/* Buttons */}
       <div className="flex justify-between items-center">
@@ -480,7 +501,7 @@ const PartnerInfo = ({
         {/* Right Cards */}
         <div className="w-[30%] flex flex-col gap-4">
           <SubmittedDocumentsCard />
-          <Saletypechart />
+          <Locationmapcard email="example@unanimeplanet.com" />
         </div>
       </div>
     </>

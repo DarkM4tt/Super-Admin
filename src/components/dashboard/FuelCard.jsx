@@ -18,11 +18,11 @@ import AddIcon from "@mui/icons-material/Add";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import BusinessIcon from "@mui/icons-material/Business";
-import Saletypechart from "./Dashboardcharts/Saletypechart";
 import CircularProgressBar from "../common/CircularProgressBar";
 import AddFuelCardModal from "./AddFuelCardModal";
 import FuelStationsRequestCard from "../common/FuelStationsRequestCard";
 import CircularProgress from "../common/CircularProgress";
+import FuelStationLocation from "./FuelStationLocation";
 
 const FuelCard = ({ setActiveComponent }) => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -405,7 +405,7 @@ const FuelCard = ({ setActiveComponent }) => {
         {/* Right Cards */}
         <div className="w-[30%] flex flex-col gap-4">
           <FuelStationsRequestCard />
-          <Saletypechart />
+          <FuelStationLocation />
         </div>
       </div>
 

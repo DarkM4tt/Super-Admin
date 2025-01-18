@@ -26,6 +26,9 @@ import Thirdparty from "../components/dashboard/Seprateservices/Boldthirdparty/T
 import Thirdpartyinfo from "../components/dashboard/Seprateservices/Boldthirdparty/Thirdpartyinfo";
 import Sos from "../components/dashboard/Seprateservices/Sos/Sos";
 import Sosinfo from "../components/dashboard/Seprateservices/Sos/Sosinfo";
+import Payouts from "../components/dashboard/Payouts";
+import Rewards from "../components/dashboard/Rewards";
+import TransactionHistory from "../components/dashboard/TransactionHistory";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -159,15 +162,22 @@ const Home = () => {
         return <Business handleBusinessClick={handleBusinessClick} />;
       case "BusinessInfo":
         return <Businessinfo />;
-        case "Thirdparty":
-          return <Thirdparty handleThirdpartyClick={handleThirdpartyClick} />;
-        case "ThirdpartyInfo":
-          return <Thirdpartyinfo />;
-          case "SoS":
-            return <Sos handleSosClick={handleSosClick} />;
-          case "SoSInfo":
-            return <Sosinfo />;
-
+      case "Thirdparty":
+        return <Thirdparty handleThirdpartyClick={handleThirdpartyClick} />;
+      case "ThirdpartyInfo":
+        return <Thirdpartyinfo />;
+      case "SoS":
+        return <Sos handleSosClick={handleSosClick} />;
+      case "SoSInfo":
+        return <Sosinfo />;
+      case "Accounts":
+        return <Payouts />;
+      case "Payouts":
+        return <Payouts />;
+      case "Rewards":
+        return <Rewards />;
+      case "TransactionHistory":
+        return <TransactionHistory />;
       case "Vehicles":
         return (
           <Vehicles
@@ -197,6 +207,8 @@ const Home = () => {
         return null;
     }
   };
+
+  console.log(activeComponent);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

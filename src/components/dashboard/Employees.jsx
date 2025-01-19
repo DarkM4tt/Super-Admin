@@ -9,9 +9,11 @@ import {
   TableRow,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import AppleIcon from "../../assets/apple.svg";
+import PartnerIcon from "../../assets/partnerImage.png";
 import { MoreHoriz } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
+import AddNewEmployeeModal from "./AddNewEmployeeModal";
+import { useState } from "react";
 
 const employeesData = [
   {
@@ -177,6 +179,22 @@ const employeesData = [
 ];
 
 const Employees = ({ onEmployeeClick }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    cardName: "",
+    fuelType: "",
+    fuelCategory: "",
+    fuelStations: "",
+    cardLimit: "",
+    revenueNeeded: "",
+    amount: "",
+  });
+
+  const handleSave = () => {
+    console.log("Saved Data:", formData);
+    setModalOpen(false);
+  };
+
   return (
     <Box>
       {/* Employees Heading */}
@@ -191,7 +209,10 @@ const Employees = ({ onEmployeeClick }) => {
               className="bg-transparent outline-none"
             ></input>
           </div>
-          <div className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer">
+          <div
+            className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer"
+            onClick={() => setModalOpen(true)}
+          >
             <span className="pr-1">
               {" "}
               <AddIcon fontSize="small" />
@@ -264,7 +285,7 @@ const Employees = ({ onEmployeeClick }) => {
                 >
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <img src={AppleIcon} alt="AppleIcon" />
+                      <img src={PartnerIcon} alt="AppleIcon" />
                       {employee.name}
                     </div>
                   </TableCell>
@@ -281,6 +302,14 @@ const Employees = ({ onEmployeeClick }) => {
           </Table>
         </TableContainer>
       </Box>
+
+      <AddNewEmployeeModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        formData={formData}
+        setFormData={setFormData}
+        onSave={handleSave}
+      />
     </Box>
   );
 };

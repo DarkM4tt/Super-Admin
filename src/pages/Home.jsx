@@ -29,6 +29,7 @@ import Sosinfo from "../components/dashboard/Seprateservices/Sos/Sosinfo";
 import Payouts from "../components/dashboard/Payouts";
 import Rewards from "../components/dashboard/Rewards";
 import TransactionHistory from "../components/dashboard/TransactionHistory";
+import FuelStationDetails from "../components/dashboard/FuelStationDetails";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -36,6 +37,7 @@ const Home = () => {
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [selectedDriverId, setSelectedDriverId] = useState(null);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+  const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
   const [selectedRentalId, setSelectedRentalId] = useState(null);
   const [selectedBoldadsId, setSelectedBoldadsId] = useState(null);
   const [selectedPromotionId, setSelectedPromotionId] = useState(null);
@@ -97,6 +99,11 @@ const Home = () => {
     setActiveComponent("EmployeeInfo");
   };
 
+  const handleFuelStationClick = (stationId) => {
+    setSelectedFuelStationId(stationId);
+    setActiveComponent("FuelStationDetails");
+  };
+
   const renderActiveComponent = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
@@ -129,6 +136,14 @@ const Home = () => {
       return (
         <EmployeeInfo
           setSelectedEmployeeId={setSelectedEmployeeId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
+    if (selectedFuelStationId && activeComponent === "FuelStationDetails") {
+      return (
+        <FuelStationDetails
+          setSelectedFuelStationId={setSelectedFuelStationId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -195,7 +210,12 @@ const Home = () => {
       case "Fuel Card":
         return <FuelCard setActiveComponent={setActiveComponent} />;
       case "FuelStations":
-        return <FuelStations setActiveComponent={setActiveComponent} />;
+        return (
+          <FuelStations
+            onFuelStationClick={handleFuelStationClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       case "Employees":
         return (
           <Employees

@@ -17,7 +17,7 @@ const SubmittedDocumentsCard = () => {
       sx={{
         // maxWidth: 400,
         borderRadius: 2,
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)"
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
       }}
     >
       <CardContent sx={{ paddingInline: "5%" }}>
@@ -49,6 +49,7 @@ const SubmittedDocumentsCard = () => {
             borderColor: "black",
             color: "black",
             borderRadius: "20px",
+            backgroundColor: "#fff",
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.04)",
               borderColor: "black",

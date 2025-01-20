@@ -21,7 +21,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
 
 const VehicleInfo = ({
-  selectedOrgId,
+  setSelectedVehicleId,
   setActiveComponent,
   setSelectedOrgId,
 }) => {
@@ -92,8 +92,8 @@ const VehicleInfo = ({
             alt="BackArrow"
             className="mb-4 cursor-pointer"
             onClick={() => {
-              setSelectedDriverId(null);
-              setActiveComponent("Drivers");
+              setSelectedVehicleId(null);
+              setActiveComponent("Vehicles");
             }}
           />
         </div>

@@ -119,7 +119,7 @@ const Home = () => {
     if (selectedVehicleId && activeComponent === "VehicleInfo") {
       return (
         <VehicleInfo
-          selectedVehicleId={selectedVehicleId}
+          setSelectedVehicleId={setSelectedVehicleId}
           setActiveComponent={setActiveComponent}
         />
       );

@@ -45,7 +45,6 @@ const StatusDropdown = () => {
           border: "1px solid #ddd",
           borderRadius: "50px",
           padding: "8px 16px",
-          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
         <span className="flex items-center">

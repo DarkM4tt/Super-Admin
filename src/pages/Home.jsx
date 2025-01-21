@@ -32,6 +32,10 @@ import Trips from "../components/dashboard/Trips/Trips";
 import Tripinfo from "../components/dashboard/Trips/Tripinfo";
 import Internalteam from "../components/dashboard/Internalteam";
 import Operations from "../components/dashboard/Seprateinternalteams/Operations";
+import Payouts from "../components/dashboard/Payouts";
+import Rewards from "../components/dashboard/Rewards";
+import TransactionHistory from "../components/dashboard/TransactionHistory";
+import FuelStationDetails from "../components/dashboard/FuelStationDetails";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -39,6 +43,7 @@ const Home = () => {
   const [selectedVehicleId, setSelectedVehicleId] = useState(null);
   const [selectedDriverId, setSelectedDriverId] = useState(null);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
+  const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
   const [selectedRentalId, setSelectedRentalId] = useState(null);
   const [selectedBoldadsId, setSelectedBoldadsId] = useState(null);
   const [selectedPromotionId, setSelectedPromotionId] = useState(null);
@@ -112,6 +117,11 @@ const Home = () => {
     setActiveComponent("EmployeeInfo");
   };
 
+  const handleFuelStationClick = (stationId) => {
+    setSelectedFuelStationId(stationId);
+    setActiveComponent("FuelStationDetails");
+  };
+
   const renderActiveComponent = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
@@ -127,7 +137,7 @@ const Home = () => {
     if (selectedVehicleId && activeComponent === "VehicleInfo") {
       return (
         <VehicleInfo
-          selectedVehicleId={selectedVehicleId}
+          setSelectedVehicleId={setSelectedVehicleId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -144,6 +154,14 @@ const Home = () => {
       return (
         <EmployeeInfo
           setSelectedEmployeeId={setSelectedEmployeeId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
+    if (selectedFuelStationId && activeComponent === "FuelStationDetails") {
+      return (
+        <FuelStationDetails
+          setSelectedFuelStationId={setSelectedFuelStationId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -197,6 +215,14 @@ const Home = () => {
           return <Internalteam />;
           case "Operations":
             return <Operations />;
+      case "Accounts":
+        return <Payouts />;
+      case "Payouts":
+        return <Payouts />;
+      case "Rewards":
+        return <Rewards />;
+      case "TransactionHistory":
+        return <TransactionHistory />;
       case "Vehicles":
         return (
           <Vehicles
@@ -214,7 +240,12 @@ const Home = () => {
       case "Fuel Card":
         return <FuelCard setActiveComponent={setActiveComponent} />;
       case "FuelStations":
-        return <FuelStations setActiveComponent={setActiveComponent} />;
+        return (
+          <FuelStations
+            onFuelStationClick={handleFuelStationClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       case "Employees":
         return (
           <Employees
@@ -226,6 +257,8 @@ const Home = () => {
         return null;
     }
   };
+
+  console.log(activeComponent);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

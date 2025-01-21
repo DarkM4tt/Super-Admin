@@ -12,7 +12,7 @@ import {
   TableRow,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import AppleIcon from "../../assets/apple.svg";
+import PartnerIcon from "../../assets/partnerImage.png";
 
 const organizationsData = [
   {
@@ -312,7 +312,7 @@ const Partners = ({ onPartnerClick }) => {
                     <TableCell>{org.id}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <img src={AppleIcon} alt="AppleIcon" />
+                        <img src={PartnerIcon} alt="AppleIcon" />
                         {org.name}
                       </div>
                     </TableCell>

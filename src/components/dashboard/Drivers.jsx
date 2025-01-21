@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { MoreHoriz } from "@mui/icons-material";
 import BackArrow from "../../assets/leftArrowBlack.svg";
-import AppleIcon from "../../assets/apple.svg";
+import PartnerIcon from "../../assets/partnerImage.png";
 import SearchIcon from "@mui/icons-material/Search";
 
 const driversData = [
@@ -299,7 +299,7 @@ const Drivers = ({ onDriverClick, setActiveComponent }) => {
                   >
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <img src={AppleIcon} alt="AppleIcon" />
+                        <img src={PartnerIcon} alt="AppleIcon" />
                         {driver.name}
                       </div>
                     </TableCell>

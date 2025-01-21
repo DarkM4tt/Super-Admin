@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import {
   Box,
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -9,13 +10,11 @@ import {
   TableRow,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import PartnerIcon from "../../assets/partnerImage.png";
-import { MoreHoriz } from "@mui/icons-material";
+import DownloadIcon from "@mui/icons-material/Download";
 import AddIcon from "@mui/icons-material/Add";
-import AddNewEmployeeModal from "./AddNewEmployeeModal";
-import { useState } from "react";
+import AppleIcon from "../../assets/unchecked.svg";
 
-const employeesData = [
+const TransactionHistoryData = [
   {
     id: 1,
     name: "Nolan Lipshutz",
@@ -178,28 +177,12 @@ const employeesData = [
   },
 ];
 
-const Employees = ({ onEmployeeClick }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    cardName: "",
-    fuelType: "",
-    fuelCategory: "",
-    fuelStations: "",
-    cardLimit: "",
-    revenueNeeded: "",
-    amount: "",
-  });
-
-  const handleSave = () => {
-    console.log("Saved Data:", formData);
-    setModalOpen(false);
-  };
-
+const TransactionHistory = ({ onEmployeeClick }) => {
   return (
     <Box>
-      {/* Employees Heading */}
-      <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
-        {"> All employees"}
+      {/* TransactionHistory Heading */}
+      <div className="flex justify-between items-center font-redhat text-base text-gray font-semibold mb-8">
+        {"Accounts > Transactions"}
         <div className="flex gap-4">
           <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
             <SearchIcon />
@@ -209,10 +192,7 @@ const Employees = ({ onEmployeeClick }) => {
               className="bg-transparent outline-none"
             ></input>
           </div>
-          <div
-            className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer"
-            onClick={() => setModalOpen(true)}
-          >
+          <div className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer">
             <span className="pr-1">
               {" "}
               <AddIcon fontSize="small" />
@@ -220,6 +200,25 @@ const Employees = ({ onEmployeeClick }) => {
             Add New Employees{" "}
           </div>
         </div>
+      </div>
+
+      <div className="mt-8 flex flex-row-reverse">
+        <Button
+          variant="outlined"
+          sx={{
+            textTransform: "none",
+            borderColor: "black",
+            color: "black",
+            borderRadius: "20px",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+              borderColor: "black",
+            },
+          }}
+        >
+          <DownloadIcon sx={{ marginRight: "8px" }} />
+          Download receipt
+        </Button>
       </div>
 
       <Box
@@ -254,12 +253,11 @@ const Employees = ({ onEmployeeClick }) => {
             >
               <TableRow>
                 {[
-                  "Name",
-                  "Joined on",
-                  "Current team",
-                  "Employee ID",
-                  "Last worked on",
-                  "Options",
+                  "Transaction ID",
+                  "Date of transaction",
+                  "Time",
+                  "Credited to",
+                  "Status",
                 ].map((header) => (
                   <TableCell key={header}>{header}</TableCell>
                 ))}
@@ -275,7 +273,7 @@ const Employees = ({ onEmployeeClick }) => {
                 },
               }}
             >
-              {employeesData.map((employee) => (
+              {TransactionHistoryData.map((employee) => (
                 <TableRow
                   key={employee?.id}
                   onClick={() => onEmployeeClick(employee?.id)}
@@ -285,7 +283,7 @@ const Employees = ({ onEmployeeClick }) => {
                 >
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <img src={PartnerIcon} alt="AppleIcon" />
+                      <img src={AppleIcon} alt="AppleIcon" />
                       {employee.name}
                     </div>
                   </TableCell>
@@ -293,25 +291,14 @@ const Employees = ({ onEmployeeClick }) => {
                   <TableCell>{employee.currentTeam}</TableCell>
                   <TableCell>{employee.employeeId}</TableCell>
                   <TableCell>{employee.lastWorkedOn}</TableCell>
-                  <TableCell>
-                    <MoreHoriz />
-                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
       </Box>
-
-      <AddNewEmployeeModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onSave={handleSave}
-      />
     </Box>
   );
 };
 
-export default Employees;
+export default TransactionHistory;

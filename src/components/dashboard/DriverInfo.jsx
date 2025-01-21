@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import { useState, useRef, useEffect } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,7 +11,6 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
@@ -24,18 +22,17 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import AddIcon from "@mui/icons-material/Add";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
-import BusinessIcon from "@mui/icons-material/Business";
-import Acceptancechart from "./Dashboardcharts/Acceptancechart";
-import Saletypechart from "./Dashboardcharts/Saletypechart";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import StatusDropdown from "../common/StatusDropdown";
 import QuickConnect from "../common/QuickConnect";
+import CallIcon from "@mui/icons-material/Call";
+import EmailIcon from "@mui/icons-material/Email";
+import StarIcon from "@mui/icons-material/Star";
+import Rentalpartner from "../../assets/Rentalpartner.png";
+import partycar from "../../assets/partycar.png";
+import CustomDropdown from "../common/CustomDropdown";
 
 ChartJS.register(
   CategoryScale,
@@ -106,6 +103,10 @@ const DriverInfo = ({ setSelectedDriverId, setActiveComponent }) => {
         totalRides: 789,
       },
     ];
+    const dropdownOptions = [
+      { title: "Fuel Stations", value: "stations" },
+      { title: "Vehicles", value: "vehicles" },
+    ];
 
     return (
       <Box
@@ -119,9 +120,9 @@ const DriverInfo = ({ setSelectedDriverId, setActiveComponent }) => {
           borderRadius: "8px",
         }}
       >
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <p className="font-redhat font-semibold text-2xl">Ride history</p>
-          <p>drivers</p>
+          <CustomDropdown options={dropdownOptions} />
         </div>
         <TableContainer>
           <Table>
@@ -239,6 +240,73 @@ const DriverInfo = ({ setSelectedDriverId, setActiveComponent }) => {
             Generate report
           </div>
           <StatusDropdown />
+        </div>
+      </div>
+
+      <div className=" p-6 rounded-lg bg-white mt-8">
+        <div className="flex justify-between pb-11 border-b border-[#DDDDDD] ">
+          <div className="">
+            <div className="flex gap-4">
+              <div className="">
+                <img
+                  src={Rentalpartner}
+                  alt="any"
+                  className="w-20 h-20 rounded-full"
+                />
+              </div>
+              <div className="">
+                <p className="font-sans text-2xl font-semibold flex items-center">
+                  Ann Baptista{" "}
+                  <span className=" pl-4 text-base text-[#777777] underline font-sans">
+                    ABC Company Ltd &gt;&gt;
+                  </span>
+                </p>
+                <div className="pt-2 flex gap-4">
+                  <p className="font-sans text-base text-[#777777] flex gap-2 items-center">
+                    <span>
+                      <EmailIcon fontSize="small" />
+                    </span>
+                    annbaptista16@gmail.com
+                  </p>
+                  <p className="font-sans text-base text-[#777777] flex gap-2 items-center underline">
+                    <span>
+                      <CallIcon fontSize="small" />
+                    </span>
+                    +91-9440192122
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="">
+            <p className="font-redhat text-xl text-[#777777]">
+              Customer rating
+            </p>
+            <p className="pt-2 font-redhat font-bold text-xl text-[#18C4B8] text-right">
+              <span className="text-[#FBDB0B] pr-2">
+                <StarIcon />
+              </span>
+              4.5/5
+            </p>
+          </div>
+        </div>
+        <div className="flex justify-between gap-6 items-center pt-4">
+          <img src={partycar} alt="partycar" className="w-[15%]" />
+          <div className="flex items-center gap-8 flex-grow">
+            <div className="">
+              <p className="font-redhat text-xl text-[#777777]">
+                Registered vehicle
+              </p>
+              <p className="font-redhat text-xl pt-2 "> KH01MN0019M </p>
+            </div>
+            <p className="font-redhat font-bold text-xl text-[#344BFD]">82%</p>
+            <div className="h-4 rounded-3xl bg-[#EEEEEE] flex-grow relative ">
+              <div className="h-4 rounded-3xl bg-[#344BFD] absolute w-[82%]"></div>
+            </div>
+          </div>
+          <p className="font-redhat font-semibold text-xl text-[#777777]">
+            Acceptance ratio
+          </p>
         </div>
       </div>
 

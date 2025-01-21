@@ -6,8 +6,9 @@ import CustomDropdown from "./../common/CustomDropdown";
 import { useState } from "react";
 import AddFuelCardModal from "./AddFuelCardModal";
 import { Button, Tab, Tabs } from "@mui/material";
+import BackArrow from "../../assets/leftArrowBlack.svg";
 
-const FuelStations = ({ setActiveComponent }) => {
+const FuelStations = ({ onFuelStationClick, setActiveComponent }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [formData, setFormData] = useState({
@@ -98,6 +99,7 @@ const FuelStations = ({ setActiveComponent }) => {
                 backgroundColor: "rgba(0,0,0,0.05)",
               },
             }}
+            onClick={() => onFuelStationClick(2)}
           >
             Accept and review
           </Button>
@@ -123,6 +125,15 @@ const FuelStations = ({ setActiveComponent }) => {
           </div>
         </div>
       </div>
+
+      <img
+        src={BackArrow}
+        alt="BackArrow"
+        className="mb-4 mt-4 cursor-pointer"
+        onClick={() => {
+          setActiveComponent("Fuel Card");
+        }}
+      />
 
       <p className="font-redhat font-semibold text-2xl pt-8">Overview</p>
       <p className="font-normal text-lg text-gray pt-4">
@@ -153,7 +164,7 @@ const FuelStations = ({ setActiveComponent }) => {
       </div>
 
       {/* Tabs */}
-      <div className="flex justify-between mt-8">
+      <div className="flex justify-between items-center mt-8">
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
@@ -180,6 +191,7 @@ const FuelStations = ({ setActiveComponent }) => {
             borderColor: "black",
             color: "black",
             borderRadius: "30px",
+            backgroundColor: "#fff",
             "&:hover": {
               backgroundColor: "rgba(0, 0, 0, 0.04)",
               borderColor: "black",

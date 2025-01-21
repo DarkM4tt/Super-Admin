@@ -1,12 +1,12 @@
-import React from "react";
-import { Card, CardContent, IconButton, Button } from "@mui/material";
+import React, { useState } from "react";
+import { IconButton, TextField, MenuItem } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import CallIcon from "@mui/icons-material/Call";
-import EmailIcon from "@mui/icons-material/Email";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { GoogleMap } from "@react-google-maps/api";
 import useGoogleMapsLoader from "../../useGoogleMapsLoader";
 
-const Locationmapcard = ({ email }) => {
+const FuelStationLocation = () => {
+  const [partnerStation, setPartnerStation] = useState("");
   const { isLoaded, loadError } = useGoogleMapsLoader();
 
   if (loadError) {
@@ -23,29 +23,38 @@ const Locationmapcard = ({ email }) => {
       style={{ boxShadow: "4px 4px 33px 0px #0000000A" }}
     >
       <div className="flex justify-between items-center">
-        <p className="font-redhat font-semibold text-base">
-          {email ? "Company contact" : "Location"}
-        </p>
+        <p className="font-redhat font-semibold text-base">Quick search</p>
         <IconButton aria-label="options">
           <MoreHorizIcon />
         </IconButton>
       </div>
       <div className="pt-8 flex flex-col gap-4 pb-6 border-b border-[#DDDDDD] border-dashed ">
-        <div className="flex items-center gap-3">
-          <div className="bg-[#6FA4EE1F] rounded-lg items-start p-3 ">
-            <CallIcon />
-          </div>
-          <p className="font-sans text-base ">Call : +351 2210 02912</p>
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="bg-[#6FA4EE1F] rounded-lg items-start p-3 ">
-            <EmailIcon />
-          </div>
-          {email ? (
-            <p className="font-sans text-base">Mail : {email}</p>
-          ) : (
-            <p className="font-sans text-base font-bold ">Send mail now</p>
-          )}
+        <div className="flex flex-col">
+          <label
+            htmlFor="fuel-type"
+            className="text-sm font-medium text-gray-700 mb-4"
+          >
+            Select fuel station to view locaion
+          </label>
+          <TextField
+            id="fuel-type"
+            select
+            variant="outlined"
+            size="small"
+            value={partnerStation}
+            onChange={(e) => setPartnerStation(e.target.value)}
+            fullWidth
+            SelectProps={{
+              displayEmpty: true,
+              IconComponent: ExpandMoreIcon,
+            }}
+          >
+            <MenuItem value="" disabled>
+              Select partner fuel station
+            </MenuItem>
+            <MenuItem value="diesel">Diesel</MenuItem>
+            <MenuItem value="petrol">Petrol</MenuItem>
+          </TextField>
         </div>
       </div>
       <p className="font-sans text-base pt-6">
@@ -66,4 +75,4 @@ const Locationmapcard = ({ email }) => {
   );
 };
 
-export default Locationmapcard;
+export default FuelStationLocation;

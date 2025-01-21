@@ -16,7 +16,7 @@ const SideMenu = ({ onMenuItemClick }) => {
       text: "Services",
       subItems: [
         { text: "Overview", route: "/services/overview" },
-        { text: "Rentals",},
+        { text: "Rentals" },
         { text: "BOLD Ads", route: "/services/bold-ads" },
         { text: "BOLD Promotions", route: "/services/bold-promotions" },
         { text: "BOLD Business", route: "/services/bold-business" },
@@ -44,28 +44,33 @@ const SideMenu = ({ onMenuItemClick }) => {
   ];
 
   const handleMenuItemClick = (itemName) => {
-
-    if(itemName==="BOLD Ads"){
+    if (itemName === "BOLD Ads") {
       onMenuItemClick("Boldads");
       return;
-    }
-
-    else if(itemName==="BOLD Promotions"){
+    } else if (itemName === "BOLD Promotions") {
       onMenuItemClick("Promotion");
       return;
-    }
-
-    else if(itemName==="BOLD Business"){
+    } else if (itemName === "BOLD Business") {
       onMenuItemClick("Business");
       return;
-    }
-
-    else if(itemName==="BOLD 3rd Party"){
+    } else if (itemName === "BOLD 3rd Party") {
       onMenuItemClick("Thirdparty");
       return;
     }
-    onMenuItemClick(itemName);
 
+    else if (activeDropdown === "services" && itemName === "Overview"){
+      onMenuItemClick("Services")
+      return;
+    }
+    else if (activeDropdown === "internalteam" && itemName === "Overview"){
+      onMenuItemClick("Internalteam");
+    }
+    else if (itemName === "Internal Team") {
+      onMenuItemClick("Internalteam");
+      return;
+    }
+
+     else onMenuItemClick(itemName);
   };
 
   return (
@@ -133,9 +138,12 @@ const SideMenu = ({ onMenuItemClick }) => {
                             }`}
                             onClick={() => setSubindex(subIndex)}
                           >
-                            
                             <li
-                            onClick={()=>handleMenuItemClick(subItem.text)}
+                              onClick={() => {
+                                activeDropdown === "services" &&
+                                  subItem.text === "Overview";
+                                handleMenuItemClick(subItem.text);
+                              }}
                               className={`py-3 px-4 text-lg font-redhat rounded-lg ml-3 text-[#777777] hover:text-white  hover:bg-[#18C4B833] hover:font-semibold cursor-pointer ${
                                 subIndex === subindex
                                   ? "font-semibold text-white"
@@ -154,7 +162,7 @@ const SideMenu = ({ onMenuItemClick }) => {
             }
 
             return (
-              <NavLink  key={index}>
+              <NavLink key={index}>
                 <li
                   onClick={() => {
                     setActiveIndex(index);

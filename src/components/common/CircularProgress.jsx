@@ -41,7 +41,7 @@ const CircularProgress = ({
       </svg>
       {/* Value inside the circle */}
       <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center">
-        <p className="text-lg font-semibold text-black">{value}%</p>
+        <p className="text-sm font-semibold text-black">{value}%</p>
       </div>
     </div>
   );

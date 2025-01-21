@@ -56,7 +56,7 @@ ChartJS.register(
 );
 
 
-const Dashboard = () => {
+const Dashboard = ({onMenuItemClick}) => {
 
 
   const chartRef = useRef(null);
@@ -297,7 +297,7 @@ const Dashboard = () => {
     <p className="font-redhat font-semibold text-base">Total users</p>
     <p className="pt-2 font-redhat font-bold text-2xl">2210</p>
     <p className="pt-2 text-sm text-[#777777]">including 320 rental org.</p>
-    <button className='pt-3 font-redhat text-sm font-light underline'>View list</button>
+    <button className='pt-3 font-redhat text-sm font-light underline' onClick={()=>onMenuItemClick("Customer")}>View list</button>
   </div>
           </div>
         </div>
@@ -313,7 +313,7 @@ const Dashboard = () => {
     <p className="font-redhat font-semibold text-base">Total vehicles</p>
     <p className="pt-2 font-redhat font-bold text-2xl">22 k</p>
     <p className="pt-2 text-sm text-[#777777]">18 k+ currently <span className='text-[#18C4B8]'>active</span></p>
-    <button className='pt-3 font-redhat text-sm font-light underline'>View list</button>
+    <button className='pt-3 font-redhat text-sm font-light underline' onClick={()=>onMenuItemClick("Trips")}>View list</button>
   </div>
           </div>
           <div className="w-[30%] p-6 flex gap-6 bg-white items-center rounded-lg border-b border-[#1860C4]" style={{boxShadow: "4px 4px 33px 0px #0000000A"}}>

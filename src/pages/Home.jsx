@@ -26,6 +26,12 @@ import Thirdparty from "../components/dashboard/Seprateservices/Boldthirdparty/T
 import Thirdpartyinfo from "../components/dashboard/Seprateservices/Boldthirdparty/Thirdpartyinfo";
 import Sos from "../components/dashboard/Seprateservices/Sos/Sos";
 import Sosinfo from "../components/dashboard/Seprateservices/Sos/Sosinfo";
+import Customer from "../components/dashboard/Customer/Customer";
+import Customerinfo from "../components/dashboard/Customer/Customerinfo";
+import Trips from "../components/dashboard/Trips/Trips";
+import Tripinfo from "../components/dashboard/Trips/Tripinfo";
+import Internalteam from "../components/dashboard/Internalteam";
+import Operations from "../components/dashboard/Seprateinternalteams/Operations";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -39,6 +45,8 @@ const Home = () => {
   const [selectedBusinessId, setSelectedBusinessId] = useState(null);
   const [selectedThirdpartyId, setSelectedThirdpartyId] = useState(null);
   const [selectedSosId, setSelectedSosId] = useState(null);
+  const [selectedCustomerId, setSelectedCustomerId] = useState(null);
+  const [selectedTripId, setSelectedTripId] = useState(null);
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
@@ -87,6 +95,16 @@ const Home = () => {
   const handleDriverClick = (driverId) => {
     setSelectedDriverId(driverId);
     setActiveComponent("DriverInfo");
+  };
+
+  const handleTripClick = (tripId) => {
+    setSelectedTripId(tripId);
+    setActiveComponent("TripInfo");
+  };
+
+  const handleCustomerClick = (customerId) => {
+    setSelectedCustomerId(customerId);
+    setActiveComponent("CustomerInfo");
   };
 
   const handleEmployeeClick = (employeeId) => {
@@ -159,15 +177,26 @@ const Home = () => {
         return <Business handleBusinessClick={handleBusinessClick} />;
       case "BusinessInfo":
         return <Businessinfo />;
-        case "Thirdparty":
-          return <Thirdparty handleThirdpartyClick={handleThirdpartyClick} />;
-        case "ThirdpartyInfo":
-          return <Thirdpartyinfo />;
-          case "SoS":
-            return <Sos handleSosClick={handleSosClick} />;
-          case "SoSInfo":
-            return <Sosinfo />;
-
+      case "Thirdparty":
+        return <Thirdparty handleThirdpartyClick={handleThirdpartyClick} />;
+      case "ThirdpartyInfo":
+        return <Thirdpartyinfo />;
+      case "SoS":
+        return <Sos handleSosClick={handleSosClick} />;
+      case "SoSInfo":
+        return <Sosinfo />;
+      case "Customer":
+        return <Customer handleCustomerClick={handleCustomerClick} />;
+      case "CustomerInfo":
+        return <Customerinfo />;
+        case "Trips":
+        return <Trips handleTripClick={handleTripClick} />;
+      case "TripInfo":
+        return <Tripinfo />;
+        case "Internalteam":
+          return <Internalteam />;
+          case "Operations":
+            return <Operations />;
       case "Vehicles":
         return (
           <Vehicles

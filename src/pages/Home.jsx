@@ -32,6 +32,8 @@ import Trips from "../components/dashboard/Trips/Trips";
 import Tripinfo from "../components/dashboard/Trips/Tripinfo";
 import Internalteam from "../components/dashboard/Internalteam";
 import Operations from "../components/dashboard/Seprateinternalteams/Operations";
+import CustomerSupport from "../components/dashboard/Seprateinternalteams/CustomerSupport";
+import Finance from "../components/dashboard/Seprateinternalteams/Finance";
 import Payouts from "../components/dashboard/Payouts";
 import Rewards from "../components/dashboard/Rewards";
 import TransactionHistory from "../components/dashboard/TransactionHistory";
@@ -207,14 +209,18 @@ const Home = () => {
         return <Customer handleCustomerClick={handleCustomerClick} />;
       case "CustomerInfo":
         return <Customerinfo />;
-        case "Trips":
+      case "Trips":
         return <Trips handleTripClick={handleTripClick} />;
       case "TripInfo":
         return <Tripinfo />;
-        case "Internalteam":
-          return <Internalteam />;
-          case "Operations":
-            return <Operations />;
+      case "Internalteam":
+        return <Internalteam />;
+      case "Operations":
+        return <Operations />;
+      case "Customer Support":
+        return <CustomerSupport />;
+      case "Finance":
+        return <Finance />;
       case "Accounts":
         return <Payouts />;
       case "Payouts":

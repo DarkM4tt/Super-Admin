@@ -22,6 +22,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import TimeTracksChart from "./TimeTracksChart";
 
 const issues = [
   { name: "Service problems", percentage: 43.5, color: "#FBDB0B" },
@@ -250,7 +251,9 @@ const EmployeeInfo = ({ setActiveComponent, setSelectedEmployeeId }) => {
       </div>
 
       <div className="flex justify-between mt-8 gap-6">
-        <div className="w-[50%] min-h-72 bg-white rounded-[8px]"></div>
+        <div className="w-[50%] py-8 px-6 bg-white rounded-[8px]">
+          <TimeTracksChart />
+        </div>
         <div className="w-[25%] bg-white rounded-[8px]">
           <IssuesRelatedTo />
         </div>

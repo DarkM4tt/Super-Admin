@@ -13,6 +13,7 @@ import {
   Select,
   Typography,
 } from "@mui/material";
+import TimeTracksChart from "../TimeTracksChart";
 
 const agents = [
   {
@@ -325,7 +326,9 @@ const CustomerSupport = () => {
               </div>
             </div>
           </div>
-          <div className="w-full h-80 bg-white rounded-[8px]"></div>
+          <div className="w-full bg-white rounded-[8px] px-6 py-8">
+            <TimeTracksChart />
+          </div>
           <TopPerformingEmployees />
         </div>
         <div className="w-[20%] flex flex-col gap-8">

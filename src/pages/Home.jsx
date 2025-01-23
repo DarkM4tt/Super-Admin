@@ -38,6 +38,7 @@ import Payouts from "../components/dashboard/Payouts";
 import Rewards from "../components/dashboard/Rewards";
 import TransactionHistory from "../components/dashboard/TransactionHistory";
 import FuelStationDetails from "../components/dashboard/FuelStationDetails";
+import FuelRequest from "../components/dashboard/FuelRequest";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -221,6 +222,8 @@ const Home = () => {
         return <CustomerSupport />;
       case "Finance":
         return <Finance />;
+      case "Fuel Request":
+        return <FuelRequest />;
       case "Accounts":
         return <Payouts />;
       case "Payouts":

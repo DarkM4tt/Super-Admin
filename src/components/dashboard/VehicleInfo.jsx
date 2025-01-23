@@ -1,13 +1,10 @@
 import {
-  Box,
   Button,
   Checkbox,
-  Divider,
   FormControlLabel,
   InputAdornment,
   TextField,
 } from "@mui/material";
-import pdfIcon from "../../assets/pdf.png";
 import SearchIcon from "@mui/icons-material/Search";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import TickIcon from "../../assets/tick.svg";
@@ -15,10 +12,11 @@ import StatusDropdown from "../common/StatusDropdown";
 import EmailIcon from "@mui/icons-material/Email";
 import CallIcon from "@mui/icons-material/Call";
 import partycar from "../../assets/partycar.png";
-import { CheckCircleOutline } from "@mui/icons-material";
-import Rentalpartner from "../../assets/Rentalpartner.png";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useState } from "react";
+import QuickConnect from "../common/QuickConnect";
+import SubmittedDocumentsCard from "../common/SubmittedDocuments";
+import CustomerCard from "../common/CustomerCard";
 
 const VehicleInfo = ({
   setSelectedVehicleId,
@@ -37,27 +35,6 @@ const VehicleInfo = ({
     ev: false,
     luxury: false,
   });
-
-  const VehicleInfo = [
-    {
-      title:
-        "[Partner Only] > Personal Accident Insurance Policy (Special Conditions + Invoice/Receipt)",
-      expiryDate: "December 25, 2024",
-      fileName: "Personal Accid....pdf",
-    },
-    {
-      title:
-        "[Partner Only] > Personal Accident Insurance Policy (Special Conditions + Invoice/Receipt)",
-      expiryDate: "December 25, 2024",
-      fileName: "Personal Accid....pdf",
-    },
-    {
-      title:
-        "[Partner Only] > Personal Accident Insurance Policy (Special Conditions + Invoice/Receipt)",
-      expiryDate: "December 25, 2024",
-      fileName: "Personal Accid....pdf",
-    },
-  ];
 
   const handleChange = (event) => {
     setServices({
@@ -165,69 +142,14 @@ const VehicleInfo = ({
         </div>
       </div>
 
+      {/* Cards */}
       <div className="flex justify-between pt-8">
-        <div className="w-4/6">
-          <Box className="p-4 bg-white rounded-lg">
-            <p className="font-semibold font-redhat text-2xl mb-4">
-              Submitted VehicleInfo
-            </p>
-            {VehicleInfo.map((doc, index) => (
-              <Box key={index}>
-                <Box className="flex justify-between items-center mb-4 py-2">
-                  <Box className="flex items-center mt-4">
-                    <div className="flex flex-col gap-2">
-                      <p className="font-bold text-base font-redhat">
-                        {doc.title}
-                      </p>
-                      <Box className="flex items-center text-green-500">
-                        <CheckCircleOutline fontSize="small" />
-                        <p className="ml-1 text-boldCyan font-redhat font-medium text-base">
-                          Valid until {doc.expiryDate}
-                        </p>
-                      </Box>
-                      <div className="flex gap-2 mt-4">
-                        <img
-                          src={pdfIcon}
-                          alt="PDF Icon"
-                          className="w-6 h-6 mr-3"
-                        />
-                        <p className="underline cursor-pointer">
-                          {doc.fileName}
-                        </p>
-                      </div>
-                    </div>
-                  </Box>
-                  <Button
-                    variant="contained"
-                    sx={{
-                      backgroundColor: "#eeeeee",
-                      color: "black",
-                      textTransform: "none",
-                      boxShadow: "none",
-                      border: "none",
-                      "&:hover": {
-                        backgroundColor: "#eeeeee",
-                        boxShadow: "none",
-                      },
-                      borderRadius: "8px",
-                      padding: "6px 16px",
-                    }}
-                  >
-                    View
-                  </Button>
-                </Box>
-                {index < VehicleInfo.length - 1 && <Divider />}
-              </Box>
-            ))}
-          </Box>
-        </div>
-
-        <div className="w-[30%] flex flex-col gap-4">
+        <div className="w-4/6 flex flex-col gap-4">
           <div className="px-4 py-6 bg-white rounded-lg">
             {/* Title and Save Button */}
             <div className="flex justify-between">
-              <p className="font-semibold font-redhat text-base">
-                Services covered
+              <p className="font-semibold font-redhat text-2xl">
+                Covering services
               </p>
               <Button
                 variant="contained"
@@ -280,8 +202,7 @@ const VehicleInfo = ({
                 label="Rentals"
                 className="text-gray-800 text-sm"
               />
-            </div>
-            <div className="flex justify-between pt-2">
+
               <FormControlLabel
                 control={
                   <Checkbox
@@ -317,6 +238,9 @@ const VehicleInfo = ({
                 className="text-gray-800 text-sm"
               />
             </div>
+            <p className="font-semibold font-redhat text-2xl mt-4">
+              Covering sectors
+            </p>
             <div className="flex justify-between pt-2">
               <FormControlLabel
                 control={
@@ -352,8 +276,6 @@ const VehicleInfo = ({
                 label="Regular cabs"
                 className="text-gray-800 text-sm"
               />
-            </div>
-            <div className="flex justify-between pt-2">
               <FormControlLabel
                 control={
                   <Checkbox
@@ -388,8 +310,7 @@ const VehicleInfo = ({
                 label="BOLD Assist"
                 className="text-gray-800 text-sm"
               />
-            </div>
-            <div className="flex justify-between pt-2">
+
               <FormControlLabel
                 control={
                   <Checkbox
@@ -427,28 +348,7 @@ const VehicleInfo = ({
             </div>
           </div>
           <div className="bg-white w-full h-fit p-4 rounded-[8px] flex flex-col gap-2">
-            <p className="font-redhat font-semibold text-base">
-              Assigned driver
-            </p>
-            <div className="flex gap-2 items-center mt-4 border-b-[1px] border-[#dddddd] border-dashed pb-4">
-              <img
-                src={Rentalpartner}
-                alt="Rentalpartner"
-                className="w-[5rem]"
-              />
-              <div className="flex flex-col gap-2">
-                <p className="text-2xl font-semibold">Ann Baptista</p>
-                <p className="font-sans text-base text-[#777777] flex gap-2 items-center underline">
-                  <span>
-                    <CallIcon fontSize="small" />
-                  </span>
-                  +91-9440192122
-                </p>
-              </div>
-            </div>
-            <p className="text-xl underline font-redhat font-semibold my-4">
-              ABC Company Ltd &gt;&gt;
-            </p>
+            <CustomerCard />
             <TextField
               id="fuel-card-name"
               placeholder="Assign another driver"
@@ -466,6 +366,12 @@ const VehicleInfo = ({
               }}
             />
           </div>
+        </div>
+
+        {/* Right Cards */}
+        <div className="w-[30%] flex flex-col gap-8">
+          <SubmittedDocumentsCard />
+          <QuickConnect />
         </div>
       </div>
     </>

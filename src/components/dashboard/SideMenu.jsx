@@ -15,13 +15,13 @@ const SideMenu = ({ onMenuItemClick }) => {
     {
       text: "Services",
       subItems: [
-        { text: "Overview"},
+        { text: "Overview" },
         { text: "Rentals" },
-        { text: "BOLD Ads"},
-        { text: "BOLD Promotions"},
-        { text: "BOLD Business"},
-        { text: "BOLD 3rd Party"},
-        { text: "SoS"},
+        { text: "BOLD Ads" },
+        { text: "BOLD Promotions" },
+        { text: "BOLD Business" },
+        { text: "BOLD 3rd Party" },
+        { text: "SoS" },
       ],
     },
     { text: "Partners" },
@@ -29,25 +29,26 @@ const SideMenu = ({ onMenuItemClick }) => {
     {
       text: "Internal Team",
       subItems: [
-        { text: "Overview"},
-        { text: "Operations"},
-        { text: "Customer Support"},
-        { text: "Product Development"},
-        { text: "Finance"},
-        { text: "Compliance"},
+        { text: "Overview" },
+        { text: "Operations" },
+        { text: "Customer Support" },
+        { text: "Product Development" },
+        { text: "Finance" },
+        { text: "Compliance" },
       ],
     },
     { text: "Employees" },
     {
       text: "Accounts",
       subItems: [
-        { text: "Payouts"},
-        { text: "Rewards"},
-        { text: "Transaction history"},
+        { text: "Payouts" },
+        { text: "Rewards" },
+        { text: "Transaction history" },
       ],
     },
     { text: "Settings" },
     { text: "Trash" },
+    { text: "Fuel Request" },
   ];
 
   const handleMenuItemClick = (itemName) => {
@@ -116,7 +117,8 @@ const SideMenu = ({ onMenuItemClick }) => {
                     setActiveIndex(index);
                     handleMenuItemClick(item.text);
                     setActiveDropdown(
-                      activeDropdown === item.text.toLowerCase().replace(" ", "")
+                      activeDropdown ===
+                        item.text.toLowerCase().replace(" ", "")
                         ? null
                         : item.text.toLowerCase().replace(" ", "")
                     );
@@ -196,4 +198,3 @@ const SideMenu = ({ onMenuItemClick }) => {
 };
 
 export default SideMenu;
-

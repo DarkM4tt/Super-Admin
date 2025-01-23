@@ -30,6 +30,7 @@ import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import BusinessIcon from "@mui/icons-material/Business";
 import Acceptancechart from "./Dashboardcharts/Acceptancechart";
 import BackArrow from "../../assets/leftArrowBlack.svg";
+import Warning from "../../assets/warning.svg";
 import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import StatusDropdown from "../common/StatusDropdown";
 import CustomDropdown from "./../common/CustomDropdown";
@@ -455,44 +456,33 @@ const PartnerInfo = ({
               className="w-[30%] p-6 flex gap-6 bg-white items-center rounded-lg border-b border-[#1860C4]"
               style={{ boxShadow: "4px 4px 33px 0px #0000000A" }}
             >
-              <div className="p-2 rounded-lg bg-[#F6A0171F] h-fit">
-                <DirectionsCarFilledIcon
-                  fontSize="medium"
-                  className="text-[#F6A017]"
-                />
+              <div className="p-3 rounded-lg bg-[#D20B0B14] h-fit">
+                <img src={Warning} alt="Warning" />
               </div>
               <div className="">
                 <p className="font-redhat font-semibold text-base">
-                  Total vehicles
+                  Major issue reported
                 </p>
-                <p className="pt-2 font-redhat font-bold text-2xl">22 k</p>
+                <p className="pt-2 font-redhat font-bold text-2xl">00</p>
                 <p className="pt-2 text-sm text-[#777777]">
-                  18 k+ currently <span className="text-[#18C4B8]">active</span>
+                  including all issue
                 </p>
                 <button className="pt-3 font-redhat text-sm font-light border-b-[2px]">
                   View list
                 </button>
               </div>
             </div>
-            <div
-              className="w-[30%] p-6 flex gap-6 bg-white items-center rounded-lg border-b border-[#1860C4]"
-              style={{ boxShadow: "4px 4px 33px 0px #0000000A" }}
-            >
-              <div className="p-2 rounded-lg bg-[#006AFF21] h-fit">
-                <BusinessIcon fontSize="medium" className="text-[#006AFF]" />
-              </div>
-              <div className="">
-                <p className="font-redhat font-semibold text-base">
-                  Total users
-                </p>
-                <p className="pt-2 font-redhat font-bold text-2xl">2210</p>
-                <p className="pt-2 text-sm text-[#777777]">
-                  including 320 rental org.
-                </p>
-                <button className="pt-3 font-redhat text-sm font-light underline">
-                  View list
-                </button>
-              </div>
+            <div className="w-[30%] p-6 flex flex-col gap-2 bg-white rounded-lg border-b border-[#1860C4]">
+              <p className="font-redhat font-semibold text-base">
+                Pending payouts
+              </p>
+              <p className="font-redhat font-bold text-2xl">€ 22,1109</p>
+              <p className="text-sm text-[#777777]">
+                Including all the accounts
+              </p>
+              <button className="w-full bg-black py-2 font-redhat font-semibold text-lg text-white rounded-lg">
+                {"Proceed to pay >>"}
+              </button>
             </div>
           </div>
 

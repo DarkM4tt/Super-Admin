@@ -1,16 +1,5 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler,
-} from "chart.js";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   Box,
@@ -33,17 +22,6 @@ import StarIcon from "@mui/icons-material/Star";
 import Rentalpartner from "../../assets/Rentalpartner.png";
 import partycar from "../../assets/partycar.png";
 import CustomDropdown from "../common/CustomDropdown";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
 
 const DriverInfo = ({ setSelectedDriverId, setActiveComponent }) => {
   const EntityTable = () => {

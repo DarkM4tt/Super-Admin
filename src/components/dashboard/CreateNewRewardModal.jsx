@@ -7,11 +7,16 @@ import {
   InputAdornment,
   IconButton,
   Box,
+  ToggleButtonGroup,
+  ToggleButton,
+  FormControlLabel,
+  Radio,
+  Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
-import PercentIcon from "@mui/icons-material/Percent";
 import rewardIcon from "../../assets/reward.png";
+import { useState } from "react";
 
 const CreateNewRewardModal = ({
   open,
@@ -20,6 +25,12 @@ const CreateNewRewardModal = ({
   setFormData,
   onSave,
 }) => {
+  const [selected, setSelected] = useState("Customers");
+
+  const handleSwitchChange = (event) => {
+    setSelected(event.target.value);
+  };
+
   const handleChange = (field, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -45,17 +56,10 @@ const CreateNewRewardModal = ({
         {/* Modal Header */}
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <img
-              src={rewardIcon}
-              alt="Fuel Gas Icon"
-              className="w-10 h-10 mr-3"
-            />
+            <img src={rewardIcon} alt="Fuel Gas Icon" className="w-20 mr-3" />
             <div>
               <p className="text-lg font-semibold text-black">
                 Create new reward
-              </p>
-              <p className="text-sm text-gray-500">
-                The maximum limit will be from the total revenue generated.
               </p>
             </div>
           </div>
@@ -64,9 +68,72 @@ const CreateNewRewardModal = ({
           </IconButton>
         </div>
 
+        {/* Switches */}
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: "20px",
+            marginTop: 2,
+          }}
+        >
+          <FormControlLabel
+            control={
+              <Radio
+                checked={selected === "Drivers"}
+                onChange={handleSwitchChange}
+                value="Drivers"
+                sx={{
+                  "&.Mui-checked": {
+                    color: "#00cbc4",
+                  },
+                  color: "#6d6d6d",
+                }}
+              />
+            }
+            label={
+              <Typography
+                sx={{
+                  color: selected === "Drivers" ? "#00cbc4" : "#6d6d6d",
+                  fontSize: "14px",
+                  fontWeight: 400,
+                }}
+              >
+                Drivers
+              </Typography>
+            }
+          />
+          <FormControlLabel
+            control={
+              <Radio
+                checked={selected === "Customers"}
+                onChange={handleSwitchChange}
+                value="Customers"
+                sx={{
+                  "&.Mui-checked": {
+                    color: "#00cbc4",
+                  },
+                  color: "#6d6d6d",
+                }}
+              />
+            }
+            label={
+              <Typography
+                sx={{
+                  color: selected === "Customers" ? "#00cbc4" : "#6d6d6d",
+                  fontSize: "14px",
+                  fontWeight: 400,
+                }}
+              >
+                Customers
+              </Typography>
+            }
+          />
+        </Box>
+
         {/* Modal Body */}
         <div className="grid grid-cols-2 gap-6 mt-6">
-          {/* Fuel Card Name */}
+          {/* Student coupon */}
           <div className="flex flex-col">
             <label
               htmlFor="fuel-card-name"
@@ -76,7 +143,7 @@ const CreateNewRewardModal = ({
             </label>
             <TextField
               id="fuel-card-name"
-              placeholder="Enter fuel card name"
+              placeholder="Student coupon"
               variant="outlined"
               size="small"
               value={formData.cardName}
@@ -92,7 +159,7 @@ const CreateNewRewardModal = ({
             />
           </div>
 
-          {/* Fuel Type */}
+          {/* Select service type */}
           <div className="flex flex-col">
             <label
               htmlFor="fuel-type"
@@ -103,7 +170,6 @@ const CreateNewRewardModal = ({
             <TextField
               id="fuel-type"
               select
-              placeholder="Select fuel type"
               variant="outlined"
               size="small"
               value={formData.fuelType}
@@ -115,14 +181,13 @@ const CreateNewRewardModal = ({
               }}
             >
               <MenuItem value="" disabled>
-                Select fuel type
+                Intercity
               </MenuItem>
               <MenuItem value="diesel">Diesel</MenuItem>
               <MenuItem value="petrol">Petrol</MenuItem>
             </TextField>
           </div>
-
-          {/* Fuel Category */}
+          {/* Select applicable customers from list */}
           <div className="flex flex-col">
             <label
               htmlFor="fuel-category"
@@ -145,116 +210,58 @@ const CreateNewRewardModal = ({
               }}
             >
               <MenuItem value="" disabled>
-                Select fuel category
+                Select customers
               </MenuItem>
               <MenuItem value="regular">Regular</MenuItem>
               <MenuItem value="premium">Premium</MenuItem>
             </TextField>
           </div>
-
-          {/* Partner Fuel Stations */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="fuel-stations"
-              className="text-sm font-medium text-gray-700 mb-1"
-            >
-              Partner fuel stations
-            </label>
-            <TextField
-              id="fuel-stations"
-              select
-              placeholder="Select partner fuel stations"
-              variant="outlined"
-              size="small"
-              value={formData.fuelStations}
-              onChange={(e) => handleChange("fuelStations", e.target.value)}
-              fullWidth
-              SelectProps={{
-                displayEmpty: true,
-                IconComponent: ExpandMoreIcon,
-              }}
-            >
-              <MenuItem value="" disabled>
-                Select fuel stations
-              </MenuItem>
-              <MenuItem value="station1">Station 1</MenuItem>
-              <MenuItem value="station2">Station 2</MenuItem>
-            </TextField>
-          </div>
-
-          {/* Card Limit */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="card-limit"
-              className="text-sm font-medium text-gray-700 mb-1"
-            >
-              Card limit
-            </label>
-            <TextField
-              id="card-limit"
-              placeholder="Enter maximum limit"
-              variant="outlined"
-              size="small"
-              value={formData.cardLimit}
-              onChange={(e) => handleChange("cardLimit", e.target.value)}
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <PercentIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </div>
-
-          {/* Revenue Needed */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="revenue-needed"
-              className="text-sm font-medium text-gray-700 mb-1"
-            >
-              Revenue needed to apply
-            </label>
-            <TextField
-              id="revenue-needed"
-              select
-              placeholder="Minimum revenue needed to apply"
-              variant="outlined"
-              size="small"
-              value={formData.revenueNeeded}
-              onChange={(e) => handleChange("revenueNeeded", e.target.value)}
-              fullWidth
-              SelectProps={{
-                displayEmpty: true,
-                IconComponent: ExpandMoreIcon,
-              }}
-            >
-              <MenuItem value="" disabled>
-                Minimum revenue needed to apply
-              </MenuItem>
-              <MenuItem value="yes">Yes</MenuItem>
-              <MenuItem value="no">No</MenuItem>
-            </TextField>
-          </div>
-
-          {/* Amount */}
+          {/* Reward amount */}
           <div className="flex flex-col">
             <label
               htmlFor="amount"
               className="text-sm font-medium text-gray-700 mb-1"
             >
-              Amount
+              Reward amount
             </label>
             <TextField
               id="amount"
-              placeholder="Enter minimum revenue"
+              placeholder="€ 11"
               variant="outlined"
               size="small"
               value={formData.amount}
               onChange={(e) => handleChange("amount", e.target.value)}
               fullWidth
             />
+          </div>
+
+          {/* Fow how many rides */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="fuel-type"
+              className="text-sm font-medium text-gray-700 mb-1"
+            >
+              Fow how many rides
+            </label>
+            <TextField
+              id="fuel-type"
+              select
+              variant="outlined"
+              size="small"
+              value={formData.fuelType}
+              onChange={(e) => handleChange("fuelType", e.target.value)}
+              fullWidth
+              SelectProps={{
+                displayEmpty: true,
+                IconComponent: ExpandMoreIcon,
+              }}
+            >
+              <MenuItem value="" disabled>
+                5
+              </MenuItem>
+              <MenuItem value="diesel">4</MenuItem>
+              <MenuItem value="petrol">3</MenuItem>
+            </TextField>
           </div>
         </div>
 
@@ -268,6 +275,7 @@ const CreateNewRewardModal = ({
               color: "white",
               textTransform: "none",
               borderRadius: "8px",
+              width: "50%",
               paddingX: "16px",
               paddingY: "8px",
               "&:hover": {

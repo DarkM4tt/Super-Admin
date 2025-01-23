@@ -9,8 +9,109 @@ import Outgoing from "../../assets/Outgoing.svg";
 import Unanswered from "../../assets/Unanswered.svg";
 import CircularProgress from "./../common/CircularProgress";
 import CustomerCard from "../common/CustomerCard";
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  LinearProgress,
+  MenuItem,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useState } from "react";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+
+const issues = [
+  { name: "Service problems", percentage: 43.5, color: "#FBDB0B" },
+  { name: "Technical issues", percentage: 38.1, color: "#18C4B8" },
+  { name: "Payment issues", percentage: 30.9, color: "#6FA4EE" },
+  { name: "Signup issues", percentage: 25.5, color: "#19E051" },
+];
+
+const IssuesRelatedTo = () => {
+  const [timeframe, setTimeframe] = useState("month");
+
+  const handleTimeframeChange = (event) => {
+    setTimeframe(event.target.value);
+  };
+
+  return (
+    <Box
+      sx={{
+        backgroundColor: "white",
+        p: 2,
+        borderRadius: 2,
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "2",
+        }}
+      >
+        <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+          Issues related to
+        </Typography>
+        <Select
+          value={timeframe}
+          onChange={handleTimeframeChange}
+          size="small"
+          sx={{
+            fontSize: "0.875rem",
+            backgroundColor: "#F3F4F6",
+            border: "1px solid #D1D5DB",
+            borderRadius: 1,
+          }}
+        >
+          <MenuItem value="month">Month</MenuItem>
+          <MenuItem value="year">Year</MenuItem>
+        </Select>
+      </Box>
+
+      {issues.map((issue, index) => (
+        <Box key={index} sx={{ mt: 3 }}>
+          <Typography
+            variant="body2"
+            sx={{ fontWeight: "medium", color: "#374151" }}
+          >
+            {issue.name}
+          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+            <LinearProgress
+              variant="determinate"
+              value={issue.percentage}
+              sx={{
+                height: 8,
+                borderRadius: 4,
+                flexGrow: 1,
+                backgroundColor: "#E5E7EB",
+                "& .MuiLinearProgress-bar": {
+                  backgroundColor: issue.color,
+                },
+              }}
+            />
+          </Box>
+          <Typography variant="caption" sx={{ color: "#6B7280" }}>
+            {issue.percentage}%
+          </Typography>
+        </Box>
+      ))}
+    </Box>
+  );
+};
+
+const handleSave = () => {
+  console.log("hoi");
+};
 
 const EmployeeInfo = ({ setActiveComponent, setSelectedEmployeeId }) => {
+  const [currentTeam, setCurrentTeam] = useState("");
+  const [currentGroup, setCurrentGroup] = useState("");
+
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -28,6 +129,7 @@ const EmployeeInfo = ({ setActiveComponent, setSelectedEmployeeId }) => {
           </div>
         </div>
       </div>
+
       {/* Buttons */}
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-4">
@@ -144,6 +246,93 @@ const EmployeeInfo = ({ setActiveComponent, setSelectedEmployeeId }) => {
             primaryColor="#15D356"
             secondaryColor="#EEEEEE"
           />
+        </div>
+      </div>
+
+      <div className="flex justify-between mt-8 gap-6">
+        <div className="w-[50%] min-h-72 bg-white rounded-[8px]"></div>
+        <div className="w-[25%] bg-white rounded-[8px]">
+          <IssuesRelatedTo />
+        </div>
+        <div className="w-[25%] bg-white rounded-[8px] px-4 py-6 flex flex-col gap-6">
+          {/* Title and Save Button */}
+          <div className="flex justify-between items-center">
+            <p className="font-semibold font-redhat text-base">
+              Services covered
+            </p>
+            <Button
+              variant="contained"
+              style={{
+                backgroundColor: "black",
+                color: "white",
+                textTransform: "none",
+                fontSize: "14px",
+              }}
+              onClick={handleSave}
+            >
+              Save changes
+            </Button>
+          </div>
+
+          {/* Current team */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="fuel-stations"
+              className="text-sm font-medium text-gray-700 mb-1"
+            >
+              Current team
+            </label>
+            <TextField
+              id="fuel-stations"
+              select
+              placeholder="Customer support team"
+              variant="outlined"
+              size="small"
+              value={currentTeam}
+              onChange={(e) => setCurrentTeam(e.target.value)}
+              fullWidth
+              SelectProps={{
+                displayEmpty: true,
+                IconComponent: ExpandMoreIcon,
+              }}
+            >
+              <MenuItem value="" disabled>
+                Customer support team
+              </MenuItem>
+              <MenuItem value="station1">Station 1</MenuItem>
+              <MenuItem value="station2">Station 2</MenuItem>
+            </TextField>
+          </div>
+
+          {/* Current group */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="fuel-stations"
+              className="text-sm font-medium text-gray-700 mb-1"
+            >
+              Current group
+            </label>
+            <TextField
+              id="fuel-stations"
+              select
+              placeholder="Group 16"
+              variant="outlined"
+              size="small"
+              value={currentGroup}
+              onChange={(e) => setCurrentGroup(e.target.value)}
+              fullWidth
+              SelectProps={{
+                displayEmpty: true,
+                IconComponent: ExpandMoreIcon,
+              }}
+            >
+              <MenuItem value="" disabled>
+                Group 16
+              </MenuItem>
+              <MenuItem value="station1">Station 1</MenuItem>
+              <MenuItem value="station2">Station 2</MenuItem>
+            </TextField>
+          </div>
         </div>
       </div>
     </>

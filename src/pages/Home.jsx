@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import HomeHeader from "../components/common/HomeHeader";
@@ -39,6 +40,10 @@ import Rewards from "../components/dashboard/Rewards";
 import TransactionHistory from "../components/dashboard/TransactionHistory";
 import FuelStationDetails from "../components/dashboard/FuelStationDetails";
 import FuelRequest from "../components/dashboard/FuelRequest";
+import Jumpstart from "../components/dashboard/Seprateservices/Jumpstart/Jumpstart";
+import Packages from "../components/dashboard/Seprateservices/Packages/Packages";
+import BoldMiles from "../components/dashboard/Seprateservices/BoldMiles/BoldMiles";
+import CommonServiceInfo from "../components/dashboard/Seprateservices/CommonServiceInfo";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -48,6 +53,7 @@ const Home = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
   const [selectedRentalId, setSelectedRentalId] = useState(null);
+  const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [selectedBoldadsId, setSelectedBoldadsId] = useState(null);
   const [selectedPromotionId, setSelectedPromotionId] = useState(null);
   const [selectedBusinessId, setSelectedBusinessId] = useState(null);
@@ -68,6 +74,11 @@ const Home = () => {
   const handleRentalClick = (rentalId) => {
     setSelectedRentalId(rentalId);
     setActiveComponent("RentalInfo");
+  };
+
+  const handleServiceClick = (serviceId) => {
+    setSelectedServiceId(serviceId);
+    setActiveComponent("ServiceInfo");
   };
 
   const handleBoldadsClick = (BoldadsId) => {
@@ -206,6 +217,14 @@ const Home = () => {
         return <Sos handleSosClick={handleSosClick} />;
       case "SoSInfo":
         return <Sosinfo />;
+      case "Jumpstart":
+        return <Jumpstart handleServiceClick={handleServiceClick} />;
+      case "Packages":
+        return <Packages handleServiceClick={handleServiceClick} />;
+      case "BoldMiles":
+        return <BoldMiles handleServiceClick={handleServiceClick} />;
+      case "ServiceInfo":
+        return <CommonServiceInfo />;
       case "Customer":
         return <Customer handleCustomerClick={handleCustomerClick} />;
       case "CustomerInfo":

@@ -22,6 +22,10 @@ const SideMenu = ({ onMenuItemClick }) => {
         { text: "BOLD Business" },
         { text: "BOLD 3rd Party" },
         { text: "SoS" },
+        { text: "Jumpstart" },
+        { text: "Packages" },
+        { text: "BOLD Miles" },
+        { text: "Fuel Card" },
       ],
     },
     { text: "Partners" },
@@ -64,6 +68,15 @@ const SideMenu = ({ onMenuItemClick }) => {
         break;
       case "BOLD 3rd Party":
         onMenuItemClick("Thirdparty");
+        break;
+      case "Jumpstart":
+        onMenuItemClick("Jumpstart");
+        break;
+      case "Packages":
+        onMenuItemClick("Packages");
+        break;
+      case "BOLD Miles":
+        onMenuItemClick("BoldMiles");
         break;
       case "Payouts":
         onMenuItemClick("Payouts");

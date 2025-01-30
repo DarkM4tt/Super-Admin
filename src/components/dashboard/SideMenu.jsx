@@ -50,9 +50,15 @@ const SideMenu = ({ onMenuItemClick }) => {
         { text: "Transaction history" },
       ],
     },
-    { text: "Settings" },
-    { text: "Trash" },
     { text: "Fuel Request" },
+    {
+      text: "Location",
+      subItems: [
+        { text: "Map" },
+        { text: "Allowed services" },
+        { text: "Bidding" },
+      ],
+    },
   ];
 
   const handleMenuItemClick = (itemName) => {
@@ -87,6 +93,15 @@ const SideMenu = ({ onMenuItemClick }) => {
       case "Transaction history":
         onMenuItemClick("TransactionHistory");
         break;
+      case "Map":
+        onMenuItemClick("Map");
+        break;
+      case "Allowed services":
+        onMenuItemClick("Allowed services");
+        break;
+      case "Bidding":
+        onMenuItemClick("Bidding");
+        break;
       case "Overview":
         if (activeDropdown === "services") onMenuItemClick("Services");
         if (activeDropdown === "internalteam") onMenuItemClick("Internalteam");
@@ -116,12 +131,14 @@ const SideMenu = ({ onMenuItemClick }) => {
             const isDropdown =
               item.text === "Services" ||
               item.text === "Internal Team" ||
-              item.text === "Accounts";
+              item.text === "Accounts" ||
+              item.text === "Location";
             const isDropdownOpen =
               (item.text === "Services" && activeDropdown === "services") ||
               (item.text === "Internal Team" &&
                 activeDropdown === "internalteam") ||
-              (item.text === "Accounts" && activeDropdown === "accounts");
+              (item.text === "Accounts" && activeDropdown === "accounts") ||
+              (item.text === "Location" && activeDropdown === "location");
 
             return isDropdown ? (
               <li key={index} className="relative hover:bg-transparent">

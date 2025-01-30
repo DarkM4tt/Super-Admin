@@ -44,6 +44,7 @@ import Jumpstart from "../components/dashboard/Seprateservices/Jumpstart/Jumpsta
 import Packages from "../components/dashboard/Seprateservices/Packages/Packages";
 import BoldMiles from "../components/dashboard/Seprateservices/BoldMiles/BoldMiles";
 import CommonServiceInfo from "../components/dashboard/Seprateservices/CommonServiceInfo";
+import Map from "../components/dashboard/Location/Map";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -251,6 +252,10 @@ const Home = () => {
         return <Rewards />;
       case "TransactionHistory":
         return <TransactionHistory />;
+      case "Location":
+        return <Map />;
+      case "Map":
+        return <Map />;
       case "Vehicles":
         return (
           <Vehicles

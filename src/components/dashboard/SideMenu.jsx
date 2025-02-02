@@ -50,7 +50,7 @@ const SideMenu = ({ onMenuItemClick }) => {
         { text: "Transaction history" },
       ],
     },
-    { text: "Fuel Request" },
+    // { text: "Fuel Request" },
     {
       text: "Location",
       subItems: [
@@ -97,7 +97,7 @@ const SideMenu = ({ onMenuItemClick }) => {
         onMenuItemClick("Map");
         break;
       case "Allowed services":
-        onMenuItemClick("Allowed services");
+        onMenuItemClick("AllowedServices");
         break;
       case "Bidding":
         onMenuItemClick("Bidding");

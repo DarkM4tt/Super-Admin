@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
 import HomeHeader from "../components/common/HomeHeader";
@@ -39,6 +40,13 @@ import Rewards from "../components/dashboard/Rewards";
 import TransactionHistory from "../components/dashboard/TransactionHistory";
 import FuelStationDetails from "../components/dashboard/FuelStationDetails";
 import FuelRequest from "../components/dashboard/FuelRequest";
+import Jumpstart from "../components/dashboard/Seprateservices/Jumpstart/Jumpstart";
+import Packages from "../components/dashboard/Seprateservices/Packages/Packages";
+import BoldMiles from "../components/dashboard/Seprateservices/BoldMiles/BoldMiles";
+import CommonServiceInfo from "../components/dashboard/Seprateservices/CommonServiceInfo";
+import Map from "../components/dashboard/Location/Map";
+import AllowedServices from "../components/dashboard/Location/AllowedServices";
+import Bidding from "../components/dashboard/Location/Bidding";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -48,6 +56,7 @@ const Home = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
   const [selectedRentalId, setSelectedRentalId] = useState(null);
+  const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [selectedBoldadsId, setSelectedBoldadsId] = useState(null);
   const [selectedPromotionId, setSelectedPromotionId] = useState(null);
   const [selectedBusinessId, setSelectedBusinessId] = useState(null);
@@ -68,6 +77,11 @@ const Home = () => {
   const handleRentalClick = (rentalId) => {
     setSelectedRentalId(rentalId);
     setActiveComponent("RentalInfo");
+  };
+
+  const handleServiceClick = (serviceId) => {
+    setSelectedServiceId(serviceId);
+    setActiveComponent("ServiceInfo");
   };
 
   const handleBoldadsClick = (BoldadsId) => {
@@ -206,6 +220,14 @@ const Home = () => {
         return <Sos handleSosClick={handleSosClick} />;
       case "SoSInfo":
         return <Sosinfo />;
+      case "Jumpstart":
+        return <Jumpstart handleServiceClick={handleServiceClick} />;
+      case "Packages":
+        return <Packages handleServiceClick={handleServiceClick} />;
+      case "BoldMiles":
+        return <BoldMiles handleServiceClick={handleServiceClick} />;
+      case "ServiceInfo":
+        return <CommonServiceInfo />;
       case "Customer":
         return <Customer handleCustomerClick={handleCustomerClick} />;
       case "CustomerInfo":
@@ -232,6 +254,14 @@ const Home = () => {
         return <Rewards />;
       case "TransactionHistory":
         return <TransactionHistory />;
+      case "Location":
+        return <Map />;
+      case "Map":
+        return <Map />;
+      case "AllowedServices":
+        return <AllowedServices />;
+      case "Bidding":
+        return <Bidding />;
       case "Vehicles":
         return (
           <Vehicles
@@ -273,7 +303,7 @@ const Home = () => {
     <div className="h-screen flex flex-col overflow-hidden">
       {/* <HomeHeader /> */}
       <Toaster />
-      <div className="flex flex-grow overflow-y-auto">
+      <div className="flex flex-grow overflow-y-auto bg-[#F8F8F8]">
         <div
           className={`absolute sm:relative z-50 h-full w-2/5 sm:w-[18%] max-w-[280px] md:block text-white overflow-y-auto`}
         >

@@ -22,6 +22,10 @@ const SideMenu = ({ onMenuItemClick }) => {
         { text: "BOLD Business" },
         { text: "BOLD 3rd Party" },
         { text: "SoS" },
+        { text: "Jumpstart" },
+        { text: "Packages" },
+        { text: "BOLD Miles" },
+        { text: "Fuel Card" },
       ],
     },
     { text: "Partners" },
@@ -46,9 +50,15 @@ const SideMenu = ({ onMenuItemClick }) => {
         { text: "Transaction history" },
       ],
     },
-    { text: "Settings" },
-    { text: "Trash" },
-    { text: "Fuel Request" },
+    // { text: "Fuel Request" },
+    {
+      text: "Location",
+      subItems: [
+        { text: "Map" },
+        { text: "Allowed services" },
+        { text: "Bidding" },
+      ],
+    },
   ];
 
   const handleMenuItemClick = (itemName) => {
@@ -65,6 +75,15 @@ const SideMenu = ({ onMenuItemClick }) => {
       case "BOLD 3rd Party":
         onMenuItemClick("Thirdparty");
         break;
+      case "Jumpstart":
+        onMenuItemClick("Jumpstart");
+        break;
+      case "Packages":
+        onMenuItemClick("Packages");
+        break;
+      case "BOLD Miles":
+        onMenuItemClick("BoldMiles");
+        break;
       case "Payouts":
         onMenuItemClick("Payouts");
         break;
@@ -73,6 +92,15 @@ const SideMenu = ({ onMenuItemClick }) => {
         break;
       case "Transaction history":
         onMenuItemClick("TransactionHistory");
+        break;
+      case "Map":
+        onMenuItemClick("Map");
+        break;
+      case "Allowed services":
+        onMenuItemClick("AllowedServices");
+        break;
+      case "Bidding":
+        onMenuItemClick("Bidding");
         break;
       case "Overview":
         if (activeDropdown === "services") onMenuItemClick("Services");
@@ -103,12 +131,14 @@ const SideMenu = ({ onMenuItemClick }) => {
             const isDropdown =
               item.text === "Services" ||
               item.text === "Internal Team" ||
-              item.text === "Accounts";
+              item.text === "Accounts" ||
+              item.text === "Location";
             const isDropdownOpen =
               (item.text === "Services" && activeDropdown === "services") ||
               (item.text === "Internal Team" &&
                 activeDropdown === "internalteam") ||
-              (item.text === "Accounts" && activeDropdown === "accounts");
+              (item.text === "Accounts" && activeDropdown === "accounts") ||
+              (item.text === "Location" && activeDropdown === "location");
 
             return isDropdown ? (
               <li key={index} className="relative hover:bg-transparent">

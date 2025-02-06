@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
   Button,
   Checkbox,
@@ -21,7 +22,7 @@ import CustomerCard from "../common/CustomerCard";
 const VehicleInfo = ({
   setSelectedVehicleId,
   setActiveComponent,
-  setSelectedOrgId,
+  // setSelectedOrgId,
 }) => {
   const [services, setServices] = useState({
     packages: false,

@@ -63,9 +63,57 @@ const rentalPartnersData = [
     revenueGenerated: "€120,192",
     pendingPayouts: "€120,192",
   },
+  {
+    id: 6,
+    name: "Your rental partners",
+    totalVehicle: "Aviero",
+    totalBookings: 129,
+    revenueGenerated: "€120,192",
+    pendingPayouts: "€120,192",
+  },
+  {
+    id: 6,
+    name: "Your rental partners",
+    totalVehicle: "Aviero",
+    totalBookings: 129,
+    revenueGenerated: "€120,192",
+    pendingPayouts: "€120,192",
+  },
+  {
+    id: 6,
+    name: "Your rental partners",
+    totalVehicle: "Aviero",
+    totalBookings: 129,
+    revenueGenerated: "€120,192",
+    pendingPayouts: "€120,192",
+  },
+  {
+    id: 6,
+    name: "Your rental partners",
+    totalVehicle: "Aviero",
+    totalBookings: 129,
+    revenueGenerated: "€120,192",
+    pendingPayouts: "€120,192",
+  },
+  {
+    id: 6,
+    name: "Your rental partners",
+    totalVehicle: "Aviero",
+    totalBookings: 129,
+    revenueGenerated: "€120,192",
+    pendingPayouts: "€120,192",
+  },
+  {
+    id: 6,
+    name: "Your rental partners",
+    totalVehicle: "Aviero",
+    totalBookings: 129,
+    revenueGenerated: "€120,192",
+    pendingPayouts: "€120,192",
+  },
 ];
 
-const Rentals = ({ handleRentalClick }) => {
+const BoldMiles = ({ handleServiceClick }) => {
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (event, newValue) => {
@@ -78,7 +126,7 @@ const Rentals = ({ handleRentalClick }) => {
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
         <p className="font-redhat font-semibold text-base flex items-center">
           <span className="text-[#777777] pr-2">Services</span>
-          {"> Rentals"}
+          {"> BOLD Miles"}
         </p>
         <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
           <SearchIcon />
@@ -91,9 +139,7 @@ const Rentals = ({ handleRentalClick }) => {
       </div>
 
       {/* Manage Heading */}
-      <p className="font-redhat font-semibold text-2xl py-8">
-        All rental partners
-      </p>
+      <p className="font-redhat font-semibold text-2xl py-8">Partner</p>
 
       {/* Tabs */}
       <Tabs
@@ -117,9 +163,9 @@ const Rentals = ({ handleRentalClick }) => {
           ".MuiTabs-indicator": { backgroundColor: "#1976d2" },
         }}
       >
-        <Tab label="All rental partners" />
+        <Tab label="All 3rd party partners" />
         <Tab label="Pending requests" />
-        <Tab label="New requests" />
+        <Tab label="New requests (11)" />
       </Tabs>
 
       {/* Tab Content */}
@@ -150,11 +196,11 @@ const Rentals = ({ handleRentalClick }) => {
               >
                 <TableRow style={{ borderRadius: "8px" }}>
                   {[
-                    "Name",
-                    "Total vehicle",
-                    "Total bookings made",
-                    "Revenue generated",
-                    "Pending payouts",
+                    "Done by",
+                    "Vehicle type",
+                    "Plate number",
+                    "Total pickups",
+                    "Status",
                     "Options",
                   ].map((header) => (
                     <TableCell
@@ -176,7 +222,7 @@ const Rentals = ({ handleRentalClick }) => {
                 {rentalPartnersData.map((partner) => (
                   <TableRow
                     key={partner.id}
-                    onClick={() => handleRentalClick(partner?.id)}
+                    onClick={() => handleServiceClick(partner?.id)}
                     sx={{ cursor: "pointer" }}
                   >
                     <TableCell sx={{ fontSize: "16px", fontWeight: "600" }}>
@@ -254,11 +300,11 @@ const Rentals = ({ handleRentalClick }) => {
             textAlign: "center",
           }}
         >
-          New requests
+          New requests(11)
         </Box>
       )}
     </Box>
   );
 };
 
-export default Rentals;
+export default BoldMiles;

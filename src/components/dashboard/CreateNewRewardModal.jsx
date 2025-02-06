@@ -58,7 +58,7 @@ const CreateNewRewardModal = ({
           <div className="flex items-center">
             <img src={rewardIcon} alt="Fuel Gas Icon" className="w-20 mr-3" />
             <div>
-              <p className="text-lg font-semibold text-black">
+              <p className="text-2xl font-redhat font-semibold text-black">
                 Create new reward
               </p>
             </div>
@@ -94,9 +94,9 @@ const CreateNewRewardModal = ({
             label={
               <Typography
                 sx={{
-                  color: selected === "Drivers" ? "#00cbc4" : "#6d6d6d",
-                  fontSize: "14px",
-                  fontWeight: 400,
+                  color: "black",
+                  fontSize: "16px",
+                  fontWeight: 600,
                 }}
               >
                 Drivers
@@ -120,9 +120,9 @@ const CreateNewRewardModal = ({
             label={
               <Typography
                 sx={{
-                  color: selected === "Customers" ? "#00cbc4" : "#6d6d6d",
-                  fontSize: "14px",
-                  fontWeight: 400,
+                  color: "black",
+                  fontSize: "16px",
+                  fontWeight: 600,
                 }}
               >
                 Customers
@@ -137,7 +137,7 @@ const CreateNewRewardModal = ({
           <div className="flex flex-col">
             <label
               htmlFor="fuel-card-name"
-              className="text-sm font-medium text-gray-700 mb-1"
+              className="font-redhat font-semibold text-base mb-4"
             >
               Select reward sector
             </label>
@@ -163,7 +163,7 @@ const CreateNewRewardModal = ({
           <div className="flex flex-col">
             <label
               htmlFor="fuel-type"
-              className="text-sm font-medium text-gray-700 mb-1"
+              className="font-redhat font-semibold text-base mb-4"
             >
               Select service type
             </label>
@@ -191,7 +191,7 @@ const CreateNewRewardModal = ({
           <div className="flex flex-col">
             <label
               htmlFor="fuel-category"
-              className="text-sm font-medium text-gray-700 mb-1"
+              className="font-redhat font-semibold text-base mb-4"
             >
               Select applicable customers from list
             </label>
@@ -220,7 +220,7 @@ const CreateNewRewardModal = ({
           <div className="flex flex-col">
             <label
               htmlFor="amount"
-              className="text-sm font-medium text-gray-700 mb-1"
+              className="font-redhat font-semibold text-base mb-4"
             >
               Reward amount
             </label>
@@ -239,7 +239,7 @@ const CreateNewRewardModal = ({
           <div className="flex flex-col">
             <label
               htmlFor="fuel-type"
-              className="text-sm font-medium text-gray-700 mb-1"
+              className="font-redhat font-semibold text-base mb-4"
             >
               Fow how many rides
             </label>
@@ -263,10 +263,7 @@ const CreateNewRewardModal = ({
               <MenuItem value="petrol">3</MenuItem>
             </TextField>
           </div>
-        </div>
-
-        {/* Modal Footer */}
-        <div className="flex justify-end mt-6">
+          <div className="flex flex-col justify-end">
           <Button
             variant="contained"
             onClick={onSave}
@@ -275,7 +272,7 @@ const CreateNewRewardModal = ({
               color: "white",
               textTransform: "none",
               borderRadius: "8px",
-              width: "50%",
+              width: "100%",
               paddingX: "16px",
               paddingY: "8px",
               "&:hover": {
@@ -285,6 +282,12 @@ const CreateNewRewardModal = ({
           >
             Add coupon
           </Button>
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div className="flex justify-end mt-6">
+         
         </div>
       </Box>
     </Modal>

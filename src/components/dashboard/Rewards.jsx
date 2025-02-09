@@ -49,54 +49,35 @@ const Rewards = () => {
         id: 1,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
+        customerID:"@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
       {
         id: 2,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
+        customerID:"@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
       {
         id: 3,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
+        customerID:"@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
       {
         id: 4,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
+        customerID:"@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
       {
         id: 5,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 6,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 7,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 8,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 9,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
+        customerID:"@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
     ];
@@ -115,7 +96,7 @@ const Rewards = () => {
         }}
       >
         <div className="flex justify-between items-center">
-          <p className="font-redhat font-semibold text-2xl">Ride history</p>
+          <p className="font-redhat font-semibold text-2xl">List of applicable customers</p>
           <CustomDropdown options={dropdownOptions} />
         </div>
         <TableContainer>
@@ -128,6 +109,7 @@ const Rewards = () => {
                   fontWeight: "400",
                   fontSize: "16px",
                   borderBottom: "none",
+                  color:"black"
                 },
                 "& .MuiTableCell-root:first-of-type": {
                   borderTopLeftRadius: "10px",
@@ -143,11 +125,11 @@ const Rewards = () => {
                 sx={{
                   backgroundColor: "#f5f5f5",
                   borderRadius: "10px",
-                  fontWeight: "400",
                   fontSize: "16px",
+                  paddingBottom:"24px"
                 }}
               >
-                {["Name", "Assigned vehicle", "Total rides", "Options"].map(
+                {["Customer name", "Total ride taken", "Total spends","Customer ID","Options"].map(
                   (header) => (
                     <TableCell key={header}>{header}</TableCell>
                   )
@@ -166,12 +148,13 @@ const Rewards = () => {
                     fontSize: "16px",
                   }}
                 >
-                  <TableCell>{org.name}</TableCell>
-                  <TableCell>{org.assignedVehicle}</TableCell>
-                  <TableCell>{org.totalRides}</TableCell>
+                  <TableCell sx={{fontWeight:"600",fontSize:"16px",color:"black"}}>{org.name}</TableCell>
+                  <TableCell  sx={{fontWeight:"600",fontSize:"16px",color:"black"}}>{org.assignedVehicle}</TableCell>
+                  <TableCell  sx={{fontWeight:"600",fontSize:"16px",color:"black"}}>{org.totalRides}</TableCell>
+                  <TableCell  sx={{fontWeight:"600",fontSize:"16px",color:"black"}}>{org.customerID}</TableCell>
                   <TableCell>
                     <button>
-                      <MoreHorizIcon className="text-[#777777]" />
+                      <MoreHorizIcon className="text-black" />
                     </button>
                   </TableCell>
                 </TableRow>
@@ -195,7 +178,7 @@ const Rewards = () => {
               },
             }}
           >
-            View ride history &gt;&gt;
+            View all list &gt;&gt;
           </Button>
         </div>
       </Box>
@@ -235,6 +218,7 @@ const Rewards = () => {
             Select options to proceed
           </p>
         </div>
+        <div className="flex gap-6">
         <div
           className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer"
           onClick={() => setModalOpen(true)}
@@ -244,6 +228,13 @@ const Rewards = () => {
             <AddIcon fontSize="small" />
           </span>{" "}
           Create new reward{" "}
+        </div>
+        <div
+          className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer"
+          onClick={() => setModalOpen(true)}
+        >
+         In-app reward
+        </div>
         </div>
       </div>
 
@@ -257,15 +248,18 @@ const Rewards = () => {
             width: "fit-content",
             ".MuiTab-root": {
               textTransform: "none",
-              fontWeight: 500,
+              fontWeight: 400,
               color: "#9e9e9e",
+              paddingY:"8px",
+              fontSize:"16px"
             },
-            ".Mui-selected": { color: "#1976d2", fontWeight: "bold" },
+            ".Mui-selected": { color: "#1976d2", fontWeight: "600",paddingY:"8px", fontSize:"16px" },
             ".MuiTabs-indicator": { backgroundColor: "#1976d2" },
           }}
         >
           <Tab label="Coupons" />
           <Tab label="Rewards" />
+          <Tab label="Voucher" />
         </Tabs>
         <Button
           variant="outlined"

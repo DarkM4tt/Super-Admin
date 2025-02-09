@@ -64,7 +64,6 @@ function OtpForm() {
       const response = await verifyEmailOTP({ otp }).unwrap();
       console.log(response);
       const loginResponse = await triggerLoginWithEmail().unwrap();
-      console.log(loginResponse);
       localStorage.setItem("org_id", loginResponse?.user?.organization_id);
       if (loginResponse.user) {
         navigate("/home");

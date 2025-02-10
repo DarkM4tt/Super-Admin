@@ -251,6 +251,8 @@ const Payouts = () => {
           <Tab label="Rentals" />
           <Tab label="BOLD promotions" />
           <Tab label="Fuel stations" />
+          <Tab label="3rd party" />
+          <Tab label="BOLD miles" />
         </Tabs>
         <div className="flex items-center gap-6">
           <div className="py-3 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359] cursor-pointer">

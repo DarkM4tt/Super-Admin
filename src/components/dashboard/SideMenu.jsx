@@ -25,7 +25,6 @@ const SideMenu = ({ onMenuItemClick }) => {
         { text: "Jumpstart" },
         { text: "Packages" },
         { text: "BOLD Miles" },
-        { text: "Fuel Card" },
       ],
     },
     { text: "Partners" },

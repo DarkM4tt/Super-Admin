@@ -56,6 +56,7 @@ const SideMenu = ({ onMenuItemClick }) => {
         { text: "Map" },
         { text: "Allowed services" },
         { text: "Bidding" },
+        { text: "Add Location" },
       ],
     },
   ];
@@ -100,6 +101,9 @@ const SideMenu = ({ onMenuItemClick }) => {
         break;
       case "Bidding":
         onMenuItemClick("Bidding");
+        break;
+      case "Add Location":
+        onMenuItemClick("AddLocation");
         break;
       case "Overview":
         if (activeDropdown === "services") onMenuItemClick("Services");

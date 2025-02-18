@@ -47,6 +47,7 @@ import CommonServiceInfo from "../components/dashboard/Seprateservices/CommonSer
 import Map from "../components/dashboard/Location/Map";
 import AllowedServices from "../components/dashboard/Location/AllowedServices";
 import Bidding from "../components/dashboard/Location/Bidding";
+import AddLocation from "../components/dashboard/Location/AddLocation";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -262,6 +263,8 @@ const Home = () => {
         return <AllowedServices />;
       case "Bidding":
         return <Bidding />;
+      case "AddLocation":
+        return <AddLocation />;
       case "Vehicles":
         return (
           <Vehicles
@@ -305,7 +308,7 @@ const Home = () => {
       <Toaster />
       <div className="flex flex-grow overflow-y-auto bg-[#F8F8F8]">
         <div
-          className={`absolute sm:relative z-50 h-full w-2/5 sm:w-[18%] max-w-[280px] md:block text-white overflow-y-auto`}
+          className={`absolute sm:relative z-50 h-full w-2/5 sm:w-[18%] max-w-[335px] md:block text-white overflow-y-auto`}
         >
           <SideMenu
             onMenuItemClick={handleMenuItemClick}

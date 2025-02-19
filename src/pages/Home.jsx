@@ -48,6 +48,7 @@ import Map from "../components/dashboard/Location/Map";
 import AllowedServices from "../components/dashboard/Location/AllowedServices";
 import Bidding from "../components/dashboard/Location/Bidding";
 import AddLocation from "../components/dashboard/Location/AddLocation";
+import AddCity from "../components/dashboard/Location/AddCity";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -264,7 +265,9 @@ const Home = () => {
       case "Bidding":
         return <Bidding />;
       case "AddLocation":
-        return <AddLocation />;
+        return <AddLocation setActiveComponent={setActiveComponent} />;
+      case "AddCity":
+        return <AddCity setActiveComponent={setActiveComponent} />;
       case "Vehicles":
         return (
           <Vehicles

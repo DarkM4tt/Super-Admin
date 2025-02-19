@@ -1,8 +1,9 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import CountryModal from "./CountryModal";
 
-const AddLocation = () => {
+const AddLocation = ({ setActiveComponent }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleAddCountry = (country) => {
@@ -36,7 +37,10 @@ const AddLocation = () => {
         >
           Add country
         </div>
-        <div className="flex-1 flex items-center justify-center border-2 border-dashed border-gray h-40 cursor-pointer">
+        <div
+          className="flex-1 flex items-center justify-center border-2 border-dashed border-gray h-40 cursor-pointer"
+          onClick={() => setActiveComponent("AddCity")}
+        >
           Add city
         </div>
       </div>

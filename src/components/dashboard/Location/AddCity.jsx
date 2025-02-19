@@ -33,6 +33,30 @@ const AddCity = ({ setActiveComponent }) => {
   const [markerPosition, setMarkerPosition] = useState(null);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
 
+  const calculatePolygonCentroid = (coords) => {
+    let area = 0;
+    let centroidX = 0;
+    let centroidY = 0;
+
+    for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
+      const lat1 = coords[i][1];
+      const lng1 = coords[i][0];
+      const lat2 = coords[j][1];
+      const lng2 = coords[j][0];
+
+      const factor = lat1 * lng2 - lat2 * lng1;
+      area += factor;
+      centroidX += (lat1 + lat2) * factor;
+      centroidY += (lng1 + lng2) * factor;
+    }
+
+    area /= 2;
+    centroidX = centroidX / (6 * area);
+    centroidY = centroidY / (6 * area);
+
+    return { lat: centroidX, lng: centroidY };
+  };
+
   const onOverlayComplete = useCallback((e) => {
     if (e.type === "polygon") {
       if (polygonRef.current) {
@@ -41,14 +65,10 @@ const AddCity = ({ setActiveComponent }) => {
 
       const path = e.overlay.getPath();
       const coordinates = [];
-      let latSum = 0,
-        lngSum = 0;
 
       for (let i = 0; i < path.getLength(); i++) {
         const point = path.getAt(i);
         coordinates.push([point.lng(), point.lat()]);
-        latSum += point.lat();
-        lngSum += point.lng();
       }
 
       if (
@@ -62,10 +82,9 @@ const AddCity = ({ setActiveComponent }) => {
       polygonRef.current = e.overlay;
       setDrawingControlEnabled(false);
 
-      const centerLat = latSum / coordinates.length;
-      const centerLng = lngSum / coordinates.length;
-      setMapCenter({ lat: centerLat, lng: centerLng });
-      setMarkerPosition({ lat: centerLat, lng: centerLng });
+      const centroid = calculatePolygonCentroid(coordinates);
+      setMapCenter(centroid);
+      setMarkerPosition(centroid);
     }
   }, []);
 

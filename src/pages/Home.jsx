@@ -49,6 +49,8 @@ import AllowedServices from "../components/dashboard/Location/AllowedServices";
 import Bidding from "../components/dashboard/Location/Bidding";
 import AddLocation from "../components/dashboard/Location/AddLocation";
 import AddCity from "../components/dashboard/Location/AddCity";
+import AllZones from "../components/dashboard/Zones/AllZones";
+import NewZone from "../components/dashboard/Zones/NewZone";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -196,6 +198,10 @@ const Home = () => {
         );
       case "Partners":
         return <Partners onPartnerClick={handleOrgClick} />;
+      case "Zones":
+        return <AllZones setActiveComponent={setActiveComponent} />;
+      case "NewZone":
+        return <NewZone setActiveComponent={setActiveComponent} />;
       case "Services":
         return <Services />;
       case "Rentals":
@@ -319,7 +325,7 @@ const Home = () => {
           />
         </div>
         <div className="w-4/5 flex-1 overflow-y-auto">
-          <HomeHeader />
+          <HomeHeader setActiveComponent={setActiveComponent} />
           <div className="py-8 px-14 bg-[#F8F8F8]">
             {renderActiveComponent()}
           </div>

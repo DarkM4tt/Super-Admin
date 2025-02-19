@@ -1,4 +1,6 @@
-import React, { useRef, useEffect } from "react";
+/* eslint-disable react/no-unknown-property */
+/* eslint-disable react/prop-types */
+import { useRef, useEffect, useState } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,22 +12,7 @@ import {
   Legend,
   Filler,
 } from "chart.js";
-import { Button } from "@mui/material";
-import infoIcon from "../../assets/infoIcon.svg";
-import PropTypes from "prop-types";
-import Euroicon from "../../assets/euroicon.svg";
-import Upgraph from "../../assets/upgraph.svg";
-import dashboardvehicle from "../../assets/dashboardvehicle.svg";
-import CircleIcon from "@mui/icons-material/Circle";
-import lowgraph from "../../assets/lowgraphdash.svg";
-import moderategraph from "../../assets/moderategrapgdash.svg";
-import CancellationChart from "./Dashboardcharts/Cancellationchart";
-import PerformanceChart from "./Dashboardcharts/Companyperformance";
-// import { Chart, ArcElement, Tooltip, Legend,} from 'chart.js';
 import { Line } from "react-chartjs-2";
-import { useState } from "react";
-import Dashboardzones from "./Dashboardcharts/Dashboardzones";
-import Organisationreports from "./Dashboardcharts/Organisationreports";
 import SearchIcon from "@mui/icons-material/Search";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import AddIcon from "@mui/icons-material/Add";
@@ -34,7 +21,6 @@ import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import BusinessIcon from "@mui/icons-material/Business";
 import CloseIcon from "@mui/icons-material/Close";
-
 import Acceptancechart from "./Dashboardcharts/Acceptancechart";
 import Bookinggraph from "./Dashboardcharts/Bookinggraph";
 import Saletypechart from "./Dashboardcharts/Saletypechart";

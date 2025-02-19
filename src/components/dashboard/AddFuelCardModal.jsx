@@ -74,13 +74,6 @@ const AddFuelCardModal = ({ open, onClose, formData, setFormData, onSave }) => {
               value={formData.cardName}
               onChange={(e) => handleChange("cardName", e.target.value)}
               fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <ExpandMoreIcon sx={{ color: "black" }} />
-                  </InputAdornment>
-                ),
-              }}
             />
           </div>
 

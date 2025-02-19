@@ -9,8 +9,10 @@ import {
   GoogleMap,
   InfoWindow,
   StandaloneSearchBox,
+  Marker,
+  Polygon,
 } from "@react-google-maps/api";
-import { Marker, Polygon } from "react-leaflet";
+// import { Marker, Polygon } from "react-leaflet";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 import LoadingAnimation from "../../common/LoadingAnimation";
 

@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unknown-property */
 /* eslint-disable react/prop-types */
 import { useRef, useEffect, useState } from "react";
 import {
@@ -15,24 +14,13 @@ import {
 import { Line } from "react-chartjs-2";
 import SearchIcon from "@mui/icons-material/Search";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import AddIcon from "@mui/icons-material/Add";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
 import BusinessIcon from "@mui/icons-material/Business";
-import CloseIcon from "@mui/icons-material/Close";
 import Acceptancechart from "./Dashboardcharts/Acceptancechart";
 import Bookinggraph from "./Dashboardcharts/Bookinggraph";
 import Saletypechart from "./Dashboardcharts/Saletypechart";
-import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  IconButton,
-  Checkbox,
-} from "@mui/material";
-import Zones from "./Zones";
-import DeleteIcon from "@mui/icons-material/Delete";
 
 // Register required chart.js components
 // Chart.register(ArcElement, Tooltip, Legend);
@@ -50,16 +38,6 @@ ChartJS.register(
 const Dashboard = ({ onMenuItemClick }) => {
   const chartRef = useRef(null);
   const [gradient, setGradient] = useState(null);
-  const [openZonesDialog, setOpenZonesDialog] = useState(false);
-  const [createzone, setcreatezone] = useState(false);
-
-  const handleOpenDialog = () => {
-    setOpenZonesDialog(true);
-  };
-
-  const handleCloseDialog = () => {
-    setOpenZonesDialog(false);
-  };
 
   useEffect(() => {
     if (chartRef.current) {
@@ -81,44 +59,6 @@ const Dashboard = ({ onMenuItemClick }) => {
       setGradient(gradientFill);
     }
   }, []);
-
-  const zones = [
-    {
-      id: 1,
-      name: "Mid-eve",
-      area: "View in-map",
-      vehicles: 622,
-      rate: "€ 1120",
-    },
-    {
-      id: 2,
-      name: "Mid-eve",
-      area: "View in-map",
-      vehicles: 622,
-      rate: "€ 1120",
-    },
-    {
-      id: 3,
-      name: "Mid-eve",
-      area: "View in-map",
-      vehicles: 622,
-      rate: "€ 1120",
-    },
-    {
-      id: 4,
-      name: "Mid-eve",
-      area: "View in-map",
-      vehicles: 622,
-      rate: "€ 1120",
-    },
-    {
-      id: 5,
-      name: "Mid-eve",
-      area: "View in-map",
-      vehicles: 622,
-      rate: "€ 1120",
-    },
-  ];
 
   const data = {
     labels: ["May", "Jun", "Jul", "Aug", "Sep"],
@@ -217,131 +157,6 @@ const Dashboard = ({ onMenuItemClick }) => {
             <div className="py-3 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359]">
               Generate overview report
             </div>
-            <div
-              className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] flex"
-              onClick={handleOpenDialog}
-            >
-              All zones
-              <span className="pl-1">
-                {" "}
-                <KeyboardDoubleArrowRightIcon fontSize="small" />
-              </span>
-            </div>
-            <Dialog
-              open={openZonesDialog}
-              onClose={handleCloseDialog}
-              maxWidth="md"
-              fullWidth
-            >
-              <DialogTitle sx={{ paddingX: "32px", paddingY: "40px" }}>
-                Create Zone
-                <IconButton
-                  aria-label="close"
-                  onClick={handleCloseDialog}
-                  sx={{
-                    position: "absolute",
-                    right: 8,
-                    top: 8,
-                    color: (theme) => theme.palette.grey[500],
-                  }}
-                >
-                  <CloseIcon />
-                </IconButton>
-              </DialogTitle>
-              {createzone ? (
-                <DialogContent sx={{ paddingX: "32px" }}>
-                  <Zones />
-                </DialogContent>
-              ) : (
-                <DialogContent className="">
-                  <div className="flex justify-between">
-                    <p className="text-sm mb-4">
-                      Your zone have been created successfully, please fill in
-                      the below details and submit
-                    </p>
-
-                    <div className="flex flex-col justify-between gap-4">
-                      <button
-                        variant="contained"
-                        onClick={() => setcreatezone(true)}
-                        className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px]"
-                      >
-                        <span className="pr-1">
-                          {" "}
-                          <AddIcon fontSize="small" />
-                        </span>
-                        Create new zone
-                      </button>
-                      <button
-                        variant="outlined"
-                        className="py-3 px-4 text-base font-redhat border border-black rounded-[56px]"
-                      >
-                        <span className="pr-1">
-                          {" "}
-                          <DeleteIcon fontSize="small" />
-                        </span>
-                        Delete selection
-                      </button>
-                    </div>
-                  </div>
-
-                  <table className="table-auto w-full border-spacing-y-4 border-separate mt-6">
-                    <tbody className="">
-                      {zones.map((zone, index) => (
-                        <tr
-                          key={index}
-                          className={`hover:bg-[#F5F5F5] w-full `}
-                        >
-                          <td className=" w-[30px]">
-                            <Checkbox />
-                          </td>
-                          <td className="py-2 px-4 text-left">
-                            <div className="flex flex-col gap-2 ">
-                              <p className="font-redhat font-bold text-lg">
-                                Zone name
-                              </p>
-                              <p className="font-redhat font-medium text-base text-[#666666]">
-                                {zone.name}
-                              </p>
-                            </div>
-                          </td>
-                          <td className="py-2 px-4 cursor-pointer">
-                            <div className="flex flex-col gap-2 ">
-                              <p className="font-redhat font-bold text-lg">
-                                Area
-                              </p>
-                              <p className="font-redhat font-medium text-base text-[#666666] underline">
-                                View in-map
-                              </p>
-                            </div>
-                          </td>
-                          <td className="py-2 px-4 ">
-                            <div className="flex flex-col gap-2 ">
-                              <p className="font-redhat font-bold text-lg">
-                                Vehicle around
-                              </p>
-                              <p className="font-redhat font-medium text-base text-[#666666]">
-                                {zone.vehicles}
-                              </p>
-                            </div>
-                          </td>
-                          <td className="py-2 px-4 text-right">
-                            <div className="flex flex-col gap-2 ">
-                              <p className="font-redhat font-bold text-lg">
-                                Rate
-                              </p>
-                              <p className="font-redhat font-medium text-base text-[#666666]">
-                                62
-                              </p>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </DialogContent>
-              )}
-            </Dialog>
           </div>
         </div>
         <div className="flex justify-between pt-8">

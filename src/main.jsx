@@ -4,7 +4,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ThemeProvider } from "@mui/material/styles";
 import Login from "./pages/Login.jsx";
 import Home from "./pages/Home";
-import OtpForm from "./components/auth-flow/OtpForm.jsx";
 import theme from "./theme.jsx";
 import { store } from "./app/Store.js";
 import { Provider } from "react-redux";
@@ -18,15 +17,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/home",
-    element: (
-      // <ProtectedRoute>
-      <Home />
-      // </ProtectedRoute>
-    ),
-  },
-  {
-    path: "/otp",
-    element: <OtpForm />,
+    element: <Home />,
   },
 ]);
 

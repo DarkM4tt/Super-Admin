@@ -1,81 +1,74 @@
 import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import LoadingAnimation from "../common/LoadingAnimation";
-import { useSendEmailOTPMutation } from "../../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 function LoginForm() {
-  const [input, setInput] = useState("");
-  const [error, setError] = useState(false);
+  const [loginId, setLoginId] = useState("");
+  const [accessCode, setAccessCode] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const [sendEmailOTP] = useSendEmailOTPMutation();
-
-  const handlePhoneSignIn = async () => {};
-
-  const handleEmailContinue = async () => {
-    setError(false);
-    setLoading(true);
-    try {
-      const response = await sendEmailOTP({ email: input }).unwrap();
-      const token = response.Email_OTP_Token;
-      localStorage.setItem("auth_token", token);
-      console.log(response.Email_OTP_Token);
-      navigate("/otp", {
-        state: { input, isEmail: true },
-      });
-    } catch (error) {
-      console.error("Error: ", error);
-      setError(true);
-    }
-    setLoading(false);
-  };
 
   const handleContinue = async () => {
-    const emailRegex = /\S+@\S+\.\S+/;
-    const phoneRegex = /^\+[0-9]{1,4}[0-9]{6,}$/;
-
-    if (!input) {
-      setError(true);
+    setError("");
+    setLoading(true);
+    if (!loginId || !accessCode) {
+      setError("Please enter login id and access code!");
       return;
     }
 
-    if (emailRegex.test(input)) {
-      handleEmailContinue();
-    } else if (phoneRegex.test(input)) {
-      setError(false);
-      handlePhoneSignIn();
-    } else {
-      setError(true);
-      return;
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
+        method: "POST",
+        body: JSON.stringify({
+          email: loginId,
+          password: accessCode,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const result = await res?.json();
+      console.log(result);
+      if (result.success) {
+        navigate("/home");
+      } else {
+        setError(result.message);
+      }
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const orgId = localStorage.getItem("org_id");
-
-  if (orgId && orgId !== "undefined") {
-    return <Navigate to="/home" />;
-  }
-
   return (
-    <div className="flex px-20 flex-col py-8 gap-6">
-      <p className="text-fontBlack text-mxl font-semibold font-redhat">
-        Enter your phone number or email?
-      </p>
+    <div className="flex flex-col gap-6 max-w-[650px]">
       <div className="flex flex-col gap-2">
+        <p className="font-redhat font-bold text-4xl">Login</p>
+        <p className="font-sans font-normal text-xl text-[#5C5C5C]">
+          Please login to continue
+        </p>
+      </div>
+      <p className="text-fontBlack text-mxl font-semibold font-redhat">
+        Please provide your details
+      </p>
+      <div className="flex flex-col gap-4">
         <TextField
-          placeholder="Enter your email or phone no."
+          placeholder="Enter your login ID"
           variant="outlined"
-          value={input}
-          error={error}
-          onChange={(e) => setInput(e.target.value)}
+          value={loginId}
+          onChange={(e) => setLoginId(e.target.value)}
         />
-        {error && (
-          <p className="text-red-500 text-xs">
-            Enter a valid email or mobile number with country code
-          </p>
-        )}
+        <TextField
+          placeholder="Enter your access code"
+          variant="outlined"
+          value={accessCode}
+          onChange={(e) => setAccessCode(e.target.value)}
+        />
+        {error && <p className="text-red-500 text-xs">{error}</p>}
       </div>
       <Button
         variant="contained"
@@ -94,11 +87,15 @@ function LoginForm() {
         fullWidth
         onClick={handleContinue}
       >
-        {loading ? <LoadingAnimation height={30} width={30} /> : "Continue"}
+        {loading ? (
+          <LoadingAnimation height={30} width={30} />
+        ) : (
+          "Login to owner access"
+        )}
       </Button>
       <p className="text-gray text-lg font-normal font-sans mt-2">
-        Lorem ipsum dolor sit amet consectetur. Eget venenatis est adipiscing
-        senectus. Adipiscing lorem est scelerisque congue donec in.
+        This is the owner access login and hence it is having all the BOLD data.
+        Any wrong scripted login is strictly prohibited.
       </p>
     </div>
   );

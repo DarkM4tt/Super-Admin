@@ -3,6 +3,7 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import LoadingAnimation from "../common/LoadingAnimation";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/authContext";
 
 function LoginForm() {
   const [loginId, setLoginId] = useState("");
@@ -10,6 +11,7 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { checkAuth } = useAuth();
 
   const handleContinue = async () => {
     setError("");
@@ -20,19 +22,24 @@ function LoginForm() {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/login`, {
-        method: "POST",
-        body: JSON.stringify({
-          email: loginId,
-          password: accessCode,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/organizations/super-admin/login`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            email: loginId,
+            password: accessCode,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
       const result = await res?.json();
       console.log(result);
       if (result.success) {
+        await checkAuth();
         navigate("/home");
       } else {
         setError(result.message);
@@ -97,6 +104,26 @@ function LoginForm() {
         This is the owner access login and hence it is having all the BOLD data.
         Any wrong scripted login is strictly prohibited.
       </p>
+      <div className="flex gap-4">
+        <button
+          className="border-[2px] border-red-400 rounded text-lg text-red-400 w-fit px-4 py-1"
+          onClick={() => {
+            setLoginId("superadmin@gmail.com");
+            setAccessCode("SuperAdmin@123");
+          }}
+        >
+          Testing ? get demo email and password
+        </button>
+        <button
+          className="border-[2px] border-green-400 rounded text-lg text-green-400 w-fit px-4 py-1"
+          onClick={() => {
+            setLoginId("");
+            setAccessCode("");
+          }}
+        >
+          Clear
+        </button>
+      </div>
     </div>
   );
 }

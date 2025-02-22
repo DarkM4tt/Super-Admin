@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+/* eslint-disable react/prop-types */
+import { useState, useRef, useEffect, useCallback } from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -35,6 +36,7 @@ import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import StatusDropdown from "../common/StatusDropdown";
 import CustomDropdown from "./../common/CustomDropdown";
 import Locationmapcard from "./../common/locationmapcard";
+import LoadingAnimation from "../common/LoadingAnimation";
 
 ChartJS.register(
   CategoryScale,
@@ -54,6 +56,44 @@ const PartnerInfo = ({
 }) => {
   const chartRef = useRef(null);
   const [gradient, setGradient] = useState(null);
+  const [partnerDetails, setPartnerDetails] = useState(null);
+  const [partnerAddress, setPartnerAddress] = useState(null);
+  const [partnerDocuments, setPartnerDocuments] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const fetchPartnerDetails = useCallback(async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_URL
+        }/organizations/super-admin/get-organization-details/${selectedOrgId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setPartnerDetails(result?.data?.organizationInfo);
+        setPartnerAddress(result?.data?.organizationAddress);
+        setPartnerDocuments(result?.data?.organizationDocuments);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedOrgId]);
+
+  useEffect(() => {
+    fetchPartnerDetails();
+  }, [fetchPartnerDetails]);
 
   useEffect(() => {
     if (chartRef.current) {
@@ -199,7 +239,6 @@ const PartnerInfo = ({
           flexDirection: "column",
           gap: "30px",
           borderRadius: "8px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
         <div className="flex justify-between">
@@ -271,6 +310,20 @@ const PartnerInfo = ({
     );
   };
 
+  if (loading) {
+    return <LoadingAnimation width={500} height={500} />;
+  }
+
+  if (error) {
+    return (
+      <p className="text-lg text-red-400 font-bold">
+        {error.message || "Error"}
+      </p>
+    );
+  }
+
+  console.log(partnerDocuments);
+
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -309,7 +362,7 @@ const PartnerInfo = ({
       <div className="flex justify-between items-center">
         <div className="flex flex-col max-w-[70%]">
           <p className="font-redhat font-semibold text-2xl pt-8">
-            ABC Company Ltd
+            {partnerDetails?.full_name || "No name"}
           </p>
           <p className="font-redhat font-normal text-sm text-[#777777] pt-2">
             Please note that the status change will hinder the organisation
@@ -381,7 +434,9 @@ const PartnerInfo = ({
                 <p className="font-redhat font-semibold text-base">
                   Total vehicles
                 </p>
-                <p className="pt-2 font-redhat font-bold text-2xl">22 k</p>
+                <p className="pt-2 font-redhat font-bold text-2xl">
+                  {partnerDetails?.totalVehicles || 0}
+                </p>
                 <p className="pt-2 text-sm text-[#777777]">
                   18 k+ currently <span className="text-[#18C4B8]">active</span>
                 </p>
@@ -404,7 +459,9 @@ const PartnerInfo = ({
                 <p className="font-redhat font-semibold text-base">
                   Total drivers
                 </p>
-                <p className="pt-2 font-redhat font-bold text-2xl">2210</p>
+                <p className="pt-2 font-redhat font-bold text-2xl">
+                  {partnerDetails?.totalDrivers || 0}
+                </p>
                 <p className="pt-2 text-sm text-[#777777]">
                   including 320 rental org.
                 </p>
@@ -493,7 +550,17 @@ const PartnerInfo = ({
         {/* Right Cards */}
         <div className="w-[30%] flex flex-col gap-4">
           <SubmittedDocumentsCard />
-          <Locationmapcard email="example@unanimeplanet.com" />
+          <Locationmapcard
+            email={partnerDetails?.email}
+            phone={partnerDetails?.phone}
+            address={
+              partnerAddress?.length > 0 && partnerAddress[0]?.complete_address
+            }
+            center={
+              partnerAddress?.length > 0 &&
+              partnerAddress[0]?.location?.coordinates
+            }
+          />
         </div>
       </div>
     </>

@@ -1,13 +1,22 @@
-import React from "react";
-import { Card, CardContent, IconButton, Button } from "@mui/material";
+/* eslint-disable react/prop-types */
+import { IconButton } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import CallIcon from "@mui/icons-material/Call";
 import EmailIcon from "@mui/icons-material/Email";
 import { GoogleMap } from "@react-google-maps/api";
 import useGoogleMapsLoader from "../../useGoogleMapsLoader";
 
-const Locationmapcard = ({ email }) => {
+const Locationmapcard = ({
+  email = "unanimeplanet.com",
+  phone = "+351 2210 02912",
+  address = "Opposite DEF company office, Mall Road, Snta street, Aviero Portugal. 110091",
+  center,
+}) => {
   const { isLoaded, loadError } = useGoogleMapsLoader();
+
+  const centerOfMap = { lat: center[0], lng: center[1] };
+
+  console.log("COM: ", centerOfMap);
 
   if (loadError) {
     return <p>Error loading Google Maps: {loadError.message}</p>;
@@ -35,7 +44,7 @@ const Locationmapcard = ({ email }) => {
           <div className="bg-[#6FA4EE1F] rounded-lg items-start p-3 ">
             <CallIcon />
           </div>
-          <p className="font-sans text-base ">Call : +351 2210 02912</p>
+          <p className="font-sans text-base ">Call : {phone}</p>
         </div>
         <div className="flex items-center gap-3">
           <div className="bg-[#6FA4EE1F] rounded-lg items-start p-3 ">
@@ -49,19 +58,24 @@ const Locationmapcard = ({ email }) => {
         </div>
       </div>
       <p className="font-sans text-base pt-6">
-        <span className="text-[#777777]">Address :</span> Opposite DEF company
-        office, Mall Road, Snta street, Aviero Portugal. 110091
+        <span className="text-[#777777]">Address :</span> {address}
       </p>
-      <div className="flex-grow pt-6">
-        <GoogleMap
-          mapContainerStyle={{ height: "100%", width: "" }}
-          //   center={getCenter()}
-          center={{ lat: 40.6413, lng: -8.6536 }}
-          zoom={12}
-          //   zoom={polygon.length > 0 ? 10 : 3}
-          //   onLoad={(map) => (mapRef.current = map)}
-        ></GoogleMap>
-      </div>
+      {center ? (
+        <div className="flex-grow pt-6">
+          <GoogleMap
+            mapContainerStyle={{ height: "100%", width: "" }}
+            //   center={getCenter()}
+            center={centerOfMap}
+            zoom={12}
+            //   zoom={polygon.length > 0 ? 10 : 3}
+            //   onLoad={(map) => (mapRef.current = map)}
+          ></GoogleMap>
+        </div>
+      ) : (
+        <p className="text-red-400 text-lg font-bold">
+          No address registered yet!
+        </p>
+      )}
     </div>
   );
 };

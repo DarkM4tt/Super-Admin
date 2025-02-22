@@ -15,12 +15,12 @@ function LoginForm() {
 
   const handleContinue = async () => {
     setError("");
-    setLoading(true);
     if (!loginId || !accessCode) {
       setError("Please enter login id and access code!");
       return;
     }
 
+    setLoading(true);
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/organizations/super-admin/login`,

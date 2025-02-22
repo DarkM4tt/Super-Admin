@@ -13,6 +13,7 @@ const HomeHeader = ({ setActiveComponent }) => {
   const { checkAuth } = useAuth();
 
   const handleLogout = async () => {
+    setLoading(true);
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_URL}/organizations/super-admin/logout`,
@@ -52,7 +53,7 @@ const HomeHeader = ({ setActiveComponent }) => {
           All zones
         </p>
         {loading ? (
-          <LoadingAnimation width={10} height={10} />
+          <LoadingAnimation width={60} height={60} />
         ) : (
           <div
             className="flex flex-row items-center cursor-pointer hover:bg-gray-100 p-2 rounded-md group"

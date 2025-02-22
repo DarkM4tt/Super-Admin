@@ -30,7 +30,7 @@ const Partners = ({ onPartnerClick }) => {
       const res = await fetch(
         `${
           import.meta.env.VITE_API_URL
-        }/organizations/super-admin/all-organizations`,
+        }/organizations/super-admin/all-organizations?page=1&limit=100`,
         {
           method: "GET",
           credentials: "include",

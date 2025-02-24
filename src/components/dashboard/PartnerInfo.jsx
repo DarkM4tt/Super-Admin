@@ -57,8 +57,6 @@ const PartnerInfo = ({
   const chartRef = useRef(null);
   const [gradient, setGradient] = useState(null);
   const [partnerDetails, setPartnerDetails] = useState(null);
-  const [partnerAddress, setPartnerAddress] = useState(null);
-  const [partnerDocuments, setPartnerDocuments] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -78,9 +76,7 @@ const PartnerInfo = ({
       );
       const result = await res?.json();
       if (result?.success) {
-        setPartnerDetails(result?.data?.organizationInfo);
-        setPartnerAddress(result?.data?.organizationAddress);
-        setPartnerDocuments(result?.data?.organizationDocuments);
+        setPartnerDetails(result?.data);
       } else {
         throw new Error(result?.message);
       }
@@ -322,8 +318,6 @@ const PartnerInfo = ({
     );
   }
 
-  console.log(partnerDocuments);
-
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -554,11 +548,10 @@ const PartnerInfo = ({
             email={partnerDetails?.email}
             phone={partnerDetails?.phone}
             address={
-              partnerAddress?.length > 0 && partnerAddress[0]?.complete_address
+              partnerDetails?.organizationAddress?.complete_address
             }
             center={
-              partnerAddress?.length > 0 &&
-              partnerAddress[0]?.location?.coordinates
+              partnerDetails?.organizationAddress?.location?.coordinates
             }
           />
         </div>

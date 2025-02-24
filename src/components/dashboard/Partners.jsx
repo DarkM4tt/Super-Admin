@@ -34,7 +34,7 @@ const Partners = ({ onPartnerClick }) => {
     } else {
       return `${
         import.meta.env.VITE_API_URL
-      }/organizations/super-admin/all-organizations?page=1&limit=100&?status=NEW-REQUEST`;
+      }/organizations/super-admin/all-organizations?page=1&limit=100&status=NEW-REQUEST`;
     }
   }, [activeTab]);
 

@@ -11,7 +11,7 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { checkAuth } = useAuth();
+  const { checkAuth, authLoading } = useAuth();
 
   const handleContinue = async () => {
     setError("");
@@ -50,6 +50,10 @@ function LoginForm() {
       setLoading(false);
     }
   };
+
+  if (authLoading) {
+    return <LoadingAnimation width={500} height={500} />;
+  }
 
   return (
     <div className="flex flex-col gap-6 max-w-[650px]">

@@ -9,8 +9,8 @@ import { store } from "./app/Store.js";
 import { Provider } from "react-redux";
 import ProtectedRoute from "./components/auth-flow/ProtectedRoute.jsx";
 import PublicRoute from "./components/auth-flow/PublicRoute.jsx";
-import "./index.css";
 import { AuthProvider } from "./context/authContext.jsx";
+import "./index.css";
 
 const router = createBrowserRouter([
   {

@@ -51,6 +51,8 @@ import AddLocation from "../components/dashboard/Location/AddLocation";
 import AddCity from "../components/dashboard/Location/AddCity";
 import AllZones from "../components/dashboard/Zones/AllZones";
 import NewZone from "../components/dashboard/Zones/NewZone";
+import LoadingAnimation from "../components/common/LoadingAnimation";
+import { useAuth } from "../context/authContext";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -68,6 +70,7 @@ const Home = () => {
   const [selectedSosId, setSelectedSosId] = useState(null);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [selectedTripId, setSelectedTripId] = useState(null);
+  const { checkAuth, authLoading } = useAuth();
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
@@ -309,7 +312,9 @@ const Home = () => {
     }
   };
 
-  console.log(activeComponent);
+  if (authLoading) {
+    return <LoadingAnimation width={500} height={500} />;
+  }
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

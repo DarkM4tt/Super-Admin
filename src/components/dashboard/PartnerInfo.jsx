@@ -24,7 +24,6 @@ import {
   TableRow,
 } from "@mui/material";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
-import AddIcon from "@mui/icons-material/Add";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
@@ -328,22 +327,13 @@ const PartnerInfo = ({
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
         <span className="text-gray">{"> Partners"}</span>
-        <div className="flex gap-4">
-          <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
-            <SearchIcon />
-            <input
-              type="text"
-              placeholder="Search anything..."
-              className="bg-transparent outline-none"
-            ></input>
-          </div>
-          <div className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px]">
-            <span className="pr-1">
-              {" "}
-              <AddIcon fontSize="small" />
-            </span>{" "}
-            Add New Employees{" "}
-          </div>
+        <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
+          <SearchIcon />
+          <input
+            type="text"
+            placeholder="Search anything..."
+            className="bg-transparent outline-none"
+          ></input>
         </div>
       </div>
 
@@ -407,7 +397,7 @@ const PartnerInfo = ({
           </div>
         </div>
         <div className="flex items-center gap-6 pt-8">
-          <div className="py-3 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359] cursor-pointer">
+          <div className="py-2 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359] cursor-pointer">
             Generate report
           </div>
           <StatusDropdown />

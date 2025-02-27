@@ -16,10 +16,12 @@ const Locationmapcard = ({
   const { isLoaded, loadError } = useGoogleMapsLoader();
 
   const centerOfMap = { lat: center[0], lng: center[1] };
-  const customIcon = {
-    url: BusinessIcon,
-    scaledSize: new window.google.maps.Size(40, 40),
-  };
+  const customIcon = isLoaded
+    ? {
+        url: BusinessIcon,
+        scaledSize: new window.google.maps.Size(40, 40),
+      }
+    : null;
 
   console.log("COM: ", centerOfMap);
 

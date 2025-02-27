@@ -31,10 +31,14 @@ const Partners = ({ onPartnerClick }) => {
       return `${
         import.meta.env.VITE_API_URL
       }/organizations/super-admin/all-organizations?page=1&limit=100&status=PENDING`;
-    } else {
+    } else if (activeTab === 2) {
       return `${
         import.meta.env.VITE_API_URL
       }/organizations/super-admin/all-organizations?page=1&limit=100&status=NEW-REQUEST`;
+    } else {
+      return `${
+        import.meta.env.VITE_API_URL
+      }/organizations/super-admin/all-organizations?page=1&limit=100&is_completed=false`;
     }
   }, [activeTab]);
 
@@ -109,7 +113,7 @@ const Partners = ({ onPartnerClick }) => {
                     "Total drivers",
                     "Total vehicles",
                     "Listing drivers",
-                    "Issues/queries",
+                    pending ? "Documents Status" : "Issues/queries",
                   ].map((header) => (
                     <TableCell key={header}>{header}</TableCell>
                   ))}
@@ -150,7 +154,13 @@ const Partners = ({ onPartnerClick }) => {
                     <TableCell>{org.totalDrivers}</TableCell>
                     <TableCell>{org.totalVehicles}</TableCell>
                     <TableCell>{org.listingDrivers}</TableCell>
-                    <TableCell>{Math.floor(Math.random() * 20) + 1}</TableCell>
+                    {pending ? (
+                      <TableCell>Docs</TableCell>
+                    ) : (
+                      <TableCell>
+                        {Math.floor(Math.random() * 20) + 1}
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
@@ -212,7 +222,8 @@ const Partners = ({ onPartnerClick }) => {
       >
         <Tab label="All organisations" />
         <Tab label="Pending organisations" />
-        <Tab label="New requests (11)" />
+        <Tab label="New requests" />
+        <Tab label="Incomplete" />
       </Tabs>
 
       {loading ? (
@@ -224,6 +235,8 @@ const Partners = ({ onPartnerClick }) => {
           {activeTab === 1 && <PartnersTable pending={true} />}
 
           {activeTab === 2 && <PartnersTable pending={true} />}
+
+          {activeTab === 3 && <PartnersTable pending={true} />}
         </>
       )}
     </Box>

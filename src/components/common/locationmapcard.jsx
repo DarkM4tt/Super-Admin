@@ -60,14 +60,14 @@ const Locationmapcard = ({
       <p className="font-sans text-base pt-6">
         <span className="text-[#777777]">Address :</span> {address}
       </p>
-      {center ? (
+      {centerOfMap ? (
         <div className="flex-grow pt-6">
           <GoogleMap
             mapContainerStyle={{ height: "100%", width: "" }}
             center={centerOfMap}
             zoom={12}
           >
-            <Marker position={center} />
+            <Marker position={centerOfMap} />
           </GoogleMap>
         </div>
       ) : (

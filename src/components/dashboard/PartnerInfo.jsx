@@ -537,12 +537,8 @@ const PartnerInfo = ({
           <Locationmapcard
             email={partnerDetails?.email}
             phone={partnerDetails?.phone}
-            address={
-              partnerDetails?.organizationAddress?.complete_address
-            }
-            center={
-              partnerDetails?.organizationAddress?.location?.coordinates
-            }
+            address={partnerDetails?.organizationAddress?.complete_address}
+            center={partnerDetails?.organizationAddress?.location?.coordinates}
           />
         </div>
       </div>

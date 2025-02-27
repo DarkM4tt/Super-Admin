@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import SearchIcon from "@mui/icons-material/Search";
 import BackArrow from "../../../assets/leftArrowBlack.svg";
-import { MenuItem, TextField } from "@mui/material";
+import { Button, MenuItem, TextField } from "@mui/material";
 import { useCallback, useRef, useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LoadingAnimation from "../../common/LoadingAnimation";
@@ -97,19 +97,19 @@ const NewZone = ({ setActiveComponent }) => {
     mapRef.current.setZoom(10); // Zoom in to the selected location
   };
 
-  //   const handleReset = () => {
-  //     if (polygonRef.current) {
-  //       polygonRef.current.setMap(null);
-  //       polygonRef.current = null;
-  //     }
-  //     setPolygon([]);
-  //     setDrawingControlEnabled(true);
-  //     setMapCenter(DEFAULT_CENTER);
-  //     setMarkerPosition(null);
-  //     drawingManagerRef.current.setDrawingMode(
-  //       window.google.maps.drawing.OverlayType.POLYGON
-  //     );
-  //   };
+  const handleReset = () => {
+    if (polygonRef.current) {
+      polygonRef.current.setMap(null);
+      polygonRef.current = null;
+    }
+    setPolygon([]);
+    setDrawingControlEnabled(true);
+    setMapCenter(DEFAULT_CENTER);
+    setMarkerPosition(null);
+    drawingManagerRef.current.setDrawingMode(
+      window.google.maps.drawing.OverlayType.POLYGON
+    );
+  };
 
   if (loadError) {
     return <div>Error loading maps</div>;
@@ -333,6 +333,44 @@ const NewZone = ({ setActiveComponent }) => {
           </InfoWindow>
         )}
       </GoogleMap>
+
+      {/* Buttons */}
+      <div className="flex gap-4 mt-8">
+        <Button
+          variant="outlined"
+          sx={{
+            textTransform: "none",
+            borderColor: "black",
+            color: "black",
+            borderRadius: "5px",
+            backgroundColor: "#fff",
+            paddingInline: "6%",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+              borderColor: "black",
+            },
+          }}
+          onClick={handleReset}
+        >
+          Reset
+        </Button>
+        <Button
+          variant="contained"
+          sx={{
+            paddingInline: "6%",
+            paddingBlock: "8px",
+            textTransform: "none",
+            backgroundColor: "black",
+            borderRadius: "5px",
+            "&:hover": {
+              backgroundColor: "rgba(0, 0, 0)",
+            },
+          }}
+          onClick={() => setActiveComponent("ZoneCharges")}
+        >
+          Continue
+        </Button>
+      </div>
     </>
   );
 };

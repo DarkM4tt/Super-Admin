@@ -53,6 +53,7 @@ import AllZones from "../components/dashboard/Zones/AllZones";
 import NewZone from "../components/dashboard/Zones/NewZone";
 import LoadingAnimation from "../components/common/LoadingAnimation";
 import { useAuth } from "../context/authContext";
+import ZoneCharges from "../components/dashboard/Zones/ZoneCharges";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -205,6 +206,8 @@ const Home = () => {
         return <AllZones setActiveComponent={setActiveComponent} />;
       case "NewZone":
         return <NewZone setActiveComponent={setActiveComponent} />;
+      case "ZoneCharges":
+        return <ZoneCharges setActiveComponent={setActiveComponent} />;
       case "Services":
         return <Services />;
       case "Rentals":

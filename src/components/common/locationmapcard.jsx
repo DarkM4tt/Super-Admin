@@ -3,14 +3,14 @@ import { IconButton } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import CallIcon from "@mui/icons-material/Call";
 import EmailIcon from "@mui/icons-material/Email";
-import { GoogleMap } from "@react-google-maps/api";
+import { GoogleMap, Marker } from "@react-google-maps/api";
 import useGoogleMapsLoader from "../../useGoogleMapsLoader";
 
 const Locationmapcard = ({
   email = "unanimeplanet.com",
   phone = "+351 2210 02912",
   address = "Opposite DEF company office, Mall Road, Snta street, Aviero Portugal. 110091",
-  center,
+  center = [0, 0],
 }) => {
   const { isLoaded, loadError } = useGoogleMapsLoader();
 
@@ -64,12 +64,11 @@ const Locationmapcard = ({
         <div className="flex-grow pt-6">
           <GoogleMap
             mapContainerStyle={{ height: "100%", width: "" }}
-            //   center={getCenter()}
             center={centerOfMap}
             zoom={12}
-            //   zoom={polygon.length > 0 ? 10 : 3}
-            //   onLoad={(map) => (mapRef.current = map)}
-          ></GoogleMap>
+          >
+            <Marker position={center} />
+          </GoogleMap>
         </div>
       ) : (
         <p className="text-red-400 text-lg font-bold">

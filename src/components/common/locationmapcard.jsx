@@ -5,6 +5,7 @@ import CallIcon from "@mui/icons-material/Call";
 import EmailIcon from "@mui/icons-material/Email";
 import { GoogleMap, Marker } from "@react-google-maps/api";
 import useGoogleMapsLoader from "../../useGoogleMapsLoader";
+import BusinessIcon from "@mui/icons-material/Business";
 
 const Locationmapcard = ({
   email = "unanimeplanet.com",
@@ -15,6 +16,10 @@ const Locationmapcard = ({
   const { isLoaded, loadError } = useGoogleMapsLoader();
 
   const centerOfMap = { lat: center[0], lng: center[1] };
+  const customIcon = {
+    url: BusinessIcon,
+    scaledSize: new window.google.maps.Size(40, 40),
+  };
 
   console.log("COM: ", centerOfMap);
 
@@ -67,7 +72,7 @@ const Locationmapcard = ({
             center={centerOfMap}
             zoom={12}
           >
-            <Marker position={centerOfMap} />
+            <Marker position={centerOfMap} icon={customIcon} />
           </GoogleMap>
         </div>
       ) : (

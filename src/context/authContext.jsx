@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }) => {
         }
       );
       const data = await res?.json();
-      console.log("SESSION: ", data?.success);
       setIsAuthenticated(data?.success);
     } catch {
       setIsAuthenticated(false);

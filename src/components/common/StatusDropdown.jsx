@@ -1,11 +1,20 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, MenuItem, Button } from "@mui/material";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-const StatusDropdown = ({ allStatus, currentStatus }) => {
+const StatusDropdown = ({
+  allStatus,
+  currentStatus,
+  documentId,
+  onStatusChange,
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(currentStatus);
+
+  useEffect(() => {
+    setSelectedStatus(currentStatus);
+  }, [currentStatus]);
 
   const open = Boolean(anchorEl);
 
@@ -17,11 +26,6 @@ const StatusDropdown = ({ allStatus, currentStatus }) => {
     setAnchorEl(null);
   };
 
-  const handleSelect = (status) => {
-    setSelectedStatus(status);
-    handleClose();
-  };
-
   const selectedStatusData = allStatus?.find(
     (status) => status.label === selectedStatus
   );
@@ -30,7 +34,15 @@ const StatusDropdown = ({ allStatus, currentStatus }) => {
     <div>
       <Button
         onClick={handleClick}
-        endIcon={<ArrowDropDownIcon />}
+        endIcon={
+          open ? (
+            <ExpandMoreIcon
+              sx={{ transform: "rotate(180deg)", color: "black" }}
+            />
+          ) : (
+            <ExpandMoreIcon sx={{ color: "black" }} />
+          )
+        }
         sx={{
           display: "flex",
           justifyContent: "space-between",
@@ -46,17 +58,7 @@ const StatusDropdown = ({ allStatus, currentStatus }) => {
           <span
             className={`w-3 h-3 rounded-full ${selectedStatusData?.color} ml-2`}
           ></span>
-          <span
-            className="ml-1"
-            style={{
-              color:
-                selectedStatusData?.label === "Operating"
-                  ? "#0cbaba"
-                  : selectedStatusData?.label === "Rejected"
-                  ? "#e74c3c"
-                  : "#f39c12",
-            }}
-          >
+          <span className={`ml-1 ${selectedStatusData?.text}`}>
             {selectedStatus}
           </span>
         </span>
@@ -65,6 +67,10 @@ const StatusDropdown = ({ allStatus, currentStatus }) => {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
+        SelectProps={{
+          displayEmpty: true,
+          IconComponent: ExpandMoreIcon,
+        }}
         sx={{
           "& .MuiPaper-root": {
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
@@ -79,7 +85,7 @@ const StatusDropdown = ({ allStatus, currentStatus }) => {
           .map((status) => (
             <MenuItem
               key={status.label}
-              onClick={() => handleSelect(status.label)}
+              onClick={() => onStatusChange(status?.label, documentId)}
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -91,18 +97,7 @@ const StatusDropdown = ({ allStatus, currentStatus }) => {
             >
               <span className="text-gray-600">Status :</span>
               <span className={`w-3 h-3 rounded-full ${status.color}`}></span>
-              <span
-                style={{
-                  color:
-                    status.label === "Operating"
-                      ? "#0cbaba"
-                      : status.label === "Rejected"
-                      ? "#e74c3c"
-                      : "#f39c12",
-                }}
-              >
-                {status.label}
-              </span>
+              <span className={status?.text}>{status.label}</span>
             </MenuItem>
           ))}
       </Menu>

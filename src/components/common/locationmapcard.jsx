@@ -23,8 +23,6 @@ const Locationmapcard = ({
       }
     : null;
 
-  console.log("COM: ", centerOfMap);
-
   if (loadError) {
     return <p>Error loading Google Maps: {loadError.message}</p>;
   }

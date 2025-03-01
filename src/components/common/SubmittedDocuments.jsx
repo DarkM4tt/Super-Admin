@@ -1,16 +1,80 @@
 /* eslint-disable react/prop-types */
-import { Card, CardContent, IconButton, Button } from "@mui/material";
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  IconButton,
+  Button,
+  CircularProgress,
+  Modal,
+} from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import { allDocumentStatus } from "../../utils/enums";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import StatusDropdown from "./StatusDropdown";
-import { allDocumentStatus } from "../../utils/enums";
 
-const SubmittedDocumentsCard = ({ orgDocuments }) => {
+const DocumentModal = ({ open, onClose, documentUrl, documentName }) => {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (documentUrl) {
+      setLoading(true);
+      const img = new Image();
+      img.src = documentUrl;
+      img.onload = () => setLoading(false);
+      img.onerror = () => setLoading(false);
+    }
+  }, [documentUrl]);
+
+  const isPdf = documentUrl?.endsWith(".pdf");
+
+  return (
+    <Modal open={open} onClose={onClose}>
+      <div className="fixed inset-0 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl w-full max-w-4xl">
+          <div className="flex justify-between items-center p-4 border-b">
+            <p className="font-bold text-lg">{documentName}</p>
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </div>
+          <div className="p-4 flex justify-center items-center min-h-[500px]">
+            {loading && <CircularProgress />}
+            {!loading && isPdf ? (
+              <iframe
+                src={documentUrl}
+                className="w-full h-[500px]"
+                title={documentName}
+              />
+            ) : (
+              !loading && (
+                <img
+                  src={documentUrl}
+                  alt={documentName}
+                  className="max-w-full max-h-[500px]"
+                />
+              )
+            )}
+          </div>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+const SubmittedDocumentsCard = ({ orgDocuments, onStatusChange }) => {
+  const [openDocumentModal, setOpenDocumentModal] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState({});
+
+  const handleOpenDocumentModal = (documentUrl, name) => {
+    setSelectedDocument({ url: documentUrl, name });
+    setOpenDocumentModal(true);
+  };
+
   return (
     <Card
       sx={{
         borderRadius: 2,
-        // maxHeight: "400px",
-        // overflowY: "auto",
       }}
     >
       <CardContent sx={{ paddingInline: "5%" }}>
@@ -31,12 +95,19 @@ const SubmittedDocumentsCard = ({ orgDocuments }) => {
           <div className="mt-4 space-y-3 font-redhat text-base max-h-72 overflow-y-auto flex flex-col gap-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100">
             {orgDocuments?.map((document, index) => (
               <div key={index}>
-                <p className="font-bold underline cursor-pointer">
+                <p
+                  className="font-bold underline cursor-pointer"
+                  onClick={() =>
+                    handleOpenDocumentModal(document?.document, document?.name)
+                  }
+                >
                   {document?.name}
                 </p>
                 <StatusDropdown
                   allStatus={allDocumentStatus}
                   currentStatus={document?.status}
+                  documentId={document?._id}
+                  onStatusChange={onStatusChange}
                 />
               </div>
             ))}
@@ -64,6 +135,13 @@ const SubmittedDocumentsCard = ({ orgDocuments }) => {
           Engage operations team
         </Button>
       </div>
+
+      <DocumentModal
+        open={openDocumentModal}
+        onClose={() => setOpenDocumentModal(false)}
+        documentUrl={selectedDocument.url}
+        documentName={selectedDocument.name}
+      />
     </Card>
   );
 };

@@ -87,6 +87,42 @@ const PartnerInfo = ({
     }
   }, [selectedOrgId]);
 
+  const handleStatusChange = useCallback(
+    async (status, documentId) => {
+      setError("");
+      setLoading(true);
+
+      try {
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/organizations/super-admin/update-org-document-status/${documentId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status,
+            }),
+            credentials: "include",
+          }
+        );
+        const result = await res?.json();
+        if (result?.success) {
+          fetchPartnerDetails();
+        } else {
+          throw new Error(result?.message);
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchPartnerDetails]
+  );
+
   useEffect(() => {
     fetchPartnerDetails();
   }, [fetchPartnerDetails]);
@@ -397,7 +433,7 @@ const PartnerInfo = ({
           </div>
           <StatusDropdown
             allStatus={allOrgStatus}
-            currentStatus="NEW-REQUEST"
+            currentStatus={partnerDetails?.status}
           />
         </div>
       </div>
@@ -540,6 +576,7 @@ const PartnerInfo = ({
           <SubmittedDocumentsCard
             orgDocuments={partnerDetails?.organizationDocuments}
             status={allDocumentStatus}
+            onStatusChange={handleStatusChange}
           />
           <Locationmapcard
             email={partnerDetails?.email}

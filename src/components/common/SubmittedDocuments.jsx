@@ -1,23 +1,16 @@
+/* eslint-disable react/prop-types */
 import { Card, CardContent, IconButton, Button } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import StatusDropdown from "./StatusDropdown";
+import { allDocumentStatus } from "../../utils/enums";
 
-const SubmittedDocumentsCard = () => {
-  const documents = [
-    {
-      title: "TVDE Driver Certificate",
-      validity: "Valid until December 25, 2024",
-    },
-    { title: "Driver’s License", validity: "Valid until December 25, 2024" },
-    { title: "Proof of Identity", validity: "Valid until December 25, 2024" },
-    { title: "Criminal Record", validity: "Valid until December 25, 2024" },
-  ];
-
+const SubmittedDocumentsCard = ({ orgDocuments }) => {
   return (
     <Card
       sx={{
-        // maxWidth: 400,
         borderRadius: 2,
-        // boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        // maxHeight: "400px",
+        // overflowY: "auto",
       }}
     >
       <CardContent sx={{ paddingInline: "5%" }}>
@@ -29,14 +22,26 @@ const SubmittedDocumentsCard = () => {
             <MoreHorizIcon />
           </IconButton>
         </div>
-        <div className="mt-4 space-y-3 font-redhat text-base">
-          {documents.map((doc, index) => (
-            <div key={index}>
-              <p className="font-bold">{doc.title}</p>
-              <p className="text-boldCyan font-medium">{doc.validity}</p>
-            </div>
-          ))}
-        </div>
+        {orgDocuments?.length === 0 && (
+          <p className="text-red-400 font-bold text-lg">
+            No documents uploaded yet!
+          </p>
+        )}
+        {orgDocuments?.length > 0 && (
+          <div className="mt-4 space-y-3 font-redhat text-base max-h-72 overflow-y-auto flex flex-col gap-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100">
+            {orgDocuments?.map((document, index) => (
+              <div key={index}>
+                <p className="font-bold underline cursor-pointer">
+                  {document?.name}
+                </p>
+                <StatusDropdown
+                  allStatus={allDocumentStatus}
+                  currentStatus={document?.status}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </CardContent>
       <div className="px-[5%]">
         <div className="border-t border-dashed border-gray-100 mt-2"></div>

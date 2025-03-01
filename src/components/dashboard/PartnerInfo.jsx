@@ -36,6 +36,7 @@ import StatusDropdown from "../common/StatusDropdown";
 import CustomDropdown from "./../common/CustomDropdown";
 import Locationmapcard from "./../common/locationmapcard";
 import LoadingAnimation from "../common/LoadingAnimation";
+import { allDocumentStatus, allOrgStatus } from "../../utils/enums";
 
 ChartJS.register(
   CategoryScale,
@@ -394,7 +395,10 @@ const PartnerInfo = ({
           <div className="py-2 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359] cursor-pointer">
             Generate report
           </div>
-          <StatusDropdown />
+          <StatusDropdown
+            allStatus={allOrgStatus}
+            currentStatus="NEW-REQUEST"
+          />
         </div>
       </div>
 
@@ -533,7 +537,10 @@ const PartnerInfo = ({
 
         {/* Right Cards */}
         <div className="w-[30%] flex flex-col gap-4">
-          <SubmittedDocumentsCard />
+          <SubmittedDocumentsCard
+            orgDocuments={partnerDetails?.organizationDocuments}
+            status={allDocumentStatus}
+          />
           <Locationmapcard
             email={partnerDetails?.email}
             phone={partnerDetails?.phone}

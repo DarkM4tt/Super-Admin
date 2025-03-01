@@ -283,6 +283,7 @@ const Home = () => {
       case "Vehicles":
         return (
           <Vehicles
+            selectedOrgId={selectedOrgId}
             onVehicleClick={handleVehicleClick}
             setActiveComponent={setActiveComponent}
           />

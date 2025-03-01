@@ -1,18 +1,13 @@
+/* eslint-disable react/prop-types */
 import { useState } from "react";
 import { Menu, MenuItem, Button } from "@mui/material";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
-const StatusDropdown = () => {
+const StatusDropdown = ({ allStatus, currentStatus }) => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [selectedStatus, setSelectedStatus] = useState("Operating");
+  const [selectedStatus, setSelectedStatus] = useState(currentStatus);
 
   const open = Boolean(anchorEl);
-
-  const statuses = [
-    { label: "Pending", color: "bg-yellow-500" },
-    { label: "Operating", color: "bg-green-500" },
-    { label: "Rejected", color: "bg-red-500" },
-  ];
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -27,7 +22,7 @@ const StatusDropdown = () => {
     handleClose();
   };
 
-  const selectedStatusData = statuses.find(
+  const selectedStatusData = allStatus?.find(
     (status) => status.label === selectedStatus
   );
 
@@ -42,7 +37,6 @@ const StatusDropdown = () => {
           alignItems: "center",
           textTransform: "none",
           backgroundColor: "#fff",
-          border: "1px solid #ddd",
           borderRadius: "50px",
           padding: "8px 16px",
         }}
@@ -50,15 +44,15 @@ const StatusDropdown = () => {
         <span className="flex items-center">
           <p className="text-gray-600">Status :</p>
           <span
-            className={`w-3 h-3 rounded-full ${selectedStatusData.color} ml-2`}
+            className={`w-3 h-3 rounded-full ${selectedStatusData?.color} ml-2`}
           ></span>
           <span
             className="ml-1"
             style={{
               color:
-                selectedStatusData.label === "Operating"
+                selectedStatusData?.label === "Operating"
                   ? "#0cbaba"
-                  : selectedStatusData.label === "Rejected"
+                  : selectedStatusData?.label === "Rejected"
                   ? "#e74c3c"
                   : "#f39c12",
             }}
@@ -80,8 +74,8 @@ const StatusDropdown = () => {
           },
         }}
       >
-        {statuses
-          .filter((status) => status.label !== selectedStatus)
+        {allStatus
+          ?.filter((status) => status.label !== selectedStatus)
           .map((status) => (
             <MenuItem
               key={status.label}

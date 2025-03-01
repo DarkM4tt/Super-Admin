@@ -72,7 +72,7 @@ const Partners = ({ onPartnerClick }) => {
     fetchPartners();
   }, [fetchPartners, activeTab]);
 
-  const PartnersTable = (pending) => {
+  const PartnersTable = ({ pending }) => {
     return (
       <Box
         sx={{

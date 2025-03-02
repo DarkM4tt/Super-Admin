@@ -19,7 +19,6 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
 
 const AddCity = ({ setActiveComponent }) => {
-  const [disabled, setDisabled] = useState(true);
   const [drawingControlEnabled, setDrawingControlEnabled] = useState(true);
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [polygon, setPolygon] = useState([]);
@@ -94,7 +93,40 @@ const AddCity = ({ setActiveComponent }) => {
     const location = places[0].geometry.location;
     setMapCenter({ lat: location.lat(), lng: location.lng() });
     mapRef.current.panTo(location);
-    mapRef.current.setZoom(10); // Zoom in to the selected location
+    mapRef.current.setZoom(10);
+  };
+
+  const handleCityChange = (e) => {
+    const selectedCity = e.target.value;
+    setCity(selectedCity);
+
+    setTimeout(() => {
+      if (searchBoxRef.current) {
+        const inputElement = searchBoxRef.current.getInputElement();
+
+        if (inputElement) {
+          inputElement.value = selectedCity;
+          inputElement.focus();
+
+          const inputEvent = new Event("input", {
+            bubbles: true,
+            cancelable: true,
+          });
+          inputElement.dispatchEvent(inputEvent);
+        }
+      }
+
+      // Use Google Maps Geocoding API to get city coordinates
+      const geocoder = new window.google.maps.Geocoder();
+      geocoder.geocode({ address: selectedCity }, (results, status) => {
+        if (status === "OK" && results[0]) {
+          const location = results[0].geometry.location;
+          setMapCenter({ lat: location.lat(), lng: location.lng() });
+          mapRef.current.panTo(location);
+          mapRef.current.setZoom(12); // Adjust zoom level as needed
+        }
+      });
+    }, 200);
   };
 
   const handleReset = () => {
@@ -111,8 +143,6 @@ const AddCity = ({ setActiveComponent }) => {
     );
   };
 
-  console.log(setDisabled);
-
   if (loadError) {
     return <div>Error loading maps</div>;
   }
@@ -124,6 +154,9 @@ const AddCity = ({ setActiveComponent }) => {
       </div>
     );
   }
+
+  console.log("POLYGON: ", polygon);
+  console.log("City: ", city);
 
   return (
     <>
@@ -145,38 +178,16 @@ const AddCity = ({ setActiveComponent }) => {
         </div>
       </div>
 
-      <div className="flex justify-between items-center mt-8">
-        <div className="flex items-center gap-4">
-          <img
-            src={BackArrow}
-            alt="BackArrow"
-            className="cursor-pointer"
-            onClick={() => {
-              setActiveComponent("AddLocation");
-            }}
-          />
-          <p className="font-redhat font-semibold text-2xl">Add location</p>
-        </div>
-        <Button
-          variant="contained"
-          disabled={disabled}
-          sx={{
-            backgroundColor: disabled ? "gray" : "black",
-            color: "white",
-            textTransform: "none",
-            borderRadius: "18px",
-            padding: "8px 16px",
-            fontSize: "16px",
-            fontWeight: 600,
-            "&:hover": {
-              backgroundColor: disabled
-                ? "rgba(128, 128, 128, 1)"
-                : "rgba(0, 0, 0, 0.9)",
-            },
+      <div className="flex items-center gap-4 mt-8">
+        <img
+          src={BackArrow}
+          alt="BackArrow"
+          className="cursor-pointer"
+          onClick={() => {
+            setActiveComponent("AddLocation");
           }}
-        >
-          Add and publish
-        </Button>
+        />
+        <p className="font-redhat font-semibold text-2xl">Add location</p>
       </div>
 
       {/* Dropdowns */}
@@ -226,20 +237,15 @@ const AddCity = ({ setActiveComponent }) => {
             variant="outlined"
             size="small"
             value={city}
-            onChange={(e) => setCity(e.target.value)}
-            fullWidth
-            SelectProps={{
-              displayEmpty: true,
-              IconComponent: ExpandMoreIcon,
-            }}
+            onChange={handleCityChange}
           >
             <MenuItem value="" disabled>
               Select city
             </MenuItem>
-            <MenuItem value="diesel">Porto</MenuItem>
-            <MenuItem value="petrol">Aviero</MenuItem>
-            <MenuItem value="petrol">New Delhi</MenuItem>
-            <MenuItem value="petrol">Lahore</MenuItem>
+            <MenuItem value="porto">Porto</MenuItem>
+            <MenuItem value="aviero">Aviero</MenuItem>
+            <MenuItem value="newdelhi">New Delhi</MenuItem>
+            <MenuItem value="lahore">Lahore</MenuItem>
           </TextField>
         </div>
       </div>

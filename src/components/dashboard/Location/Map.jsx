@@ -10,7 +10,6 @@ import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 
 const Map = () => {
   const [disabled, setDisabled] = useState(true);
-  console.log(setDisabled);
   const { isLoaded, loadError } = useGoogleMapsLoader();
 
   if (loadError) {

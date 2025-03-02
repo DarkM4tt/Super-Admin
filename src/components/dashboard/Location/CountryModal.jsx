@@ -11,12 +11,19 @@ import {
   Button,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-
 import SuccessIcon from "../../../assets/success-tick.svg";
+import { countries } from "../../../utils/countries";
+import LoadingAnimation from "../../common/LoadingAnimation";
 
-const CountryModal = ({ open, onClose }) => {
+const CountryModal = ({
+  open,
+  onClose,
+  onAddCountry,
+  loading,
+  isSuccess,
+  setIsSuccess,
+}) => {
   const [selectedCountry, setSelectedCountry] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleChange = (event) => {
     setSelectedCountry(event.target.value);
@@ -86,9 +93,11 @@ const CountryModal = ({ open, onClose }) => {
                 }}
               >
                 <MenuItem value="">Select Country</MenuItem>
-                <MenuItem value="Portugal">Portugal</MenuItem>
-                <MenuItem value="Spain">Spain</MenuItem>
-                <MenuItem value="France">France</MenuItem>
+                {countries.map((country) => (
+                  <MenuItem key={country?.code} value={country?.code}>
+                    {country?.label}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
             <Button
@@ -103,14 +112,18 @@ const CountryModal = ({ open, onClose }) => {
                 },
               }}
               onClick={() => {
-                setIsSuccess(true);
+                onAddCountry(selectedCountry);
                 setTimeout(() => {
                   onClose();
                   setIsSuccess(false);
                 }, 1000);
               }}
             >
-              Add country
+              {loading ? (
+                <LoadingAnimation width={50} height={50} />
+              ) : (
+                "Add country"
+              )}
             </Button>
           </>
         )}

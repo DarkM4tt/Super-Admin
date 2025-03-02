@@ -87,7 +87,7 @@ const PartnerInfo = ({
     }
   }, [selectedOrgId]);
 
-  const handleStatusChange = useCallback(
+  const handleDocStatusChange = useCallback(
     async (status, documentId) => {
       setError("");
       setLoading(true);
@@ -121,6 +121,42 @@ const PartnerInfo = ({
       }
     },
     [fetchPartnerDetails]
+  );
+
+  const handleOrgStatusChange = useCallback(
+    async (status) => {
+      setError("");
+      setLoading(true);
+
+      try {
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/organizations/super-admin/change-organization-status/${selectedOrgId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status,
+            }),
+            credentials: "include",
+          }
+        );
+        const result = await res?.json();
+        if (result?.success) {
+          fetchPartnerDetails();
+        } else {
+          throw new Error(result?.message);
+        }
+      } catch (error) {
+        alert(error.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchPartnerDetails, selectedOrgId]
   );
 
   useEffect(() => {
@@ -434,6 +470,7 @@ const PartnerInfo = ({
           <StatusDropdown
             allStatus={allOrgStatus}
             currentStatus={partnerDetails?.status}
+            onOrgStatusChange={handleOrgStatusChange}
           />
         </div>
       </div>
@@ -576,7 +613,7 @@ const PartnerInfo = ({
           <SubmittedDocumentsCard
             orgDocuments={partnerDetails?.organizationDocuments}
             status={allDocumentStatus}
-            onStatusChange={handleStatusChange}
+            onDocStatusChange={handleDocStatusChange}
           />
           <Locationmapcard
             email={partnerDetails?.email}

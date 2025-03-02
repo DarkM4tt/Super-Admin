@@ -62,7 +62,7 @@ const DocumentModal = ({ open, onClose, documentUrl, documentName }) => {
   );
 };
 
-const SubmittedDocumentsCard = ({ orgDocuments, onStatusChange }) => {
+const SubmittedDocumentsCard = ({ orgDocuments, onDocStatusChange }) => {
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState({});
 
@@ -107,7 +107,7 @@ const SubmittedDocumentsCard = ({ orgDocuments, onStatusChange }) => {
                   allStatus={allDocumentStatus}
                   currentStatus={document?.status}
                   documentId={document?._id}
-                  onStatusChange={onStatusChange}
+                  onDocStatusChange={onDocStatusChange}
                 />
               </div>
             ))}

@@ -7,7 +7,8 @@ const StatusDropdown = ({
   allStatus,
   currentStatus,
   documentId,
-  onStatusChange,
+  onDocStatusChange,
+  onOrgStatusChange,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(currentStatus);
@@ -85,7 +86,11 @@ const StatusDropdown = ({
           .map((status) => (
             <MenuItem
               key={status.label}
-              onClick={() => onStatusChange(status?.label, documentId)}
+              onClick={() => {
+                documentId
+                  ? onDocStatusChange(status?.label, documentId)
+                  : onOrgStatusChange(status?.label);
+              }}
               sx={{
                 display: "flex",
                 alignItems: "center",

@@ -100,33 +100,24 @@ const AddCity = ({ setActiveComponent }) => {
     const selectedCity = e.target.value;
     setCity(selectedCity);
 
-    setTimeout(() => {
-      if (searchBoxRef.current) {
-        const inputElement = searchBoxRef.current.getInputElement();
+    if (!window.google) return;
 
-        if (inputElement) {
-          inputElement.value = selectedCity;
-          inputElement.focus();
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ address: selectedCity }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        const location = results[0].geometry.location;
+        const newCenter = { lat: location.lat(), lng: location.lng() };
 
-          const inputEvent = new Event("input", {
-            bubbles: true,
-            cancelable: true,
-          });
-          inputElement.dispatchEvent(inputEvent);
-        }
-      }
+        setMapCenter(newCenter);
 
-      // Use Google Maps Geocoding API to get city coordinates
-      const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ address: selectedCity }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          const location = results[0].geometry.location;
-          setMapCenter({ lat: location.lat(), lng: location.lng() });
-          mapRef.current.panTo(location);
+        if (mapRef.current) {
+          mapRef.current.panTo(newCenter);
           mapRef.current.setZoom(12); // Adjust zoom level as needed
         }
-      });
-    }, 200);
+      } else {
+        console.error("Geocoding failed: ", status);
+      }
+    });
   };
 
   const handleReset = () => {

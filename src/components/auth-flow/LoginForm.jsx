@@ -38,7 +38,7 @@ function LoginForm() {
       );
       const result = await res?.json();
       console.log(result);
-      if (result.success) {
+      if (result?.success) {
         await checkAuth();
         navigate("/home");
       } else {

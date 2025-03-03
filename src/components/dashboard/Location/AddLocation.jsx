@@ -15,6 +15,7 @@ import {
   Tabs,
 } from "@mui/material";
 import LoadingAnimation from "../../common/LoadingAnimation";
+import { formatCreatedAt } from "../../../utils/dates";
 
 const AddLocation = ({ setActiveComponent }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,8 +33,8 @@ const AddLocation = ({ setActiveComponent }) => {
     try {
       const res = await fetch(
         `${
-          import.meta.env.VITE_API_URL
-        }/organizations/super-admin/all-organizations?page=1&limit=100`,
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/city/get-cities?page=1&limit=100`,
         {
           method: "GET",
           credentials: "include",
@@ -41,7 +42,7 @@ const AddLocation = ({ setActiveComponent }) => {
       );
       const result = await res?.json();
       if (result?.success) {
-        setAllCities(result?.data?.cities);
+        setAllCities(result?.data?.results);
       } else {
         throw new Error(result?.message);
       }
@@ -59,8 +60,8 @@ const AddLocation = ({ setActiveComponent }) => {
     try {
       const res = await fetch(
         `${
-          import.meta.env.VITE_API_URL
-        }/organizations/super-admin/all-organizations?page=1&limit=100`,
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/country/get-countries?page=1&limit=100`,
         {
           method: "GET",
           credentials: "include",
@@ -68,7 +69,7 @@ const AddLocation = ({ setActiveComponent }) => {
       );
       const result = await res?.json();
       if (result?.success) {
-        setAllCountries(result?.data?.countries);
+        setAllCountries(result?.data?.results);
       } else {
         throw new Error(result?.message);
       }
@@ -129,7 +130,7 @@ const AddLocation = ({ setActiveComponent }) => {
     );
   }
 
-  const CitiesTable = ({ isCities }) => {
+  const CitiesTable = () => {
     return (
       <Box
         sx={{
@@ -140,7 +141,7 @@ const AddLocation = ({ setActiveComponent }) => {
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
         }}
       >
-        {(isCities ? allCities : allCountries)?.length > 0 ? (
+        {allCities?.length > 0 ? (
           <TableContainer>
             <Table>
               {/* Table Header */}
@@ -166,9 +167,8 @@ const AddLocation = ({ setActiveComponent }) => {
                   {[
                     "SL",
                     "City",
-                    "Total zones",
-                    "Total vehicles",
-                    "City area",
+                    "Country code",
+                    "Status",
                     "Last edited",
                     "Options",
                   ].map((header) => (
@@ -186,9 +186,9 @@ const AddLocation = ({ setActiveComponent }) => {
                   },
                 }}
               >
-                {(isCities ? allCities : allCountries).map((org, idx) => (
+                {allCities.map((city, idx) => (
                   <TableRow
-                    key={org?._id}
+                    key={city?.id}
                     // onClick={() => onPartnerClick(org?._id)}
                     sx={{
                       cursor: "pointer",
@@ -196,26 +196,111 @@ const AddLocation = ({ setActiveComponent }) => {
                   >
                     <TableCell>{idx + 1}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        {org?.full_name || (
-                          <p className="text-red-500">No name</p>
-                        )}
-                      </div>
+                      {city?.name || <p className="text-red-500">No name</p>}
                     </TableCell>
                     <TableCell>
-                      <p className="text-red-200">Unknown</p>
+                      <p>{city?.country_code}</p>
                     </TableCell>
-                    <TableCell>{org.totalDrivers}</TableCell>
-                    <TableCell>{org.totalVehicles}</TableCell>
-                    <TableCell>{org.listingDrivers}</TableCell>
-                    <TableCell>Docs</TableCell>
+                    <TableCell>
+                      {city?.is_active ? "Active" : "Inactive"}
+                    </TableCell>
+                    <TableCell>
+                      {city?.updatedAt
+                        ? formatCreatedAt(city?.updatedAt)
+                        : formatCreatedAt(city?.createdAt)}
+                    </TableCell>
+                    <TableCell>Dots</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-        ) : isCities ? (
+        ) : (
           <p className="text-lg text-red-400 font-bold">No cities added yet!</p>
+        )}
+      </Box>
+    );
+  };
+
+  const CountriesTable = () => {
+    return (
+      <Box
+        sx={{
+          marginTop: "20px",
+          padding: "10px",
+          backgroundColor: "#fff",
+          borderRadius: "8px",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        }}
+      >
+        {allCities?.length > 0 ? (
+          <TableContainer>
+            <Table>
+              {/* Table Header */}
+              <TableHead
+                sx={{
+                  "& .MuiTableCell-root": {
+                    backgroundColor: "#EEEEEE",
+                    fontWeight: "600",
+                    fontSize: "16px",
+                    borderBottom: "none",
+                  },
+                  "& .MuiTableCell-root:first-of-type": {
+                    borderTopLeftRadius: "10px",
+                    borderBottomLeftRadius: "10px",
+                  },
+                  "& .MuiTableCell-root:last-of-type": {
+                    borderTopRightRadius: "10px",
+                    borderBottomRightRadius: "10px",
+                  },
+                }}
+              >
+                <TableRow>
+                  {[
+                    "SL",
+                    "Country",
+                    "Phone code",
+                    "ISO code",
+                    "Currency",
+                    "Status",
+                  ].map((header) => (
+                    <TableCell key={header}>{header}</TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+
+              {/* Table Body */}
+              <TableBody
+                sx={{
+                  "& .MuiTableCell-root": {
+                    fontWeight: "600",
+                    fontSize: "16px",
+                  },
+                }}
+              >
+                {allCountries.map((country, idx) => (
+                  <TableRow
+                    key={country?.id}
+                    // onClick={() => onPartnerClick(org?._id)}
+                    sx={{
+                      cursor: "pointer",
+                    }}
+                  >
+                    <TableCell>{idx + 1}</TableCell>
+                    <TableCell>
+                      {country?.name || <p className="text-red-500">No name</p>}
+                    </TableCell>
+                    <TableCell>{country?.phone_code}</TableCell>
+                    <TableCell>{country?.iso_code}</TableCell>
+                    <TableCell>{country?.currency}</TableCell>
+                    <TableCell>
+                      {country?.is_active ? "Active" : "Inactive"}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         ) : (
           <p className="text-lg text-red-400 font-bold">
             No countries added yet!
@@ -311,8 +396,8 @@ const AddLocation = ({ setActiveComponent }) => {
         <LoadingAnimation width={500} height={500} />
       ) : (
         <>
-          {activeTab === 0 && <CitiesTable isCities={true} />}
-          {activeTab === 1 && <CitiesTable isCities={false} />}
+          {activeTab === 0 && <CitiesTable />}
+          {activeTab === 1 && <CountriesTable />}
         </>
       )}
 

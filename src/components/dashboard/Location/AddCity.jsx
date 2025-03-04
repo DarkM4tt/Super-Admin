@@ -223,7 +223,7 @@ const AddCity = ({ cityId, setCityId, setActiveComponent }) => {
 
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_RIDE_URL}super-admin/city/add-city`,
+        `${import.meta.env.VITE_API_RIDE_URL}/super-admin/city/add-city`,
         {
           headers: {
             "Content-Type": "application/json",

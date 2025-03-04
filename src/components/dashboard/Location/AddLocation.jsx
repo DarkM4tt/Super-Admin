@@ -22,7 +22,7 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 import { formatCreatedAt } from "../../../utils/dates";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-const AddLocation = ({ setActiveComponent }) => {
+const AddLocation = ({ setActiveComponent, handleCityClick }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -167,13 +167,9 @@ const AddLocation = ({ setActiveComponent }) => {
     setSelectedCity(null);
   };
 
-  const handleEditCity = async () => {
+  const handleEditCity = () => {
     if (!selectedCity) return;
-    try {
-      console.log(`Editing city ID: ${selectedCity.id}`);
-    } catch (error) {
-      console.error("Error editing city", error);
-    }
+    handleCityClick(selectedCity?.id);
     handleMenuClose();
   };
 
@@ -188,7 +184,7 @@ const AddLocation = ({ setActiveComponent }) => {
 
     try {
       const res = await fetch(url, {
-        method: "DEL",
+        method: "DELETE",
         credentials: "include",
       });
       const result = await res?.json();

@@ -18,7 +18,7 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
 
-const AddCity = ({ setActiveComponent }) => {
+const AddCity = ({ cityId, setCityId, setActiveComponent }) => {
   const [drawingControlEnabled, setDrawingControlEnabled] = useState(true);
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [polygon, setPolygon] = useState([]);
@@ -29,6 +29,7 @@ const AddCity = ({ setActiveComponent }) => {
   const [loading, setLoading] = useState(false);
   const [cityLoading, setCityLoading] = useState(false);
   const [error, setError] = useState("");
+  const [addError, setAddError] = useState("");
 
   const drawingManagerRef = useRef(null);
   const polygonRef = useRef(null);
@@ -46,7 +47,7 @@ const AddCity = ({ setActiveComponent }) => {
       const res = await fetch(
         `${
           import.meta.env.VITE_API_RIDE_URL
-        }/super-admin/country/get-countries?page=1&limit=100`,
+        }/super-admin/country/get-countries?page=1&limit=300`,
         {
           method: "GET",
           credentials: "include",
@@ -184,6 +185,65 @@ const AddCity = ({ setActiveComponent }) => {
     );
   };
 
+  const handleAddCity = async () => {
+    if (!country || !city) {
+      setAddError("Select country and city from above dropdown!");
+      return;
+    }
+    if (!polygon) {
+      setAddError("Draw polygon!");
+      return;
+    }
+    setError("");
+    setLoading(true);
+
+    const cityData = {
+      country_code: country,
+      name: city,
+      country_id: allCountries.filter((contry) => contry?.iso_code === country),
+      location: {
+        type: "Polygon",
+        coordinates: [polygon],
+      },
+      center_location: {
+        type: "Point",
+        coordinates: [mapCenter[lat], mapCenter[lng]],
+      },
+      airport_business: true,
+      city_business: true,
+      zone_business: false,
+      is_business: true,
+      is_active: true,
+      is_deleted: false,
+    };
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/country/get-countries?page=1&limit=300`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify(cityData),
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setActiveComponent("AddLocation");
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (loadError) {
     return <div>Error loading maps</div>;
   }
@@ -199,6 +259,9 @@ const AddCity = ({ setActiveComponent }) => {
       </p>
     );
   }
+
+  console.log("Country: ", country);
+  console.log("City: ", city);
 
   return (
     <>
@@ -275,7 +338,7 @@ const AddCity = ({ setActiveComponent }) => {
               Select country
             </MenuItem>
             {allCountries.map((country) => (
-              <MenuItem key={country?.id} value={country?.iso_code}>
+              <MenuItem key={country?.id} value={country}>
                 {country?.name}
               </MenuItem>
             ))}
@@ -399,6 +462,13 @@ const AddCity = ({ setActiveComponent }) => {
           />
         )}
 
+        {city && (
+          <Marker
+            position={mapCenter}
+            onClick={() => setShowInfoWindow(true)}
+          />
+        )}
+
         {showInfoWindow && markerPosition && (
           <InfoWindow
             position={markerPosition}
@@ -444,10 +514,13 @@ const AddCity = ({ setActiveComponent }) => {
               backgroundColor: "#333",
             },
           }}
+          onClick={handleAddCity}
         >
           Save and confirm
         </Button>
       </Stack>
+
+      {addError && <p className="text-sm text-red-400 font-bold">{addError}</p>}
     </>
   );
 };

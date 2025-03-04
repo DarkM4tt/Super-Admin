@@ -62,6 +62,7 @@ const Home = () => {
   const [selectedDriverId, setSelectedDriverId] = useState(null);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
+  const [cityId, setCityId] = useState(null);
   const [selectedRentalId, setSelectedRentalId] = useState(null);
   const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [selectedBoldadsId, setSelectedBoldadsId] = useState(null);
@@ -147,6 +148,11 @@ const Home = () => {
     setActiveComponent("FuelStationDetails");
   };
 
+  const handleCityClick = (cityId) => {
+    setSelectedOrgId(cityId);
+    setActiveComponent("UpdateCity");
+  };
+
   const renderActiveComponent = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
@@ -187,6 +193,15 @@ const Home = () => {
       return (
         <FuelStationDetails
           setSelectedFuelStationId={setSelectedFuelStationId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
+    if (cityId && activeComponent === "UpdateCity") {
+      return (
+        <AddCity
+          cityId={cityId}
+          setCityId={setCityId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -277,7 +292,12 @@ const Home = () => {
       case "Bidding":
         return <Bidding />;
       case "AddLocation":
-        return <AddLocation setActiveComponent={setActiveComponent} />;
+        return (
+          <AddLocation
+            setActiveComponent={setActiveComponent}
+            handleCityClick={handleCityClick}
+          />
+        );
       case "AddCity":
         return <AddCity setActiveComponent={setActiveComponent} />;
       case "Vehicles":

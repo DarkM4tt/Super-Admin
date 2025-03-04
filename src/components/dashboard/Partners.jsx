@@ -26,7 +26,7 @@ const Partners = ({ onPartnerClick }) => {
     if (activeTab === 0) {
       return `${
         import.meta.env.VITE_API_URL
-      }/organizations/super-admin/all-organizations?page=1&limit=100`;
+      }/organizations/super-admin/all-organizations?page=1&limit=100&status=APPROVED`;
     } else if (activeTab === 1) {
       return `${
         import.meta.env.VITE_API_URL

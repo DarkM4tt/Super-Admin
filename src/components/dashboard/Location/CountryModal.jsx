@@ -6,23 +6,15 @@ import {
   Typography,
   IconButton,
   MenuItem,
-  FormControl,
-  Select,
   Button,
+  TextField,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import SuccessIcon from "../../../assets/success-tick.svg";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { countries } from "../../../utils/countries";
 import LoadingAnimation from "../../common/LoadingAnimation";
 
-const CountryModal = ({
-  open,
-  onClose,
-  onAddCountry,
-  loading,
-  isSuccess,
-  setIsSuccess,
-}) => {
+const CountryModal = ({ open, onClose, onAddCountry, loading }) => {
   const [selectedCountry, setSelectedCountry] = useState("");
 
   const handleChange = (event) => {
@@ -45,88 +37,85 @@ const CountryModal = ({
           borderRadius: 1,
         }}
       >
-        {isSuccess ? (
-          <>
-            <IconButton
-              onClick={onClose}
-              sx={{ position: "absolute", top: 2, right: 4 }}
-            >
-              <CloseIcon />
-            </IconButton>
-            <img
-              src={SuccessIcon}
-              alt="Success"
-              style={{ width: 60, marginBottom: 16, marginLeft: 50 }}
-            />
-            <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-              Country added successfully
-            </Typography>
-          </>
-        ) : (
-          <>
-            <div className="flex justify-between gap-8 items-center mb-4">
-              <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                Please select the country you want to add
-              </Typography>
-              <IconButton onClick={onClose}>
-                <CloseIcon />
-              </IconButton>
-            </div>
-            <FormControl fullWidth sx={{ mb: 4 }}>
-              <Typography variant="body1" sx={{ mb: 1, fontWeight: "bold" }}>
-                Select country to add
-              </Typography>
-              <Select
-                value={selectedCountry}
-                onChange={handleChange}
-                displayEmpty
-                sx={{
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "gray",
+        <div className="flex justify-between gap-8 items-center mb-4">
+          <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+            Please select the country you want to add
+          </Typography>
+          <IconButton onClick={onClose}>
+            <CloseIcon />
+          </IconButton>
+        </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="fuel-type"
+            className="text-sm font-medium text-gray-700 mb-1"
+          >
+            Select country to add
+          </label>
+          <TextField
+            id="fuel-type"
+            select
+            placeholder="Select fuel type"
+            variant="outlined"
+            size="small"
+            value={selectedCountry}
+            onChange={handleChange}
+            fullWidth
+            SelectProps={{
+              displayEmpty: true,
+              IconComponent: ExpandMoreIcon,
+              MenuProps: {
+                PaperProps: {
+                  sx: {
+                    maxHeight: 200, // Set dropdown height
+                    overflowY: "auto", // Enable vertical scroll
                   },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "gray",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "gray",
-                  },
-                }}
-              >
-                <MenuItem value="">Select Country</MenuItem>
-                {countries.map((country) => (
-                  <MenuItem key={country?.code} value={country?.code}>
-                    {country?.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <Button
-              variant="contained"
-              sx={{
-                px: "60px",
-                textTransform: "none",
-                backgroundColor: "black",
-                color: "white",
-                "&:hover": {
-                  backgroundColor: "#333",
                 },
-              }}
-              onClick={() => {
-                onAddCountry(selectedCountry);
-                setTimeout(() => {
-                  onClose();
-                  setIsSuccess(false);
-                }, 1000);
-              }}
-            >
-              {loading ? (
-                <LoadingAnimation width={50} height={50} />
-              ) : (
-                "Add country"
-              )}
-            </Button>
-          </>
-        )}
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+              },
+            }}
+          >
+            <MenuItem value="" disabled>
+              Select country
+            </MenuItem>
+            {countries.map((country) => (
+              <MenuItem key={country?.code} value={country?.code}>
+                {country?.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </div>
+
+        <Button
+          variant="contained"
+          sx={{
+            marginTop: "25px",
+            px: "60px",
+            textTransform: "none",
+            backgroundColor: "black",
+            color: "white",
+            "&:hover": {
+              backgroundColor: "#333",
+            },
+          }}
+          onClick={() => {
+            onAddCountry(selectedCountry);
+            onClose();
+          }}
+        >
+          {loading ? (
+            <LoadingAnimation width={50} height={50} />
+          ) : (
+            "Add country"
+          )}
+        </Button>
       </Box>
     </Modal>
   );

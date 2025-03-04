@@ -5,6 +5,10 @@ import CountryModal from "./CountryModal";
 import {
   Box,
   Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  Switch,
   Tab,
   Table,
   TableBody,
@@ -16,15 +20,17 @@ import {
 } from "@mui/material";
 import LoadingAnimation from "../../common/LoadingAnimation";
 import { formatCreatedAt } from "../../../utils/dates";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 const AddLocation = ({ setActiveComponent }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
   const [allCities, setAllCities] = useState([]);
   const [allCountries, setAllCountries] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(null);
 
   const fetchCities = useCallback(async () => {
     setError("");
@@ -80,34 +86,67 @@ const AddLocation = ({ setActiveComponent }) => {
     }
   }, []);
 
+  const handleAddCountry = useCallback(
+    async (country) => {
+      setError("");
+      setLoading(true);
+
+      try {
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_RIDE_URL
+          }/super-admin/country/add-country`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+            body: JSON.stringify({
+              country_code: country,
+            }),
+            credentials: "include",
+          }
+        );
+        const result = await res?.json();
+        if (result?.success) {
+          fetchCountries();
+        } else {
+          throw new Error(result?.message);
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchCountries]
+  );
+
   useEffect(() => {
     fetchCities();
     fetchCountries();
-  }, [fetchCities, fetchCountries]);
+  }, [fetchCities, fetchCountries, handleAddCountry]);
 
-  const handleAddCountry = async (country) => {
+  const handleToggleStatus = async (cityId, isCity) => {
     setError("");
     setLoading(true);
 
+    const url = isCity
+      ? `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/city/toggle-city-status/${cityId}`
+      : `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/country/toggle-country-status/${cityId}`;
+
     try {
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/organizations/super-admin/all-organizations?page=1&limit=100`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify({
-            country_code: country,
-          }),
-          credentials: "include",
-        }
-      );
+      const res = await fetch(url, {
+        method: "PUT",
+        credentials: "include",
+      });
       const result = await res?.json();
       if (result?.success) {
-        setIsSuccess(result?.success);
+        isCity ? fetchCities() : fetchCountries();
       } else {
         throw new Error(result?.message);
       }
@@ -116,6 +155,54 @@ const AddLocation = ({ setActiveComponent }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleMenuOpen = (event, city) => {
+    setMenuAnchor(event.currentTarget);
+    setSelectedCity(city);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+    setSelectedCity(null);
+  };
+
+  const handleEditCity = async () => {
+    if (!selectedCity) return;
+    try {
+      console.log(`Editing city ID: ${selectedCity.id}`);
+    } catch (error) {
+      console.error("Error editing city", error);
+    }
+    handleMenuClose();
+  };
+
+  const handleDeleteCity = async () => {
+    if (!selectedCity) return;
+    setError("");
+    setLoading(true);
+
+    const url = `${
+      import.meta.env.VITE_API_RIDE_URL
+    }/super-admin/city/delete-city/${selectedCity?.id}`;
+
+    try {
+      const res = await fetch(url, {
+        method: "DEL",
+        credentials: "include",
+      });
+      const result = await res?.json();
+      if (result?.success) {
+        fetchCities();
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+    handleMenuClose();
   };
 
   const handleTabChange = (event, newValue) => {
@@ -202,14 +289,34 @@ const AddLocation = ({ setActiveComponent }) => {
                       <p>{city?.country_code}</p>
                     </TableCell>
                     <TableCell>
-                      {city?.is_active ? "Active" : "Inactive"}
+                      <Switch
+                        checked={city?.is_active}
+                        onChange={() => handleToggleStatus(city?.id, true)}
+                        color="info"
+                      />
                     </TableCell>
                     <TableCell>
                       {city?.updatedAt
                         ? formatCreatedAt(city?.updatedAt)
                         : formatCreatedAt(city?.createdAt)}
                     </TableCell>
-                    <TableCell>Dots</TableCell>
+                    <TableCell>
+                      <IconButton
+                        onClick={(event) => handleMenuOpen(event, city)}
+                      >
+                        <MoreHorizIcon />
+                      </IconButton>
+                      {selectedCity?.id === city?.id && (
+                        <Menu
+                          anchorEl={menuAnchor}
+                          open={Boolean(menuAnchor)}
+                          onClose={handleMenuClose}
+                        >
+                          <MenuItem onClick={handleEditCity}>Edit</MenuItem>
+                          <MenuItem onClick={handleDeleteCity}>Delete</MenuItem>
+                        </Menu>
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -294,7 +401,11 @@ const AddLocation = ({ setActiveComponent }) => {
                     <TableCell>{country?.iso_code}</TableCell>
                     <TableCell>{country?.currency}</TableCell>
                     <TableCell>
-                      {country?.is_active ? "Active" : "Inactive"}
+                      <Switch
+                        checked={country?.is_active}
+                        onChange={() => handleToggleStatus(country?.id, false)}
+                        color="info"
+                      />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -406,7 +517,6 @@ const AddLocation = ({ setActiveComponent }) => {
         onClose={() => setIsModalOpen(false)}
         onAddCountry={handleAddCountry}
         loading={loading}
-        isSuccess={isSuccess}
       />
     </>
   );

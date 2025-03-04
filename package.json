@@ -23,6 +23,7 @@
     "@reduxjs/toolkit": "^2.2.6",
     "chart.js": "^4.4.7",
     "chartjs-plugin-datalabels": "^2.2.0",
+    "country-state-city": "^3.2.1",
     "date-fns": "^3.6.0",
     "dayjs": "^1.11.12",
     "dotenv": "^16.4.5",

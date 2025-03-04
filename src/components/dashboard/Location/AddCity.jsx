@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import BackArrow from "../../../assets/leftArrowBlack.svg";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button, MenuItem, Stack, TextField } from "@mui/material";
@@ -12,7 +12,7 @@ import {
   Marker,
   Polygon,
 } from "@react-google-maps/api";
-// import { Marker, Polygon } from "react-leaflet";
+import { City } from "country-state-city";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 import LoadingAnimation from "../../common/LoadingAnimation";
 
@@ -24,6 +24,12 @@ const AddCity = ({ setActiveComponent }) => {
   const [polygon, setPolygon] = useState([]);
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
+  const [allCountries, setAllCountries] = useState([]);
+  const [allCities, setAllCities] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [cityLoading, setCityLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const drawingManagerRef = useRef(null);
   const polygonRef = useRef(null);
   const mapRef = useRef(null);
@@ -31,6 +37,74 @@ const AddCity = ({ setActiveComponent }) => {
   const { isLoaded, loadError } = useGoogleMapsLoader();
   const [markerPosition, setMarkerPosition] = useState(null);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
+
+  const fetchCountries = useCallback(async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/country/get-countries?page=1&limit=100`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setAllCountries(result?.data?.results);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+  const fetchCities = useCallback(() => {
+    if (!country) return;
+    setCityLoading(true);
+    try {
+      const cities = City.getCitiesOfCountry(country);
+      setAllCities(cities || []);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setCityLoading(false);
+    }
+  }, [country]);
+
+  useEffect(() => {
+    fetchCountries();
+  }, [fetchCountries]);
+
+  useEffect(() => {
+    fetchCities();
+  }, [fetchCities]);
+
+  const handleCountryChange = (e) => {
+    const selectedCountry = e.target.value;
+    setCountry(selectedCountry);
+    setCity("");
+  };
+
+  const handleCityChange = (e) => {
+    const selectedCity = allCities.find((c) => c.name === e.target.value);
+    setCity(selectedCity?.name || "");
+
+    if (selectedCity?.latitude && selectedCity?.longitude) {
+      const newCenter = {
+        lat: parseFloat(selectedCity.latitude),
+        lng: parseFloat(selectedCity.longitude),
+      };
+      setMapCenter(newCenter);
+      mapRef.current.panTo(newCenter);
+      mapRef.current.setZoom(12);
+    }
+  };
 
   const calculatePolygonCentroid = (coords) => {
     let area = 0;
@@ -96,30 +170,6 @@ const AddCity = ({ setActiveComponent }) => {
     mapRef.current.setZoom(10);
   };
 
-  const handleCityChange = (e) => {
-    const selectedCity = e.target.value;
-    setCity(selectedCity);
-
-    if (!window.google) return;
-
-    const geocoder = new window.google.maps.Geocoder();
-    geocoder.geocode({ address: selectedCity }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        const location = results[0].geometry.location;
-        const newCenter = { lat: location.lat(), lng: location.lng() };
-
-        setMapCenter(newCenter);
-
-        if (mapRef.current) {
-          mapRef.current.panTo(newCenter);
-          mapRef.current.setZoom(12); // Adjust zoom level as needed
-        }
-      } else {
-        console.error("Geocoding failed: ", status);
-      }
-    });
-  };
-
   const handleReset = () => {
     if (polygonRef.current) {
       polygonRef.current.setMap(null);
@@ -138,16 +188,17 @@ const AddCity = ({ setActiveComponent }) => {
     return <div>Error loading maps</div>;
   }
 
-  if (!isLoaded) {
-    return (
-      <div>
-        <LoadingAnimation height={500} width={500} />
-      </div>
-    );
+  if (loading || !isLoaded) {
+    return <LoadingAnimation width={500} height={500} />;
   }
 
-  console.log("POLYGON: ", polygon);
-  console.log("City: ", city);
+  if (error) {
+    return (
+      <p className="text-lg text-red-400 font-bold">
+        {error.message || "Error"}
+      </p>
+    );
+  }
 
   return (
     <>
@@ -188,7 +239,7 @@ const AddCity = ({ setActiveComponent }) => {
             htmlFor="fuel-type"
             className="text-sm font-medium text-gray-700 mb-1"
           >
-            Select country to add
+            Select country
           </label>
           <TextField
             id="fuel-type"
@@ -197,48 +248,91 @@ const AddCity = ({ setActiveComponent }) => {
             variant="outlined"
             size="small"
             value={country}
-            onChange={(e) => setCountry(e.target.value)}
+            onChange={handleCountryChange}
             fullWidth
             SelectProps={{
               displayEmpty: true,
               IconComponent: ExpandMoreIcon,
+              MenuProps: {
+                PaperProps: {
+                  sx: {
+                    maxHeight: 200, // Set dropdown height
+                    overflowY: "auto", // Enable vertical scroll
+                  },
+                },
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+              },
             }}
           >
             <MenuItem value="" disabled>
               Select country
             </MenuItem>
-            <MenuItem value="diesel">Portugal</MenuItem>
-            <MenuItem value="petrol">India</MenuItem>
-            <MenuItem value="pedfsfdstrol">Pakistan</MenuItem>
-            <MenuItem value="petvdsvdfsrol">Nigeria</MenuItem>
+            {allCountries.map((country) => (
+              <MenuItem key={country?.id} value={country?.iso_code}>
+                {country?.name}
+              </MenuItem>
+            ))}
           </TextField>
         </div>
 
-        <div className="flex flex-col w-60">
-          <label
-            htmlFor="fuel-type"
-            className="text-sm font-medium text-gray-700 mb-1"
-          >
-            Add city
-          </label>
-          <TextField
-            id="fuel-type"
-            select
-            placeholder="Select fuel type"
-            variant="outlined"
-            size="small"
-            value={city}
-            onChange={handleCityChange}
-          >
-            <MenuItem value="" disabled>
-              Select city
-            </MenuItem>
-            <MenuItem value="porto">Porto</MenuItem>
-            <MenuItem value="aviero">Aviero</MenuItem>
-            <MenuItem value="newdelhi">New Delhi</MenuItem>
-            <MenuItem value="lahore">Lahore</MenuItem>
-          </TextField>
-        </div>
+        {cityLoading ? (
+          <LoadingAnimation width={100} height={100} />
+        ) : (
+          <div className="flex flex-col w-60">
+            <label
+              htmlFor="fuel-type"
+              className="text-sm font-medium text-gray-700 mb-1"
+            >
+              Select city to add
+            </label>
+            <TextField
+              id="fuel-type"
+              select
+              placeholder="Select fuel type"
+              variant="outlined"
+              size="small"
+              value={city}
+              onChange={handleCityChange}
+              fullWidth
+              SelectProps={{
+                displayEmpty: true,
+                IconComponent: ExpandMoreIcon,
+                MenuProps: {
+                  PaperProps: {
+                    sx: {
+                      maxHeight: 200,
+                      overflowY: "auto",
+                    },
+                  },
+                  anchorOrigin: {
+                    vertical: "bottom",
+                    horizontal: "left",
+                  },
+                  transformOrigin: {
+                    vertical: "top",
+                    horizontal: "left",
+                  },
+                },
+              }}
+            >
+              <MenuItem value="" disabled>
+                Select city
+              </MenuItem>
+              {allCities.map((city) => (
+                <MenuItem key={city.name} value={city.name}>
+                  {city.name}
+                </MenuItem>
+              ))}
+            </TextField>
+          </div>
+        )}
       </div>
 
       <p className="font-sans mt-8 font-semibold text-base">
@@ -250,7 +344,7 @@ const AddCity = ({ setActiveComponent }) => {
 
       <GoogleMap
         mapContainerStyle={{
-          height: "700px",
+          height: "400px",
           width: "",
           marginTop: "32px",
           borderRadius: "16px",

@@ -204,7 +204,7 @@ const AddCity = ({ cityId, setCityId, setActiveComponent }) => {
     const cityData = {
       country_code: country,
       name: city,
-      country_id: selectedCountry?.id,
+      country_id: selectedCountry[0]?.id,
       location: {
         type: "Polygon",
         coordinates: [polygon],

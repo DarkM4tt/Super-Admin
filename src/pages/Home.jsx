@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
+import { useAuth } from "../context/authContext";
 import HomeHeader from "../components/common/HomeHeader";
 import SideMenu from "../components/dashboard/SideMenu";
 import Dashboard from "../components/dashboard/Dashboard";
@@ -52,8 +53,8 @@ import AddCity from "../components/dashboard/Location/AddCity";
 import AllZones from "../components/dashboard/Zones/AllZones";
 import NewZone from "../components/dashboard/Zones/NewZone";
 import LoadingAnimation from "../components/common/LoadingAnimation";
-import { useAuth } from "../context/authContext";
 import ZoneCharges from "../components/dashboard/Zones/ZoneCharges";
+import UpdateCity from "../components/dashboard/Location/UpdateCity";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -149,7 +150,7 @@ const Home = () => {
   };
 
   const handleCityClick = (cityId) => {
-    setSelectedOrgId(cityId);
+    setCityId(cityId);
     setActiveComponent("UpdateCity");
   };
 
@@ -199,7 +200,7 @@ const Home = () => {
     }
     if (cityId && activeComponent === "UpdateCity") {
       return (
-        <AddCity
+        <UpdateCity
           cityId={cityId}
           setCityId={setCityId}
           setActiveComponent={setActiveComponent}

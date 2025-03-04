@@ -29,8 +29,9 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
   const [allCities, setAllCities] = useState([]);
   const [allCountries, setAllCountries] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
-  const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
 
   const fetchCities = useCallback(async () => {
     setError("");
@@ -128,9 +129,19 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
   }, [fetchCities, fetchCountries, handleAddCountry]);
 
   const handleToggleStatus = async (cityId, isCity) => {
-    setError("");
-    setLoading(true);
-
+    isCity
+      ? setAllCities((prevCities) =>
+          prevCities.map((city) =>
+            city.id === cityId ? { ...city, is_active: !city.is_active } : city
+          )
+        )
+      : setAllCountries((prevCountries) =>
+          prevCountries.map((country) =>
+            country.id === cityId
+              ? { ...country, is_active: !country.is_active }
+              : country
+          )
+        );
     const url = isCity
       ? `${
           import.meta.env.VITE_API_RIDE_URL
@@ -145,19 +156,32 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
         credentials: "include",
       });
       const result = await res?.json();
-      if (result?.success) {
-        isCity ? fetchCities() : fetchCountries();
-      } else {
+      if (!result?.success) {
         throw new Error(result?.message);
       }
     } catch (error) {
+      isCity
+        ? setAllCities((prevCities) =>
+            prevCities.map((city) =>
+              city.id === cityId
+                ? { ...city, is_active: !city.is_active }
+                : city
+            )
+          )
+        : setAllCountries((prevCountries) =>
+            prevCountries.map((country) =>
+              country.id === cityId
+                ? { ...country, is_active: !country.is_active }
+                : country
+            )
+          );
       setError(error);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleMenuOpen = (event, city) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setMenuPosition({ top: rect.bottom, left: rect.left });
     setMenuAnchor(event.currentTarget);
     setSelectedCity(city);
   };
@@ -165,12 +189,6 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
   const handleMenuClose = () => {
     setMenuAnchor(null);
     setSelectedCity(null);
-  };
-
-  const handleEditCity = () => {
-    if (!selectedCity) return;
-    handleCityClick(selectedCity?.id);
-    handleMenuClose();
   };
 
   const handleDeleteCity = async () => {
@@ -190,6 +208,7 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
       const result = await res?.json();
       if (result?.success) {
         fetchCities();
+        handleMenuClose();
       } else {
         throw new Error(result?.message);
       }
@@ -197,8 +216,8 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
       setError(error);
     } finally {
       setLoading(false);
+      handleMenuClose();
     }
-    handleMenuClose();
   };
 
   const handleTabChange = (event, newValue) => {
@@ -302,16 +321,24 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
                       >
                         <MoreHorizIcon />
                       </IconButton>
-                      {selectedCity?.id === city?.id && (
-                        <Menu
-                          anchorEl={menuAnchor}
-                          open={Boolean(menuAnchor)}
-                          onClose={handleMenuClose}
-                        >
-                          <MenuItem onClick={handleEditCity}>Edit</MenuItem>
-                          <MenuItem onClick={handleDeleteCity}>Delete</MenuItem>
-                        </Menu>
-                      )}
+                      <Menu
+                        anchorReference="anchorPosition"
+                        anchorPosition={{
+                          top: menuPosition.top,
+                          left: menuPosition.left,
+                        }}
+                        open={Boolean(menuAnchor)}
+                        onClose={handleMenuClose}
+                        PaperProps={{
+                          elevation: 2,
+                          sx: { boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)" },
+                        }}
+                      >
+                        <MenuItem onClick={() => handleCityClick(city?.id)}>
+                          Edit
+                        </MenuItem>
+                        <MenuItem onClick={handleDeleteCity}>Delete</MenuItem>
+                      </Menu>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -393,7 +420,7 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
                     <TableCell>
                       {country?.name || <p className="text-red-500">No name</p>}
                     </TableCell>
-                    <TableCell>{country?.phone_code}</TableCell>
+                    <TableCell>+{country?.phone_code}</TableCell>
                     <TableCell>{country?.iso_code}</TableCell>
                     <TableCell>{country?.currency}</TableCell>
                     <TableCell>
@@ -416,6 +443,9 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
       </Box>
     );
   };
+
+  console.log("Menu Anchor:", menuAnchor);
+  console.log("Selected City:", selectedCity);
 
   return (
     <>

@@ -16,20 +16,14 @@ import { City } from "country-state-city";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 import LoadingAnimation from "../../common/LoadingAnimation";
 
-const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
-
-const AddCity = ({ setActiveComponent }) => {
+const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
   const [drawingControlEnabled, setDrawingControlEnabled] = useState(true);
-  const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
+  const [mapCenter, setMapCenter] = useState({});
   const [polygon, setPolygon] = useState([]);
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
-  const [allCountries, setAllCountries] = useState([]);
-  const [allCities, setAllCities] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [cityLoading, setCityLoading] = useState(false);
   const [error, setError] = useState("");
-  const [addError, setAddError] = useState("");
 
   const drawingManagerRef = useRef(null);
   const polygonRef = useRef(null);
@@ -524,4 +518,4 @@ const AddCity = ({ setActiveComponent }) => {
   );
 };
 
-export default AddCity;
+export default UpdateCity;

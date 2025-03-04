@@ -217,11 +217,11 @@ const AddCity = ({ cityId, setCityId, setActiveComponent }) => {
       is_deleted: false,
     };
 
+    console.log("CiTY DATA: ", cityData);
+
     try {
       const res = await fetch(
-        `${
-          import.meta.env.VITE_API_RIDE_URL
-        }/super-admin/country/get-countries?page=1&limit=300`,
+        `${import.meta.env.VITE_API_RIDE_URL}super-admin/city/add-city`,
         {
           headers: {
             "Content-Type": "application/json",

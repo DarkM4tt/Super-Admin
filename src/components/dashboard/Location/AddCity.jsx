@@ -338,7 +338,7 @@ const AddCity = ({ cityId, setCityId, setActiveComponent }) => {
               Select country
             </MenuItem>
             {allCountries.map((country) => (
-              <MenuItem key={country?.id} value={country}>
+              <MenuItem key={country?.id} value={country?.iso_code}>
                 {country?.name}
               </MenuItem>
             ))}

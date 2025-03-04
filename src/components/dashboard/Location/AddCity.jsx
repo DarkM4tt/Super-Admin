@@ -200,14 +200,16 @@ const AddCity = ({ cityId, setCityId, setActiveComponent }) => {
     const cityData = {
       country_code: country,
       name: city,
-      country_id: allCountries.filter((contry) => contry?.iso_code === country),
+      country_id: allCountries?.filter(
+        (contry) => contry?.iso_code === country
+      ),
       location: {
         type: "Polygon",
         coordinates: [polygon],
       },
       center_location: {
         type: "Point",
-        coordinates: [mapCenter[lat], mapCenter[lng]],
+        coordinates: [mapCenter?.lat, mapCenter?.lng],
       },
       airport_business: true,
       city_business: true,

@@ -197,12 +197,14 @@ const AddCity = ({ cityId, setCityId, setActiveComponent }) => {
     setError("");
     setLoading(true);
 
+    const selectedCountry = allCountries?.filter(
+      (contry) => contry?.iso_code === country
+    );
+
     const cityData = {
       country_code: country,
       name: city,
-      country_id: allCountries?.filter(
-        (contry) => contry?.iso_code === country
-      ),
+      country_id: selectedCountry?.id,
       location: {
         type: "Polygon",
         coordinates: [polygon],

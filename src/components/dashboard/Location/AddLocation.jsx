@@ -444,9 +444,6 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
     );
   };
 
-  console.log("Menu Anchor:", menuAnchor);
-  console.log("Selected City:", selectedCity);
-
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">

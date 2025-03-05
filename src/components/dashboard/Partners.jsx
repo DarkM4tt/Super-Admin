@@ -11,10 +11,12 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
+import { formatCreatedAt } from "../../utils/dates";
 import SearchIcon from "@mui/icons-material/Search";
 import PartnerIcon from "../../assets/partnerImage.png";
-import { formatCreatedAt } from "../../utils/dates";
 import LoadingAnimation from "../common/LoadingAnimation";
+import wrongIcon from "../../assets/wrongIcon.svg";
+import infoYellow from "../../assets/infoYellow.svg";
 
 const Partners = ({ onPartnerClick }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -72,7 +74,14 @@ const Partners = ({ onPartnerClick }) => {
     fetchPartners();
   }, [fetchPartners, activeTab]);
 
-  const PartnersTable = ({ pending }) => {
+  const getVerificationStatus = (partner) => {
+    const totalDocs = 6;
+    const notUploadedCount = totalDocs - partner?.totalDocuments;
+    const pendingCount = partner?.unverifiedDocuments;
+    return { notUploadedCount, pendingCount };
+  };
+
+  const PartnersTable = ({ status }) => {
     return (
       <Box
         sx={{
@@ -113,7 +122,7 @@ const Partners = ({ onPartnerClick }) => {
                     "Total drivers",
                     "Total vehicles",
                     "Listing drivers",
-                    pending ? "Documents Status" : "Issues/queries",
+                    status ? "Documents Status" : "Issues/queries",
                   ].map((header) => (
                     <TableCell key={header}>{header}</TableCell>
                   ))}
@@ -129,46 +138,84 @@ const Partners = ({ onPartnerClick }) => {
                   },
                 }}
               >
-                {allPartners.map((org, idx) => (
-                  <TableRow
-                    key={org?._id}
-                    onClick={() => onPartnerClick(org?._id)}
-                    sx={{
-                      cursor: "pointer",
-                    }}
-                  >
-                    <TableCell>{idx + 1}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <img src={PartnerIcon} alt="AppleIcon" />
-                        {org?.full_name || (
-                          <p className="text-red-500">No name</p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {formatCreatedAt(org?.createdAt) || (
-                        <p className="text-red-200">Unknown</p>
-                      )}
-                    </TableCell>
-                    <TableCell>{org.totalDrivers}</TableCell>
-                    <TableCell>{org.totalVehicles}</TableCell>
-                    <TableCell>{org.listingDrivers}</TableCell>
-                    {pending ? (
-                      <TableCell>Docs</TableCell>
-                    ) : (
+                {allPartners.map((org, idx) => {
+                  const { notUploadedCount, pendingCount } =
+                    getVerificationStatus(org);
+
+                  return (
+                    <TableRow
+                      key={org?._id}
+                      onClick={() => onPartnerClick(org?._id)}
+                      sx={{
+                        cursor: "pointer",
+                      }}
+                    >
+                      <TableCell>{idx + 1}</TableCell>
                       <TableCell>
-                        {Math.floor(Math.random() * 20) + 1}
+                        <div className="flex items-center gap-2">
+                          <img src={PartnerIcon} alt="AppleIcon" />
+                          {org?.full_name || (
+                            <p className="text-red-500">No name</p>
+                          )}
+                        </div>
                       </TableCell>
-                    )}
-                  </TableRow>
-                ))}
+                      <TableCell>
+                        {formatCreatedAt(org?.createdAt) || (
+                          <p className="text-red-200">Unknown</p>
+                        )}
+                      </TableCell>
+                      <TableCell>{org.totalDrivers}</TableCell>
+                      <TableCell>{org.totalVehicles}</TableCell>
+                      <TableCell>{org.listingDrivers}</TableCell>
+                      {status ? (
+                        <TableCell>
+                          <div className="flex w-full justify-center items-center">
+                            {notUploadedCount > 0 && (
+                              <span
+                                className={`bg-[#f9ecea] pl-4 pr-2 py-2 ${
+                                  pendingCount > 0
+                                    ? "rounded-l-2xl"
+                                    : "rounded-2xl"
+                                } text-[#D40038] flex items-center`}
+                              >
+                                <img
+                                  src={wrongIcon}
+                                  alt="wrongIcon"
+                                  className="mr-1"
+                                />
+                                <p>{notUploadedCount}</p>
+                              </span>
+                            )}
+                            {pendingCount > 0 && (
+                              <span
+                                className={`bg-[#f9ecea] pl-2 pr-4 py-2 ${
+                                  notUploadedCount > 0
+                                    ? "rounded-r-2xl"
+                                    : "rounded-2xl"
+                                } text-[#C07000] flex items-center`}
+                              >
+                                <img
+                                  src={infoYellow}
+                                  alt="infoYellow"
+                                  className="mr-1"
+                                />
+                                <p>{pendingCount}</p>
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                      ) : (
+                        <TableCell>0</TableCell>
+                      )}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
-        ) : pending ? (
+        ) : status ? (
           <p className="text-lg text-red-400 font-bold">
-            No pending organisations!
+            No {status} organisations!
           </p>
         ) : (
           <p className="text-lg text-red-400 font-bold">
@@ -230,13 +277,13 @@ const Partners = ({ onPartnerClick }) => {
         <LoadingAnimation height={500} width={500} />
       ) : (
         <>
-          {activeTab === 0 && <PartnersTable pending={false} />}
+          {activeTab === 0 && <PartnersTable />}
 
-          {activeTab === 1 && <PartnersTable pending={true} />}
+          {activeTab === 1 && <PartnersTable status="pending" />}
 
-          {activeTab === 2 && <PartnersTable pending={true} />}
+          {activeTab === 2 && <PartnersTable status="new" />}
 
-          {activeTab === 3 && <PartnersTable pending={true} />}
+          {activeTab === 3 && <PartnersTable status="incomplete" />}
         </>
       )}
     </Box>

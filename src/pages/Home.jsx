@@ -55,6 +55,7 @@ import NewZone from "../components/dashboard/Zones/NewZone";
 import LoadingAnimation from "../components/common/LoadingAnimation";
 import ZoneCharges from "../components/dashboard/Zones/ZoneCharges";
 import UpdateCity from "../components/dashboard/Location/UpdateCity";
+import AddPrices from "../components/dashboard/Location/AddPrices";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -64,6 +65,12 @@ const Home = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
   const [cityId, setCityId] = useState(null);
+  const [addLocationData, setAddLocationData] = useState({
+    countryId: "",
+    cityId: "",
+    zoneId: "",
+    rideTypePrice: "",
+  });
   const [selectedRentalId, setSelectedRentalId] = useState(null);
   const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [selectedBoldadsId, setSelectedBoldadsId] = useState(null);
@@ -292,6 +299,13 @@ const Home = () => {
         return <AllowedServices />;
       case "Bidding":
         return <Bidding />;
+      case "AddPrices":
+        return (
+          <AddPrices
+            addLocationData={addLocationData}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       case "AddLocation":
         return (
           <AddLocation
@@ -300,7 +314,12 @@ const Home = () => {
           />
         );
       case "AddCity":
-        return <AddCity setActiveComponent={setActiveComponent} />;
+        return (
+          <AddCity
+            setActiveComponent={setActiveComponent}
+            setAddLocationData={setAddLocationData}
+          />
+        );
       case "Vehicles":
         return (
           <Vehicles

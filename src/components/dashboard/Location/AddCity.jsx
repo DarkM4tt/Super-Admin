@@ -18,7 +18,7 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
 
-const AddCity = ({ setActiveComponent }) => {
+const AddCity = ({ setActiveComponent, setAddLocationData }) => {
   const [drawingControlEnabled, setDrawingControlEnabled] = useState(true);
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [polygon, setPolygon] = useState([]);
@@ -235,7 +235,14 @@ const AddCity = ({ setActiveComponent }) => {
       );
       const result = await res?.json();
       if (result?.success) {
-        setActiveComponent("AddLocation");
+        const { country_id, id } = result.data.city;
+        setAddLocationData({
+          countryId: country_id,
+          cityId: id,
+          zoneId: "",
+          rideTypePrice: "CITY_BASE",
+        });
+        setActiveComponent("AddPrices");
       } else {
         throw new Error(result?.message);
       }

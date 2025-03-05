@@ -114,6 +114,10 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
       minimum_fare: parseFloat(row.minimumFare),
     }));
 
+    if (!zoneId || rideTypePrice === "CITY_BASE") {
+      delete payload.zone_id;
+    }
+
     try {
       const res = await fetch(
         `${

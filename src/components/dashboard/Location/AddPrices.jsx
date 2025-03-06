@@ -268,6 +268,17 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
             variant="contained"
             className="bg-black text-white"
             disabled={rows.length === 0 || !validateForm()}
+            sx={{
+              backgroundColor: "black",
+              color: "white",
+              textTransform: "none",
+              padding: "10px 60px",
+              borderRadius: "8px",
+              fontSize: "14px",
+              "&:hover": {
+                backgroundColor: "#333",
+              },
+            }}
           >
             Save & Publish
           </Button>

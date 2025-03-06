@@ -101,22 +101,31 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
       return;
     }
 
-    const payload = rows.map((row) => ({
-      country_id: countryId,
-      city_id: cityId,
-      zone_id: zoneId,
-      ride_type: row.rideType,
-      ride_type_price: rideTypePrice,
-      base_fare: parseFloat(row.baseFare),
-      fare_per_km: parseFloat(row.kmCharge),
-      waiting_charges_per_min: parseFloat(row.waitingCharge),
-      fare_per_min: parseFloat(row.farePerMin),
-      minimum_fare: parseFloat(row.minimumFare),
-    }));
-
-    if (!zoneId || rideTypePrice === "CITY_BASE") {
-      delete payload.zone_id;
-    }
+    const payload =
+      !zoneId || rideTypePrice === "CITY_BASE"
+        ? rows.map((row) => ({
+            country_id: countryId,
+            city_id: cityId,
+            ride_type: row.rideType,
+            ride_type_price: rideTypePrice,
+            base_fare: parseFloat(row.baseFare),
+            fare_per_km: parseFloat(row.kmCharge),
+            waiting_charges_per_min: parseFloat(row.waitingCharge),
+            fare_per_min: parseFloat(row.farePerMin),
+            minimum_fare: parseFloat(row.minimumFare),
+          }))
+        : rows.map((row) => ({
+            country_id: countryId,
+            city_id: cityId,
+            zone_id: zoneId,
+            ride_type: row.rideType,
+            ride_type_price: rideTypePrice,
+            base_fare: parseFloat(row.baseFare),
+            fare_per_km: parseFloat(row.kmCharge),
+            waiting_charges_per_min: parseFloat(row.waitingCharge),
+            fare_per_min: parseFloat(row.farePerMin),
+            minimum_fare: parseFloat(row.minimumFare),
+          }));
 
     try {
       const res = await fetch(

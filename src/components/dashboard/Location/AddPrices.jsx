@@ -8,6 +8,7 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 const AddPrices = ({ addLocationData, setActiveComponent }) => {
   const { countryId, cityId, zoneId, rideTypePrice } = addLocationData;
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [error, setError] = useState("");
   const [rideTypes, setRideTypes] = useState([]);
   const [rows, setRows] = useState([
@@ -108,6 +109,8 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
       return;
     }
 
+    setButtonLoading(true);
+
     const payload =
       !zoneId || rideTypePrice === "CITY_BASE"
         ? rows.map((row) => ({
@@ -167,7 +170,7 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
     } catch (error) {
       setError(error);
     } finally {
-      setLoading(false);
+      setButtonLoading(false);
     }
   };
 
@@ -282,7 +285,11 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
               },
             }}
           >
-            Save & Publish
+            {buttonLoading ? (
+              <LoadingAnimation width={30} height={30} />
+            ) : (
+              "Save & Publish"
+            )}
           </Button>
         </div>
       </div>

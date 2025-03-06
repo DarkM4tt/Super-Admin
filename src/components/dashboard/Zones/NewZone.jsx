@@ -216,7 +216,7 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
     const zoneData = {
       name: zoneName,
       zone_type: mapType,
-      city_code: city?.id,
+      city_id: city?.id,
       country_id: country?.id,
       location: {
         coordinates: [polygon],

@@ -21,6 +21,13 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
       minimumFare: "",
     },
   ]);
+  const fieldLabels = {
+    baseFare: "Base Fare (€)",
+    kmCharge: "Per km Charge (€)",
+    waitingCharge: "Waiting Charge (€)",
+    farePerMin: "Fare Per Minute (€)",
+    minimumFare: "Minimum Fare (€)",
+  };
 
   const fetchRideTypes = useCallback(async () => {
     setError("");
@@ -230,17 +237,11 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
                 ))}
             </Select>
 
-            {[
-              "baseFare",
-              "kmCharge",
-              "waitingCharge",
-              "farePerMin",
-              "minimumFare",
-            ].map((field) => (
+            {Object.keys(fieldLabels).map((field) => (
               <TextField
                 key={field}
                 type="number"
-                label={`${field.replace(/([A-Z])/g, " $1")} (€)`}
+                label={fieldLabels[field]}
                 value={row[field]}
                 onChange={(e) => updateRow(row.id, field, e.target.value)}
                 inputProps={{ step: 0.1 }}

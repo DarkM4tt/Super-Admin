@@ -307,8 +307,20 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
                       <Switch
                         checked={city?.is_active}
                         onChange={() => handleToggleStatus(city?.id, true)}
-                        color="info"
+                        sx={{
+                          "& .MuiSwitch-track": {
+                            backgroundColor: city?.is_active
+                              ? "#22cfcf"
+                              : "red",
+                            opacity: 1,
+                          },
+                          "& .Mui-checked + .MuiSwitch-track": {
+                            backgroundColor: "#22cfcf",
+                            opacity: 1,
+                          },
+                        }}
                       />
+                      {city?.is_active ? "On" : "Off"}
                     </TableCell>
                     <TableCell>
                       {city?.updatedAt

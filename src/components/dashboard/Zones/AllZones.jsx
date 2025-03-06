@@ -3,6 +3,9 @@ import SearchIcon from "@mui/icons-material/Search";
 import BackArrow from "../../../assets/leftArrowBlack.svg";
 import {
   Box,
+  IconButton,
+  Menu,
+  MenuItem,
   Switch,
   Table,
   TableBody,
@@ -11,73 +14,132 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import CustomDropdown from "../../common/CustomDropdown";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import LoadingAnimation from "../../common/LoadingAnimation";
+import { formatCreatedAt } from "../../../utils/dates";
 
-const AllZones = ({ setActiveComponent }) => {
-  const [checked, setChecked] = useState(false);
-  const driversData = [
-    {
-      id: 1,
-      name: "Omar Botosh",
-      assignedVehicle: "MX 019MMA9",
-      totalRides: 789,
-    },
-    {
-      id: 2,
-      name: "Omar Botosh",
-      assignedVehicle: "MX 019MMA9",
-      totalRides: 789,
-    },
-    {
-      id: 3,
-      name: "Omar Botosh",
-      assignedVehicle: "MX 019MMA9",
-      totalRides: 789,
-    },
-    {
-      id: 4,
-      name: "Omar Botosh",
-      assignedVehicle: "MX 019MMA9",
-      totalRides: 789,
-    },
-    {
-      id: 5,
-      name: "Omar Botosh",
-      assignedVehicle: "MX 019MMA9",
-      totalRides: 789,
-    },
-    {
-      id: 6,
-      name: "Omar Botosh",
-      assignedVehicle: "MX 019MMA9",
-      totalRides: 789,
-    },
-    {
-      id: 7,
-      name: "Omar Botosh",
-      assignedVehicle: "MX 019MMA9",
-      totalRides: 789,
-    },
-    {
-      id: 8,
-      name: "Omar Botosh",
-      assignedVehicle: "MX 019MMA9",
-      totalRides: 789,
-    },
-    {
-      id: 9,
-      name: "Omar Botosh",
-      assignedVehicle: "MX 019MMA9",
-      totalRides: 789,
-    },
-  ];
-  const dropdownOptions = [
-    { title: "Customers", value: "stations" },
-    { title: "Drivers", value: "vehicles" },
-    { title: "Vehicles", value: "drivers" },
-  ];
+const AllZones = ({ setActiveComponent, handleZoneClick }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [allZones, setAllZones] = useState([]);
+  const [menuAnchor, setMenuAnchor] = useState(null);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
+  const [selectedZone, setSelectedZone] = useState(null);
+
+  const fetchAllZones = useCallback(async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/zones?page=1&limit=100`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setAllZones(result?.data?.results);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchAllZones();
+  }, [fetchAllZones]);
+
+  const handleToggleStatus = async (zoneId) => {
+    setAllZones((prevZones) =>
+      prevZones.map((zone) =>
+        zone.id === zoneId ? { ...zone, is_active: !zone.is_active } : zone
+      )
+    );
+    const url = `${
+      import.meta.env.VITE_API_RIDE_URL
+    }/super-admin/zones/toggle-status/${zoneId}`;
+
+    try {
+      const res = await fetch(url, {
+        method: "PUT",
+        credentials: "include",
+      });
+      const result = await res?.json();
+      if (!result?.success) {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setAllZones((prevZones) =>
+        prevZones.map((zone) =>
+          zone.id === zoneId ? { ...zone, is_active: !zone.is_active } : zone
+        )
+      );
+      setError(error);
+    }
+  };
+
+  const handleDeleteZone = async () => {
+    if (!selectedZone) return;
+    setError("");
+    setLoading(true);
+
+    const url = `${import.meta.env.VITE_API_RIDE_URL}/super-admin/zones/${
+      selectedZone?.id
+    }`;
+
+    try {
+      const res = await fetch(url, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      const result = await res?.json();
+      if (result?.success) {
+        fetchAllZones();
+        handleMenuClose();
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+      handleMenuClose();
+    }
+  };
+
+  const handleMenuOpen = (event, zone) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    setMenuPosition({ top: rect.bottom, left: rect.left });
+    setMenuAnchor(event.currentTarget);
+    setSelectedZone(zone);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+    setSelectedZone(null);
+  };
+
+  if (error) {
+    return (
+      <p className="text-lg text-red-400 font-bold">
+        {error.message || "Error"}
+      </p>
+    );
+  }
+
+  if (loading) {
+    return <LoadingAnimation width={500} height={500} />;
+  }
+
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -128,12 +190,7 @@ const AllZones = ({ setActiveComponent }) => {
           borderRadius: "8px",
         }}
       >
-        <div className="flex justify-between items-center">
-          <p className="font-redhat font-semibold text-2xl">
-            List of all zones
-          </p>
-          <CustomDropdown options={dropdownOptions} />
-        </div>
+        <p className="font-redhat font-semibold text-2xl">List of all zones</p>
         <TableContainer>
           <Table>
             {/* Table Header */}
@@ -165,7 +222,7 @@ const AllZones = ({ setActiveComponent }) => {
               >
                 {[
                   "Zone name",
-                  "Vehicle around",
+                  "Color",
                   "Map type",
                   "Created on",
                   "Zones status",
@@ -178,9 +235,9 @@ const AllZones = ({ setActiveComponent }) => {
 
             {/* Table Body */}
             <TableBody>
-              {driversData.map((org) => (
+              {allZones.map((zone) => (
                 <TableRow
-                  key={org.id}
+                  key={zone?.id}
                   sx={{
                     cursor: "pointer",
                   }}
@@ -191,7 +248,7 @@ const AllZones = ({ setActiveComponent }) => {
                       fontSize: "16px",
                     }}
                   >
-                    {org.name}
+                    {zone?.name || "No name"}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -199,7 +256,7 @@ const AllZones = ({ setActiveComponent }) => {
                       fontSize: "16px",
                     }}
                   >
-                    1200
+                    {zone?.color || "No color"}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -207,7 +264,7 @@ const AllZones = ({ setActiveComponent }) => {
                       fontSize: "16px",
                     }}
                   >
-                    Heat map
+                    {zone?.zone_type || "No type"}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -215,7 +272,9 @@ const AllZones = ({ setActiveComponent }) => {
                       fontSize: "16px",
                     }}
                   >
-                    12 January, 2025
+                    {zone?.updatedAt
+                      ? formatCreatedAt(zone?.updatedAt)
+                      : formatCreatedAt(zone?.createdAt)}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -224,11 +283,11 @@ const AllZones = ({ setActiveComponent }) => {
                     }}
                   >
                     <Switch
-                      checked={checked}
-                      onChange={(e) => setChecked(e.target.checked)}
+                      checked={zone?.is_active}
+                      onChange={() => handleToggleStatus(zone?.id)}
                       sx={{
                         "& .MuiSwitch-track": {
-                          backgroundColor: checked ? "#22cfcf" : "red", // Red when ON, Turquoise when OFF
+                          backgroundColor: zone?.is_active ? "#22cfcf" : "red",
                           opacity: 1,
                         },
                         "& .Mui-checked + .MuiSwitch-track": {
@@ -237,7 +296,7 @@ const AllZones = ({ setActiveComponent }) => {
                         },
                       }}
                     />
-                    {checked ? "On" : "Off"}
+                    {zone?.is_active ? "On" : "Off"}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -245,9 +304,29 @@ const AllZones = ({ setActiveComponent }) => {
                       fontSize: "16px",
                     }}
                   >
-                    <button>
-                      <MoreHorizIcon className="text-[#777777]" />
-                    </button>
+                    <IconButton
+                      onClick={(event) => handleMenuOpen(event, zone)}
+                    >
+                      <MoreHorizIcon />
+                    </IconButton>
+                    <Menu
+                      anchorReference="anchorPosition"
+                      anchorPosition={{
+                        top: menuPosition.top,
+                        left: menuPosition.left,
+                      }}
+                      open={Boolean(menuAnchor)}
+                      onClose={handleMenuClose}
+                      PaperProps={{
+                        elevation: 2,
+                        sx: { boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)" },
+                      }}
+                    >
+                      <MenuItem onClick={() => handleZoneClick(zone?.id)}>
+                        Edit
+                      </MenuItem>
+                      <MenuItem onClick={handleDeleteZone}>Delete</MenuItem>
+                    </Menu>
                   </TableCell>
                 </TableRow>
               ))}

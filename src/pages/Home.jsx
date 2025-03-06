@@ -228,7 +228,12 @@ const Home = () => {
       case "Zones":
         return <AllZones setActiveComponent={setActiveComponent} />;
       case "NewZone":
-        return <NewZone setActiveComponent={setActiveComponent} />;
+        return (
+          <NewZone
+            setActiveComponent={setActiveComponent}
+            setAddLocationData={setAddLocationData}
+          />
+        );
       case "ZoneCharges":
         return <ZoneCharges setActiveComponent={setActiveComponent} />;
       case "Services":

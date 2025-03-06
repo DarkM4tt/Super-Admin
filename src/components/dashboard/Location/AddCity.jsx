@@ -15,7 +15,6 @@ import {
 import { City } from "country-state-city";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 import LoadingAnimation from "../../common/LoadingAnimation";
-import { getCountryCenter } from "../../../utils/dates";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
 
@@ -92,17 +91,6 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
     const selectedCountry = e.target.value;
     setCountry(selectedCountry);
 
-    const latLng = getCountryCenter(country.iso_code);
-
-    if (latLng) {
-      const newCenter = {
-        lat: parseFloat(latLng[0]),
-        lng: parseFloat(latLng[1]),
-      };
-      setMapCenter(newCenter);
-      mapRef.current.panTo(newCenter);
-      mapRef.current.setZoom(5);
-    }
     setCity("");
   };
 

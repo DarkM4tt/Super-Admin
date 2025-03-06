@@ -509,7 +509,7 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
         {/* Save and confirm button */}
         <Button
           variant="contained"
-          disabled={!city || !country || !polygon}
+          disabled={!city || !country || polygon?.length < 3}
           sx={{
             backgroundColor: "black",
             color: "white",

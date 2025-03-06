@@ -45,7 +45,7 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
       );
       const result = await res?.json();
       if (result?.success) {
-        setRideTypes(result?.data?.results);
+        setRideTypes(result?.data?.rideTypes?.results);
       } else {
         throw new Error(result?.message);
       }
@@ -158,7 +158,9 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
       );
       const result = await res?.json();
       if (result?.success) {
-        setActiveComponent("AddLocation");
+        !zoneId || rideTypePrice === "CITY_BASE"
+          ? setActiveComponent("AddLocation")
+          : setActiveComponent("AllZones");
       } else {
         throw new Error(result?.message);
       }

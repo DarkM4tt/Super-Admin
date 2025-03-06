@@ -43,7 +43,7 @@ const AllZones = ({ setActiveComponent, handleZoneClick }) => {
       );
       const result = await res?.json();
       if (result?.success) {
-        setAllZones(result?.data?.results);
+        setAllZones(result?.data?.zones?.results);
       } else {
         throw new Error(result?.message);
       }

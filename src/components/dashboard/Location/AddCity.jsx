@@ -15,6 +15,7 @@ import {
 import { City } from "country-state-city";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 import LoadingAnimation from "../../common/LoadingAnimation";
+import { getCountryCenter } from "../../../utils/dates";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
 
@@ -30,6 +31,7 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
   const [cityLoading, setCityLoading] = useState(false);
   const [error, setError] = useState("");
   const [addError, setAddError] = useState("");
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const drawingManagerRef = useRef(null);
   const polygonRef = useRef(null);
@@ -55,7 +57,7 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
       );
       const result = await res?.json();
       if (result?.success) {
-        setAllCountries(result?.data?.results);
+        setAllCountries(result?.data?.countries?.results);
       } else {
         throw new Error(result?.message);
       }
@@ -89,6 +91,18 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
   const handleCountryChange = (e) => {
     const selectedCountry = e.target.value;
     setCountry(selectedCountry);
+
+    const latLng = getCountryCenter(country.iso_code);
+
+    if (latLng) {
+      const newCenter = {
+        lat: parseFloat(latLng[0]),
+        lng: parseFloat(latLng[1]),
+      };
+      setMapCenter(newCenter);
+      mapRef.current.panTo(newCenter);
+      mapRef.current.setZoom(5);
+    }
     setCity("");
   };
 
@@ -195,7 +209,7 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
       return;
     }
     setError("");
-    setLoading(true);
+    setButtonLoading(true);
 
     const selectedCountry = allCountries?.filter(
       (contry) => contry?.iso_code === country
@@ -249,7 +263,7 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
     } catch (error) {
       setError(error);
     } finally {
-      setLoading(false);
+      setButtonLoading(false);
     }
   };
 
@@ -392,13 +406,18 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
               }}
             >
               <MenuItem value="" disabled>
-                Select city
+                {!country ? (
+                  <p className="text-red-400">No country selected!</p>
+                ) : (
+                  "Select city"
+                )}
               </MenuItem>
-              {allCities.map((city) => (
-                <MenuItem key={city.name} value={city.name}>
-                  {city.name}
-                </MenuItem>
-              ))}
+              {allCities?.length > 0 &&
+                allCities.map((city) => (
+                  <MenuItem key={city.name} value={city.name}>
+                    {city.name}
+                  </MenuItem>
+                ))}
             </TextField>
           </div>
         )}
@@ -523,7 +542,11 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
           }}
           onClick={handleAddCity}
         >
-          Save and confirm
+          {buttonLoading ? (
+            <LoadingAnimation height={30} width={30} />
+          ) : (
+            "Save and confirm"
+          )}
         </Button>
       </Stack>
 

@@ -2,7 +2,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import BackArrow from "../../../assets/leftArrowBlack.svg";
 import { Button, MenuItem, TextField } from "@mui/material";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LoadingAnimation from "../../common/LoadingAnimation";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
@@ -14,14 +14,20 @@ import {
   Polygon,
   StandaloneSearchBox,
 } from "@react-google-maps/api";
+import { getCountryCenter } from "../../../utils/dates";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
 
-const NewZone = ({ setActiveComponent }) => {
+const NewZone = ({ setActiveComponent, setAddLocationData }) => {
   const [zoneName, setZoneName] = useState("");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
-  const [mapType, setMapType] = useState("");
+  const [mapType, setMapType] = useState("RED_ZONE");
+  const [allCities, setAllCities] = useState([]);
+  const [allCountries, setAllCountries] = useState([]);
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const drawingManagerRef = useRef(null);
   const polygonRef = useRef(null);
   const mapRef = useRef(null);
@@ -32,6 +38,96 @@ const NewZone = ({ setActiveComponent }) => {
   const [drawingControlEnabled, setDrawingControlEnabled] = useState(true);
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [polygon, setPolygon] = useState([]);
+
+  const fetchCities = useCallback(async () => {
+    if (!country) return;
+    setError("");
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/city/get-cities?page=1&limit=100&country_id=${
+          country.id
+        }`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setAllCities(result?.data?.cities?.results);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    }
+  }, [country]);
+
+  const fetchCountries = useCallback(async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/country/get-countries?page=1&limit=100`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setAllCountries(result?.data?.countries?.results);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    country ? fetchCities() : fetchCountries();
+  }, [fetchCountries, fetchCities, country]);
+
+  const onCityChange = (event) => {
+    const city = event.target.value;
+    setCity(city);
+
+    if (city?.center_location) {
+      const newCenter = {
+        lat: parseFloat(city?.center_location?.coordinates[0]),
+        lng: parseFloat(city?.center_location?.coordinates[1]),
+      };
+      setMapCenter(newCenter);
+      mapRef.current.panTo(newCenter);
+      mapRef.current.setZoom(12);
+    }
+  };
+
+  const onCountryChange = (event) => {
+    const country = event.target.value;
+    setCountry(country);
+
+    const latLng = getCountryCenter(country.iso_code);
+
+    if (latLng) {
+      const newCenter = {
+        lat: parseFloat(latLng[0]),
+        lng: parseFloat(latLng[1]),
+      };
+      setMapCenter(newCenter);
+      mapRef.current.panTo(newCenter);
+      mapRef.current.setZoom(5);
+    }
+    setCity("");
+  };
 
   const calculatePolygonCentroid = (coords) => {
     let area = 0;
@@ -111,11 +207,66 @@ const NewZone = ({ setActiveComponent }) => {
     );
   };
 
-  if (loadError) {
-    return <div>Error loading maps</div>;
+  const handleAddZone = async () => {
+    if (!country || !city || !polygon || !mapType) return;
+
+    setError("");
+    setButtonLoading(true);
+
+    const zoneData = {
+      name: zoneName,
+      zone_type: mapType,
+      city_code: city?.id,
+      country_id: country?.id,
+      location: {
+        coordinates: [polygon],
+      },
+      center_location: {
+        coordinates: [mapCenter?.lat, mapCenter?.lng],
+      },
+    };
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_RIDE_URL}/super-admin/zones/create`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify(zoneData),
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        const { country_id, city_id, id } = result.data.zone;
+        setAddLocationData({
+          countryId: country_id,
+          cityId: city_id,
+          zoneId: id,
+          rideTypePrice: "ZONE_BASE",
+        });
+        setActiveComponent("AddPrices");
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setButtonLoading(false);
+    }
+  };
+
+  if (loadError || error) {
+    return (
+      <p className="text-lg text-red-400 font-bold">
+        {error.message || "Error"}
+      </p>
+    );
   }
 
-  if (!isLoaded) {
+  if (!isLoaded || loading) {
     return (
       <div>
         <LoadingAnimation height={500} width={500} />
@@ -190,20 +341,37 @@ const NewZone = ({ setActiveComponent }) => {
             variant="outlined"
             size="small"
             value={country}
-            onChange={(e) => setCountry(e.target.value)}
+            onChange={onCountryChange}
             fullWidth
             SelectProps={{
               displayEmpty: true,
               IconComponent: ExpandMoreIcon,
+              MenuProps: {
+                PaperProps: {
+                  sx: {
+                    maxHeight: 200,
+                    overflowY: "auto",
+                  },
+                },
+                anchorOrigin: {
+                  vertical: "bottom",
+                  horizontal: "left",
+                },
+                transformOrigin: {
+                  vertical: "top",
+                  horizontal: "left",
+                },
+              },
             }}
           >
             <MenuItem value="" disabled>
               Select country
             </MenuItem>
-            <MenuItem value="diesel">Portugal</MenuItem>
-            <MenuItem value="petrol">India</MenuItem>
-            <MenuItem value="pedfsfdstrol">Pakistan</MenuItem>
-            <MenuItem value="petvdsvdfsrol">Nigeria</MenuItem>
+            {allCountries.map((country) => (
+              <MenuItem key={country?.id} value={country}>
+                {country?.name}
+              </MenuItem>
+            ))}
           </TextField>
         </div>
         <div className="flex flex-col w-60">
@@ -220,7 +388,7 @@ const NewZone = ({ setActiveComponent }) => {
             variant="outlined"
             size="small"
             value={city}
-            onChange={(e) => setCity(e.target.value)}
+            onChange={onCityChange}
             fullWidth
             SelectProps={{
               displayEmpty: true,
@@ -228,12 +396,19 @@ const NewZone = ({ setActiveComponent }) => {
             }}
           >
             <MenuItem value="" disabled>
-              Select city
+              {!country ? (
+                <p className="text-red-400">No country selected!</p>
+              ) : allCities.length === 0 ? (
+                <p className="text-red-400">No cities yet!</p>
+              ) : (
+                "Select city"
+              )}
             </MenuItem>
-            <MenuItem value="diesel">Porto</MenuItem>
-            <MenuItem value="petrol">Aviero</MenuItem>
-            <MenuItem value="petrol">New Delhi</MenuItem>
-            <MenuItem value="petrol">Lahore</MenuItem>
+            {allCities.map((city) => (
+              <MenuItem key={city?.id} value={city}>
+                {city?.name}
+              </MenuItem>
+            ))}
           </TextField>
         </div>
         <div className="flex flex-col w-60">
@@ -241,7 +416,7 @@ const NewZone = ({ setActiveComponent }) => {
             htmlFor="fuel-type"
             className="text-sm font-medium text-gray-700 mb-1"
           >
-            Select map type
+            Select zone type
           </label>
           <TextField
             id="fuel-type"
@@ -258,11 +433,11 @@ const NewZone = ({ setActiveComponent }) => {
             }}
           >
             <MenuItem value="" disabled>
-              Select map type
+              Select zone type
             </MenuItem>
-            <MenuItem value="diesel">Heat map</MenuItem>
-            <MenuItem value="petrol">Zone map</MenuItem>
-            <MenuItem value="petrol">Driver map</MenuItem>
+            <MenuItem value="RED_ZONE">Heat zone</MenuItem>
+            <MenuItem value="BLUE_ZONE">Blue zone</MenuItem>
+            <MenuItem value="YELLOW_ZONE">Yellow zone</MenuItem>
           </TextField>
         </div>
       </div>
@@ -363,12 +538,19 @@ const NewZone = ({ setActiveComponent }) => {
             backgroundColor: "black",
             borderRadius: "5px",
             "&:hover": {
-              backgroundColor: "rgba(0, 0, 0)",
+              backgroundColor: "#333",
             },
           }}
-          onClick={() => setActiveComponent("ZoneCharges")}
+          disabled={
+            !city || !country || polygon?.length < 3 || zoneName.length < 3
+          }
+          onClick={handleAddZone}
         >
-          Continue
+          {buttonLoading ? (
+            <LoadingAnimation height={30} width={30} />
+          ) : (
+            "Continue"
+          )}
         </Button>
       </div>
     </>

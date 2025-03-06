@@ -20,6 +20,8 @@ const Map = () => {
     return <p>Loading Google Maps...</p>;
   }
 
+  console.log(setDisabled);
+
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">

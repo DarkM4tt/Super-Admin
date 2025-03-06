@@ -49,7 +49,7 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
       );
       const result = await res?.json();
       if (result?.success) {
-        setAllCities(result?.data?.results);
+        setAllCities(result?.data?.cities?.results);
       } else {
         throw new Error(result?.message);
       }
@@ -76,7 +76,7 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
       );
       const result = await res?.json();
       if (result?.success) {
-        setAllCountries(result?.data?.results);
+        setAllCountries(result?.data?.countries?.results);
       } else {
         throw new Error(result?.message);
       }

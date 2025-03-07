@@ -15,6 +15,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
   const [polygonCoords, setPolygonCoords] = useState([]);
   const [initialCoords, setInitialCoords] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [error, setError] = useState("");
   const [entityData, setEntityData] = useState("");
   const [isZone, setIsZone] = useState(false);
@@ -104,7 +105,6 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
       .getPath()
       .getArray()
       .map((point) => ({ lat: point.lat(), lng: point.lng() }));
-    console.log("Updated Coords: ", newCoords);
     setPolygonCoords(newCoords);
     setIsEdited(true);
     const newCenter = calculatePolygonCentroid(newCoords);
@@ -125,72 +125,69 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
   }, [polygonCoords, updatePolygonCoords]);
 
   const handleUpdate = async () => {
-    console.log("SAVE", polygonCoords);
-    console.log("CENTER", mapCenter);
-    console.log("EDIT", isEdited);
-    // setError("");
-    // setLoading(true);
+    setError("");
+    setButtonLoading(true);
 
-    // const data = isZone
-    //   ? {
-    //       name: entityData?.name,
-    //       zone_type: entityData?.zone_type,
-    //       city_id: entityData?.city_id?.id,
-    //       country_id: entityData?.country_id?.id,
-    //       color: "#FF0000",
-    //       location: {
-    //         coordinates: [polygonCoords],
-    //       },
-    //       center_location: {
-    //         coordinates: [mapCenter?.lng, mapCenter?.lat],
-    //       },
-    //     }
-    //   : {
-    //       country_code: entityData?.country_id?.id?.iso_code,
-    //       name: entityData?.name,
-    //       country_id: entityData?.country_id?.id,
-    //       location: {
-    //         type: "Polygon",
-    //         coordinates: [polygonCoords],
-    //       },
-    //       city_lat_lng: {
-    //         type: "Point",
-    //         coordinates: [mapCenter?.lng, mapCenter?.lat],
-    //       },
-    //       airport_business: true,
-    //       city_business: true,
-    //       zone_business: true,
-    //       is_business: true,
-    //     };
+    const data = isZone
+      ? {
+          name: entityData?.name,
+          zone_type: entityData?.zone_type,
+          city_id: entityData?.city_id?.id,
+          country_id: entityData?.country_id?.id,
+          color: "#FF0000",
+          location: {
+            coordinates: [polygonCoords],
+          },
+          center_location: {
+            coordinates: [mapCenter?.lng, mapCenter?.lat],
+          },
+        }
+      : {
+          country_code: entityData?.country_id?.id?.iso_code,
+          name: entityData?.name,
+          country_id: entityData?.country_id?.id,
+          location: {
+            type: "Polygon",
+            coordinates: [polygonCoords],
+          },
+          city_lat_lng: {
+            type: "Point",
+            coordinates: [mapCenter?.lng, mapCenter?.lat],
+          },
+          airport_business: true,
+          city_business: true,
+          zone_business: true,
+          is_business: true,
+        };
 
-    // const url = isZone
-    //   ? `${
-    //       import.meta.env.VITE_API_RIDE_URL
-    //     }/super-admin/zones/update/${entityId}`
-    //   : `${
-    //       import.meta.env.VITE_API_RIDE_URL
-    //     }/super-admin/city/update-city/${entityId}`;
+    const url = isZone
+      ? `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/zones/update/${entityId}`
+      : `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/city/update-city/${entityId}`;
 
-    // try {
-    //   const res = await fetch(url, {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     method: "PUT",
-    //     body: JSON.stringify(data),
-    //     credentials: "include",
-    //   });
-    //   const result = await res?.json();
-    //   if (result?.success) {
-    //     setActiveComponent("AddLocation");
-    //   } else {
-    //     throw new Error(result?.message);
-    //   }
-    // } catch (error) {
-    //   setError(error);
-    // } finally {
-    //   setLoading(false);
-    // }
+    try {
+      const res = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
+      const result = await res?.json();
+      if (result?.success) {
+        setActiveComponent("AddLocation");
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setButtonLoading(false);
+    }
   };
 
   const handleReset = () => {
@@ -217,10 +214,6 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
       </p>
     );
   }
-
-  console.log("CORDS", polygonCoords);
-  console.log("Center", mapCenter);
-  console.log("EDIT", isEdited);
 
   return (
     <>
@@ -422,7 +415,13 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
           }}
           onClick={handleUpdate}
         >
-          Update zone
+          {buttonLoading ? (
+            <LoadingAnimation height={30} width={30} />
+          ) : isZone ? (
+            "Update zone"
+          ) : (
+            "Update city"
+          )}
         </Button>
       </Stack>
     </>

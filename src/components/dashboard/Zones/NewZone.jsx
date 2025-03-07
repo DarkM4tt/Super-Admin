@@ -102,8 +102,8 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
 
     if (city?.center_location) {
       const newCenter = {
-        lat: parseFloat(city?.center_location?.coordinates[0]),
-        lng: parseFloat(city?.center_location?.coordinates[1]),
+        lat: parseFloat(city?.center_location?.coordinates[1]),
+        lng: parseFloat(city?.center_location?.coordinates[0]),
       };
       setMapCenter(newCenter);
       mapRef.current.panTo(newCenter);

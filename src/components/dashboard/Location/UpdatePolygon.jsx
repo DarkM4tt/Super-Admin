@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import BackArrow from "../../../assets/leftArrowBlack.svg";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button, MenuItem, Stack, TextField } from "@mui/material";
@@ -21,7 +21,6 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
   const [zoneName, setZoneName] = useState("");
   const [zoneType, setZoneType] = useState("");
   const [isEdited, setIsEdited] = useState(false);
-  const mapRef = useRef(null);
   const { isLoaded, loadError } = useGoogleMapsLoader();
 
   const fetchDetails = useCallback(async () => {
@@ -57,7 +56,6 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
             lat: cityData?.center_location?.coordinates[1],
             lng: cityData?.center_location?.coordinates[0],
           });
-          mapRef.current.setZoom(10);
         }
       } else {
         throw new Error(result?.message);
@@ -73,29 +71,29 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     fetchDetails();
   }, [fetchDetails]);
 
-  // const calculatePolygonCentroid = (coords) => {
-  //   let area = 0;
-  //   let centroidX = 0;
-  //   let centroidY = 0;
+  const calculatePolygonCentroid = (coords) => {
+    let area = 0;
+    let centroidX = 0;
+    let centroidY = 0;
 
-  //   for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
-  //     const lat1 = coords[i][1];
-  //     const lng1 = coords[i][0];
-  //     const lat2 = coords[j][1];
-  //     const lng2 = coords[j][0];
+    for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
+      const lat1 = coords[i][1];
+      const lng1 = coords[i][0];
+      const lat2 = coords[j][1];
+      const lng2 = coords[j][0];
 
-  //     const factor = lat1 * lng2 - lat2 * lng1;
-  //     area += factor;
-  //     centroidX += (lat1 + lat2) * factor;
-  //     centroidY += (lng1 + lng2) * factor;
-  //   }
+      const factor = lat1 * lng2 - lat2 * lng1;
+      area += factor;
+      centroidX += (lat1 + lat2) * factor;
+      centroidY += (lng1 + lng2) * factor;
+    }
 
-  //   area /= 2;
-  //   centroidX = centroidX / (6 * area);
-  //   centroidY = centroidY / (6 * area);
+    area /= 2;
+    centroidX = centroidX / (6 * area);
+    centroidY = centroidY / (6 * area);
 
-  //   return { lat: centroidX, lng: centroidY };
-  // };
+    return { lat: centroidX, lng: centroidY };
+  };
 
   const handleUpdate = async () => {
     setError("");
@@ -166,6 +164,8 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     }));
     setPolygonCoords(newCoords);
     setIsEdited(true);
+    const newCenter = calculatePolygonCentroid(newCoords);
+    setMapCenter(newCenter);
   };
 
   const redrawPolygon = () => {
@@ -174,9 +174,11 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
   };
 
   const handleReset = () => {
-    setPolygonCoords([]);
-    setPolygonCoords(initialCoords);
+    setPolygonCoords((cords) => []);
+    setPolygonCoords((cords) => initialCoords);
     setIsEdited(false);
+    const initialCenter = calculatePolygonCentroid(initialCoords);
+    setMapCenter(initialCenter);
   };
 
   if (loadError) {
@@ -332,7 +334,11 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
         }}
         center={mapCenter}
         zoom={12}
-        onLoad={(map) => (mapRef.current = map)}
+        onLoad={(map) => {
+          const bounds = new window.google.maps.LatLngBounds();
+          polygonCoords.forEach((coord) => bounds.extend(coord));
+          map.fitBounds(bounds);
+        }}
       >
         {polygonCoords.length > 0 && (
           <Polygon
@@ -371,7 +377,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
           }}
           onClick={handleReset}
         >
-          Reset boundary area
+          Reset
         </Button>
         <Button
           variant="outlined"

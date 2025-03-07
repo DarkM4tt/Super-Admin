@@ -222,7 +222,7 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
         coordinates: [polygon],
       },
       center_location: {
-        coordinates: [mapCenter?.lat, mapCenter?.lng],
+        coordinates: [mapCenter?.lng, mapCenter?.lat],
       },
     };
 
@@ -310,23 +310,6 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
 
       {/* Dropdowns */}
       <div className="flex justify-between mt-8">
-        <div className="flex flex-col">
-          <label
-            htmlFor="fuel-card-name"
-            className="text-sm font-medium text-gray-700 mb-1"
-          >
-            Enter zone name
-          </label>
-          <TextField
-            id="fuel-card-name"
-            placeholder="Enter zone name"
-            variant="outlined"
-            size="small"
-            value={zoneName}
-            onChange={(e) => setZoneName(e.target.value)}
-            fullWidth
-          />
-        </div>
         <div className="flex flex-col w-60">
           <label
             htmlFor="fuel-type"
@@ -439,6 +422,23 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
             <MenuItem value="BLUE_ZONE">Blue zone</MenuItem>
             <MenuItem value="YELLOW_ZONE">Yellow zone</MenuItem>
           </TextField>
+        </div>
+        <div className="flex flex-col">
+          <label
+            htmlFor="fuel-card-name"
+            className="text-sm font-medium text-gray-700 mb-1"
+          >
+            Enter zone name
+          </label>
+          <TextField
+            id="fuel-card-name"
+            placeholder="Enter zone name"
+            variant="outlined"
+            size="small"
+            value={zoneName}
+            onChange={(e) => setZoneName(e.target.value)}
+            fullWidth
+          />
         </div>
       </div>
 

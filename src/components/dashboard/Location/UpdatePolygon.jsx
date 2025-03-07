@@ -114,17 +114,21 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
           },
         }
       : {
+          country_code: entityData?.country_id?.id?.iso_code,
           name: entityData?.name,
-          zone_type: entityData?.zone_type,
-          city_id: entityData?.city_id?.id,
           country_id: entityData?.country_id?.id,
-          color: "#FF0000",
           location: {
+            type: "Polygon",
             coordinates: [polygonCoords],
           },
-          center_location: {
+          city_lat_lng: {
+            type: "Point",
             coordinates: [mapCenter?.lng, mapCenter?.lat],
           },
+          airport_business: true,
+          city_business: true,
+          zone_business: true,
+          is_business: true,
         };
 
     const url = isZone

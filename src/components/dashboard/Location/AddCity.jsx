@@ -15,6 +15,7 @@ import {
 import { City } from "country-state-city";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 import LoadingAnimation from "../../common/LoadingAnimation";
+import { getCountryCenter } from "../../../utils/dates";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
 
@@ -91,6 +92,16 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
     const selectedCountry = e.target.value;
     setCountry(selectedCountry);
 
+    const latLng = getCountryCenter(selectedCountry);
+    if (latLng) {
+      const newCenter = {
+        lat: parseFloat(latLng[0]),
+        lng: parseFloat(latLng[1]),
+      };
+      setMapCenter(newCenter);
+      mapRef.current.panTo(newCenter);
+      mapRef.current.setZoom(5);
+    }
     setCity("");
   };
 
@@ -213,11 +224,11 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
       },
       center_location: {
         type: "Point",
-        coordinates: [mapCenter?.lat, mapCenter?.lng],
+        coordinates: [mapCenter?.lng, mapCenter?.lat],
       },
       airport_business: true,
       city_business: true,
-      zone_business: false,
+      zone_business: true,
       is_business: true,
       is_active: true,
       is_deleted: false,
@@ -270,6 +281,8 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
       </p>
     );
   }
+
+  console.log(country);
 
   return (
     <>
@@ -402,7 +415,7 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
               </MenuItem>
               {allCities?.length > 0 &&
                 allCities.map((city) => (
-                  <MenuItem key={city.name} value={city.name}>
+                  <MenuItem key={city.id} value={city.name}>
                     {city.name}
                   </MenuItem>
                 ))}

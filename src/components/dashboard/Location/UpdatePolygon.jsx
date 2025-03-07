@@ -4,37 +4,25 @@ import BackArrow from "../../../assets/leftArrowBlack.svg";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button, MenuItem, Stack, TextField } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import {
-  DrawingManager,
-  GoogleMap,
-  InfoWindow,
-  StandaloneSearchBox,
-  Marker,
-  Polygon,
-} from "@react-google-maps/api";
+import { GoogleMap, Marker, Polygon } from "@react-google-maps/api";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 import LoadingAnimation from "../../common/LoadingAnimation";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
 
 const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
-  const [drawingControlEnabled, setDrawingControlEnabled] = useState(true);
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
-  const [polygon, setPolygon] = useState([]);
+  const [polygonCoords, setPolygonCoords] = useState([]);
+  const [initialCoords, setInitialCoords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [polygonData, setPolygonData] = useState("");
+  const [entityData, setEntityData] = useState("");
   const [isZone, setIsZone] = useState(false);
   const [zoneName, setZoneName] = useState("");
   const [zoneType, setZoneType] = useState("");
-
-  const drawingManagerRef = useRef(null);
-  const polygonRef = useRef(null);
+  const [isEdited, setIsEdited] = useState(false);
   const mapRef = useRef(null);
-  const searchBoxRef = useRef(null);
   const { isLoaded, loadError } = useGoogleMapsLoader();
-  const [markerPosition, setMarkerPosition] = useState(null);
-  const [showInfoWindow, setShowInfoWindow] = useState(false);
 
   const fetchDetails = useCallback(async () => {
     setError("");
@@ -55,14 +43,19 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
       if (result?.success) {
         if (result?.data?.zone) {
           setIsZone(true);
-          setPolygonData(result?.data?.zone);
+          setEntityData(result?.data?.zone);
         } else {
+          const cityData = result?.data?.city;
+          const polygon = cityData?.location?.coordinates[0].map(
+            ([lng, lat]) => ({ lat, lng })
+          );
           setIsZone(false);
-          setPolygonData(result?.data?.city);
-          setPolygon(result?.data?.city?.location?.coordinates[0]);
+          setEntityData(cityData);
+          setPolygonCoords(polygon);
+          setInitialCoords(polygon);
           setMapCenter({
-            lat: result?.data?.city?.center_location?.coordinates[1],
-            lng: result?.data?.city?.center_location?.coordinates[0],
+            lat: cityData?.center_location?.coordinates[1],
+            lng: cityData?.center_location?.coordinates[0],
           });
           mapRef.current.setZoom(10);
         }
@@ -80,110 +73,56 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     fetchDetails();
   }, [fetchDetails]);
 
-  const calculatePolygonCentroid = (coords) => {
-    let area = 0;
-    let centroidX = 0;
-    let centroidY = 0;
+  // const calculatePolygonCentroid = (coords) => {
+  //   let area = 0;
+  //   let centroidX = 0;
+  //   let centroidY = 0;
 
-    for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
-      const lat1 = coords[i][1];
-      const lng1 = coords[i][0];
-      const lat2 = coords[j][1];
-      const lng2 = coords[j][0];
+  //   for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
+  //     const lat1 = coords[i][1];
+  //     const lng1 = coords[i][0];
+  //     const lat2 = coords[j][1];
+  //     const lng2 = coords[j][0];
 
-      const factor = lat1 * lng2 - lat2 * lng1;
-      area += factor;
-      centroidX += (lat1 + lat2) * factor;
-      centroidY += (lng1 + lng2) * factor;
-    }
+  //     const factor = lat1 * lng2 - lat2 * lng1;
+  //     area += factor;
+  //     centroidX += (lat1 + lat2) * factor;
+  //     centroidY += (lng1 + lng2) * factor;
+  //   }
 
-    area /= 2;
-    centroidX = centroidX / (6 * area);
-    centroidY = centroidY / (6 * area);
+  //   area /= 2;
+  //   centroidX = centroidX / (6 * area);
+  //   centroidY = centroidY / (6 * area);
 
-    return { lat: centroidX, lng: centroidY };
-  };
+  //   return { lat: centroidX, lng: centroidY };
+  // };
 
-  const onOverlayComplete = useCallback((e) => {
-    if (e.type === "polygon") {
-      if (polygonRef.current) {
-        polygonRef.current.setMap(null);
-      }
-
-      const path = e.overlay.getPath();
-      const coordinates = [];
-
-      for (let i = 0; i < path.getLength(); i++) {
-        const point = path.getAt(i);
-        coordinates.push([point.lng(), point.lat()]);
-      }
-
-      if (
-        coordinates.length > 0 &&
-        coordinates[0] !== coordinates[coordinates.length - 1]
-      ) {
-        coordinates.push(coordinates[0]);
-      }
-
-      setPolygon(coordinates);
-      polygonRef.current = e.overlay;
-      setDrawingControlEnabled(false);
-
-      const centroid = calculatePolygonCentroid(coordinates);
-      setMapCenter(centroid);
-      setMarkerPosition(centroid);
-    }
-  }, []);
-
-  const handleSearchPlaces = () => {
-    const places = searchBoxRef.current.getPlaces();
-    if (places.length === 0) return;
-    const location = places[0].geometry.location;
-    setMapCenter({ lat: location.lat(), lng: location.lng() });
-    mapRef.current.panTo(location);
-    mapRef.current.setZoom(10);
-  };
-
-  const handleReset = () => {
-    if (polygonRef.current) {
-      polygonRef.current.setMap(null);
-      polygonRef.current = null;
-    }
-    setPolygon([]);
-    setDrawingControlEnabled(true);
-    setMapCenter(DEFAULT_CENTER);
-    setMarkerPosition(null);
-    drawingManagerRef.current.setDrawingMode(
-      window.google.maps.drawing.OverlayType.POLYGON
-    );
-  };
-
-  const handleEdit = async () => {
+  const handleUpdate = async () => {
     setError("");
     setLoading(true);
 
     const data = isZone
       ? {
-          name: polygonData?.name,
-          zone_type: polygonData?.zone_type,
-          city_id: polygonData?.city_id?.id,
-          country_id: polygonData?.country_id?.id,
+          name: entityData?.name,
+          zone_type: entityData?.zone_type,
+          city_id: entityData?.city_id?.id,
+          country_id: entityData?.country_id?.id,
           color: "#FF0000",
           location: {
-            coordinates: [polygon],
+            coordinates: [polygonCoords],
           },
           center_location: {
             coordinates: [mapCenter?.lng, mapCenter?.lat],
           },
         }
       : {
-          name: polygonData?.name,
-          zone_type: polygonData?.zone_type,
-          city_id: polygonData?.city_id?.id,
-          country_id: polygonData?.country_id?.id,
+          name: entityData?.name,
+          zone_type: entityData?.zone_type,
+          city_id: entityData?.city_id?.id,
+          country_id: entityData?.country_id?.id,
           color: "#FF0000",
           location: {
-            coordinates: [polygon],
+            coordinates: [polygonCoords],
           },
           center_location: {
             coordinates: [mapCenter?.lng, mapCenter?.lat],
@@ -220,6 +159,25 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     }
   };
 
+  const handlePolygonEdit = (e) => {
+    const newCoords = e.path.map((point) => ({
+      lat: point.lat(),
+      lng: point.lng(),
+    }));
+    setPolygonCoords(newCoords);
+    setIsEdited(true);
+  };
+
+  const handleReset = () => {
+    setPolygonCoords(initialCoords);
+    setIsEdited(false);
+  };
+
+  const redrawPolygon = () => {
+    setPolygonCoords([]);
+    setIsEdited(false);
+  };
+
   if (loadError) {
     return <div>Error loading maps</div>;
   }
@@ -235,8 +193,6 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
       </p>
     );
   }
-
-  console.log(polygon);
 
   return (
     <>
@@ -287,7 +243,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
           <TextField
             variant="outlined"
             size="small"
-            value={polygonData?.country_id?.name}
+            value={entityData?.country_id?.name}
             fullWidth
             disabled
           />
@@ -302,7 +258,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
           <TextField
             variant="outlined"
             size="small"
-            value={isZone ? polygonData?.city_id?.name : polygonData?.name}
+            value={isZone ? entityData?.city_id?.name : entityData?.name}
             fullWidth
             disabled
           />
@@ -374,36 +330,15 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
           borderRadius: "16px",
         }}
         center={mapCenter}
-        zoom={polygon.length > 0 ? 10 : 3}
+        zoom={12}
         onLoad={(map) => (mapRef.current = map)}
       >
-        <StandaloneSearchBox
-          onLoad={(ref) => (searchBoxRef.current = ref)}
-          onPlacesChanged={handleSearchPlaces}
-        >
-          <input
-            type="text"
-            placeholder="Search places..."
-            className="absolute top-2 left-52 w-64 p-2 rounded-md border border-gray-300"
-          />
-        </StandaloneSearchBox>
-
-        <DrawingManager
-          onLoad={(manager) => (drawingManagerRef.current = manager)}
-          onOverlayComplete={onOverlayComplete}
-          options={{
-            drawingControl: drawingControlEnabled,
-            drawingControlOptions: {
-              position: window.google.maps.ControlPosition.TOP_CENTER,
-              drawingModes: [window.google.maps.drawing.OverlayType.POLYGON],
-            },
-            polygonOptions: { editable: true, draggable: true },
-          }}
-        />
-
-        {polygon.length > 0 && (
+        {polygonCoords.length > 0 && (
           <Polygon
-            paths={polygon}
+            paths={polygonCoords}
+            draggable
+            editable
+            onMouseUp={(e) => handlePolygonEdit(e)}
             options={{
               fillColor: "#2196F3",
               fillOpacity: 0.4,
@@ -415,34 +350,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
             }}
           />
         )}
-
-        {markerPosition && (
-          <Marker
-            position={markerPosition}
-            onClick={() => setShowInfoWindow(true)}
-          />
-        )}
-
-        {isZone ? (
-          <Marker
-            position={mapCenter}
-            onClick={() => setShowInfoWindow(true)}
-          />
-        ) : (
-          <Marker
-            position={mapCenter}
-            onClick={() => setShowInfoWindow(true)}
-          />
-        )}
-
-        {showInfoWindow && markerPosition && (
-          <InfoWindow
-            position={markerPosition}
-            onCloseClick={() => setShowInfoWindow(false)}
-          >
-            <div>Center of Polygon</div>
-          </InfoWindow>
-        )}
+        <Marker position={mapCenter} />
       </GoogleMap>
 
       <Stack direction="row" spacing={2} marginTop="32px">
@@ -464,9 +372,27 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
         >
           Reset boundary area
         </Button>
-
+        <Button
+          variant="outlined"
+          sx={{
+            borderColor: "black",
+            color: "black",
+            textTransform: "none",
+            padding: "5px 60px",
+            borderRadius: "8px",
+            fontSize: "14px",
+            "&:hover": {
+              borderColor: "black",
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+            },
+          }}
+          onClick={redrawPolygon}
+        >
+          Redraw
+        </Button>
         <Button
           variant="contained"
+          disabled={!isEdited}
           sx={{
             backgroundColor: "black",
             color: "white",
@@ -478,7 +404,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
               backgroundColor: "#333",
             },
           }}
-          onClick={handleEdit}
+          onClick={handleUpdate}
         >
           Update zone
         </Button>

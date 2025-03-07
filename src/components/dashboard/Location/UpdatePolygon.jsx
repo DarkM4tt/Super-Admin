@@ -98,6 +98,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
   const handleUpdate = async () => {
     console.log("SAVE", polygonCoords);
     console.log("CENTER", mapCenter);
+    console.log("EDIT", isEdited);
     // setError("");
     // setLoading(true);
 
@@ -358,7 +359,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
             paths={polygonCoords}
             draggable
             editable
-            onMouseUp={(e) => handlePolygonEdit(e.overlay)}
+            onEdit={(e) => handlePolygonEdit(e.overlay)}
             options={{
               strokeColor: "green",
               strokeWeight: 4,

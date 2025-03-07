@@ -181,8 +181,10 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     setPolygonCoords((cords) => []);
     setPolygonCoords((cords) => initialCoords);
     setIsEdited(false);
-    const initialCenter = calculatePolygonCentroid(initialCoords);
-    setMapCenter(initialCenter);
+    setMapCenter({
+      lat: entityData?.center_location?.coordinates[1],
+      lng: entityData?.center_location?.coordinates[0],
+    });
   };
 
   if (loadError) {
@@ -200,6 +202,8 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
       </p>
     );
   }
+
+  console.log("CORDS", polygonCoords);
 
   return (
     <>
@@ -361,7 +365,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
             }}
           />
         )}
-        <Marker position={mapCenter} />
+        {mapCenter && <Marker position={mapCenter} />}
       </GoogleMap>
 
       <Stack direction="row" spacing={2} marginTop="32px">
@@ -403,7 +407,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
         </Button>
         <Button
           variant="contained"
-          disabled={!isEdited}
+          disabled={!isEdited && polygonCoords}
           sx={{
             backgroundColor: "black",
             color: "white",

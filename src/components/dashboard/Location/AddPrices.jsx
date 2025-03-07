@@ -163,7 +163,7 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
       if (result?.success) {
         !zoneId || rideTypePrice === "CITY_BASE"
           ? setActiveComponent("AddLocation")
-          : setActiveComponent("AllZones");
+          : setActiveComponent("Zones");
       } else {
         throw new Error(result?.message);
       }

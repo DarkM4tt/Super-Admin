@@ -357,7 +357,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
             paths={polygonCoords}
             draggable
             editable
-            onMouseUp={(e) => handlePolygonEdit(e)}
+            onEdit={(e) => handlePolygonEdit(e)}
             options={{
               strokeColor: "green",
               strokeWeight: 4,

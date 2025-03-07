@@ -163,11 +163,11 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     // }
   };
 
-  const handlePolygonEdit = (e) => {
-    const newCoords = e.path.map((point) => ({
-      lat: point.lat(),
-      lng: point.lng(),
-    }));
+  const handlePolygonEdit = (polygon) => {
+    const newCoords = polygon
+      .getPath()
+      .getArray()
+      .map((point) => ({ lat: point.lat(), lng: point.lng() }));
     console.log(newCoords);
     setPolygonCoords(newCoords);
     setIsEdited(true);
@@ -178,11 +178,11 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
   const redrawPolygon = () => {
     setPolygonCoords([]);
     setIsEdited(false);
+    setMapCenter(null);
   };
 
   const handleReset = () => {
-    setPolygonCoords((cords) => []);
-    setPolygonCoords((cords) => initialCoords);
+    setPolygonCoords(initialCoords);
     setIsEdited(false);
     setMapCenter({
       lat: entityData?.center_location?.coordinates[1],
@@ -208,6 +208,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
 
   console.log("CORDS", polygonCoords);
   console.log("Center", mapCenter);
+  console.log("EDIT", isEdited);
 
   return (
     <>
@@ -357,7 +358,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
             paths={polygonCoords}
             draggable
             editable
-            onEdit={(e) => handlePolygonEdit(e)}
+            onMouseUp={(e) => handlePolygonEdit(e.overlay)}
             options={{
               strokeColor: "green",
               strokeWeight: 4,

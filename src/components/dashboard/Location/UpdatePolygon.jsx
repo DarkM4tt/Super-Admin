@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import BackArrow from "../../../assets/leftArrowBlack.svg";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button, MenuItem, Stack, TextField } from "@mui/material";
@@ -22,6 +22,31 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
   const [zoneType, setZoneType] = useState("");
   const [isEdited, setIsEdited] = useState(false);
   const { isLoaded, loadError } = useGoogleMapsLoader();
+  const polygonRef = useRef(null);
+
+  const calculatePolygonCentroid = (coords) => {
+    let area = 0;
+    let centroidX = 0;
+    let centroidY = 0;
+
+    for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
+      const lat1 = coords[i][1];
+      const lng1 = coords[i][0];
+      const lat2 = coords[j][1];
+      const lng2 = coords[j][0];
+
+      const factor = lat1 * lng2 - lat2 * lng1;
+      area += factor;
+      centroidX += (lat1 + lat2) * factor;
+      centroidY += (lng1 + lng2) * factor;
+    }
+
+    area /= 2;
+    centroidX = centroidX / (6 * area);
+    centroidY = centroidY / (6 * area);
+
+    return { lat: centroidX, lng: centroidY };
+  };
 
   const fetchDetails = useCallback(async () => {
     setError("");
@@ -67,33 +92,30 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     }
   }, [entityId, isZone]);
 
+  const updatePolygonCoords = () => {
+    const newCoords = polygonRef.current
+      .getPath()
+      .getArray()
+      .map((point) => ({ lat: point.lat(), lng: point.lng() }));
+    console.log("Updated Coords: ", newCoords);
+    setPolygonCoords(newCoords);
+    setIsEdited(true);
+    const newCenter = calculatePolygonCentroid(newCoords);
+    setMapCenter(newCenter);
+  };
+
   useEffect(() => {
     fetchDetails();
   }, [fetchDetails]);
 
-  const calculatePolygonCentroid = (coords) => {
-    let area = 0;
-    let centroidX = 0;
-    let centroidY = 0;
-
-    for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
-      const lat1 = coords[i][1];
-      const lng1 = coords[i][0];
-      const lat2 = coords[j][1];
-      const lng2 = coords[j][0];
-
-      const factor = lat1 * lng2 - lat2 * lng1;
-      area += factor;
-      centroidX += (lat1 + lat2) * factor;
-      centroidY += (lng1 + lng2) * factor;
+  useEffect(() => {
+    if (polygonRef.current) {
+      const path = polygonRef.current.getPath();
+      path.addListener("set_at", updatePolygonCoords);
+      path.addListener("insert_at", updatePolygonCoords);
+      path.addListener("remove_at", updatePolygonCoords);
     }
-
-    area /= 2;
-    centroidX = centroidX / (6 * area);
-    centroidY = centroidY / (6 * area);
-
-    return { lat: centroidX, lng: centroidY };
-  };
+  }, [polygonCoords]);
 
   const handleUpdate = async () => {
     console.log("SAVE", polygonCoords);
@@ -162,18 +184,6 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     // } finally {
     //   setLoading(false);
     // }
-  };
-
-  const handlePolygonEdit = (polygon) => {
-    const newCoords = polygon
-      .getPath()
-      .getArray()
-      .map((point) => ({ lat: point.lat(), lng: point.lng() }));
-    console.log(newCoords);
-    setPolygonCoords(newCoords);
-    setIsEdited(true);
-    const newCenter = calculatePolygonCentroid(newCoords);
-    setMapCenter(newCenter);
   };
 
   const redrawPolygon = () => {
@@ -359,8 +369,9 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
             paths={polygonCoords}
             draggable={true}
             editable={true}
-            onMouseUp={(e) => handlePolygonEdit(e.overlay)}
-            onDragEnd={(e) => handlePolygonEdit(e.overlay)}
+            ref={polygonRef}
+            // onMouseUp={(e) => handlePolygonEdit(e.overlay)}
+            // onDragEnd={(e) => handlePolygonEdit(e.overlay)}
             options={{
               strokeColor: "green",
               strokeWeight: 4,

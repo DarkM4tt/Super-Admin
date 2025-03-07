@@ -92,7 +92,12 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     }
   }, [entityId, isZone]);
 
-  const updatePolygonCoords = () => {
+  const onPolygonLoad = (polygon) => {
+    polygonRef.current = polygon;
+  };
+
+  const updatePolygonCoords = useCallback(() => {
+    if (!polygonRef.current) return;
     const newCoords = polygonRef.current
       .getPath()
       .getArray()
@@ -102,7 +107,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     setIsEdited(true);
     const newCenter = calculatePolygonCentroid(newCoords);
     setMapCenter(newCenter);
-  };
+  }, []);
 
   useEffect(() => {
     fetchDetails();
@@ -115,7 +120,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
       path.addListener("insert_at", updatePolygonCoords);
       path.addListener("remove_at", updatePolygonCoords);
     }
-  }, [polygonCoords]);
+  }, [polygonCoords, updatePolygonCoords]);
 
   const handleUpdate = async () => {
     console.log("SAVE", polygonCoords);
@@ -367,11 +372,11 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
         {polygonCoords.length > 0 && (
           <Polygon
             paths={polygonCoords}
-            draggable={true}
-            editable={true}
+            draggable
+            editable
             ref={polygonRef}
-            // onMouseUp={(e) => handlePolygonEdit(e.overlay)}
-            // onDragEnd={(e) => handlePolygonEdit(e.overlay)}
+            onLoad={onPolygonLoad}
+            onMouseUp={updatePolygonCoords}
             options={{
               strokeColor: "green",
               strokeWeight: 4,

@@ -54,8 +54,8 @@ import AllZones from "../components/dashboard/Zones/AllZones";
 import NewZone from "../components/dashboard/Zones/NewZone";
 import LoadingAnimation from "../components/common/LoadingAnimation";
 import ZoneCharges from "../components/dashboard/Zones/ZoneCharges";
-import UpdateCity from "../components/dashboard/Location/UpdateCity";
 import AddPrices from "../components/dashboard/Location/AddPrices";
+import UpdatePolygon from "../components/dashboard/Location/UpdatePolygon";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -64,7 +64,7 @@ const Home = () => {
   const [selectedDriverId, setSelectedDriverId] = useState(null);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
-  const [cityId, setCityId] = useState(null);
+  const [entityId, setEntityId] = useState(null);
   const [addLocationData, setAddLocationData] = useState({
     countryId: "",
     cityId: "",
@@ -156,9 +156,9 @@ const Home = () => {
     setActiveComponent("FuelStationDetails");
   };
 
-  const handleCityClick = (cityId) => {
-    setCityId(cityId);
-    setActiveComponent("UpdateCity");
+  const handleEntityClick = (entityId) => {
+    setEntityId(entityId);
+    setActiveComponent("UpdatePolygon");
   };
 
   const renderActiveComponent = () => {
@@ -205,11 +205,11 @@ const Home = () => {
         />
       );
     }
-    if (cityId && activeComponent === "UpdateCity") {
+    if (entityId && activeComponent === "UpdatePolygon") {
       return (
-        <UpdateCity
-          cityId={cityId}
-          setCityId={setCityId}
+        <UpdatePolygon
+          entityId={entityId}
+          setEntityId={setEntityId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -315,7 +315,7 @@ const Home = () => {
         return (
           <AddLocation
             setActiveComponent={setActiveComponent}
-            handleCityClick={handleCityClick}
+            handleEntityClick={handleEntityClick}
           />
         );
       case "AddCity":

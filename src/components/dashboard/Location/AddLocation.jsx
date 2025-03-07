@@ -22,7 +22,7 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 import { formatCreatedAt } from "../../../utils/dates";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-const AddLocation = ({ setActiveComponent, handleCityClick }) => {
+const AddLocation = ({ setActiveComponent, handleEntityClick }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -346,8 +346,15 @@ const AddLocation = ({ setActiveComponent, handleCityClick }) => {
                           sx: { boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)" },
                         }}
                       >
-                        <MenuItem onClick={() => handleCityClick(city?.id)}>
-                          Edit
+                        <MenuItem
+                          onClick={() => handleEntityClick(selectedCity?.id)}
+                        >
+                          Update Polygon
+                        </MenuItem>
+                        <MenuItem
+                          onClick={() => handleEntityClick(selectedCity?.id)}
+                        >
+                          Update Prices
                         </MenuItem>
                         <MenuItem onClick={handleDeleteCity}>Delete</MenuItem>
                       </Menu>

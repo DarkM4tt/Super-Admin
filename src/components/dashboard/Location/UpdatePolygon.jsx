@@ -12,18 +12,21 @@ import {
   Marker,
   Polygon,
 } from "@react-google-maps/api";
-import { City } from "country-state-city";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 import LoadingAnimation from "../../common/LoadingAnimation";
 
-const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
+const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
+
+const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
   const [drawingControlEnabled, setDrawingControlEnabled] = useState(true);
-  const [mapCenter, setMapCenter] = useState({});
+  const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [polygon, setPolygon] = useState([]);
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [polygonData, setPolygonData] = useState("");
+  const [isZone, setIsZone] = useState(false);
+  const [zoneName, setZoneName] = useState("");
+  const [zoneType, setZoneType] = useState("");
 
   const drawingManagerRef = useRef(null);
   const polygonRef = useRef(null);
@@ -33,23 +36,36 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
   const [markerPosition, setMarkerPosition] = useState(null);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
 
-  const fetchCountries = useCallback(async () => {
+  const fetchDetails = useCallback(async () => {
     setError("");
     setLoading(true);
 
-    try {
-      const res = await fetch(
-        `${
+    const url = isZone
+      ? `${import.meta.env.VITE_API_RIDE_URL}/super-admin/zones/${entityId}`
+      : `${
           import.meta.env.VITE_API_RIDE_URL
-        }/super-admin/country/get-countries?page=1&limit=300`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
+        }/super-admin/city/get-city/${entityId}`;
+
+    try {
+      const res = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+      });
       const result = await res?.json();
       if (result?.success) {
-        setAllCountries(result?.data?.results);
+        if (result?.data?.zone) {
+          setIsZone(true);
+          setPolygonData(result?.data?.zone);
+        } else {
+          setIsZone(false);
+          setPolygonData(result?.data?.city);
+          setPolygon(result?.data?.city?.location?.coordinates[0]);
+          setMapCenter({
+            lat: result?.data?.city?.center_location?.coordinates[1],
+            lng: result?.data?.city?.center_location?.coordinates[0],
+          });
+          mapRef.current.setZoom(10);
+        }
       } else {
         throw new Error(result?.message);
       }
@@ -58,48 +74,11 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
-  const fetchCities = useCallback(() => {
-    if (!country) return;
-    setCityLoading(true);
-    try {
-      const cities = City.getCitiesOfCountry(country);
-      setAllCities(cities || []);
-    } catch (error) {
-      setError(error);
-    } finally {
-      setCityLoading(false);
-    }
-  }, [country]);
+  }, [entityId, isZone]);
 
   useEffect(() => {
-    fetchCountries();
-  }, [fetchCountries]);
-
-  useEffect(() => {
-    fetchCities();
-  }, [fetchCities]);
-
-  const handleCountryChange = (e) => {
-    const selectedCountry = e.target.value;
-    setCountry(selectedCountry);
-    setCity("");
-  };
-
-  const handleCityChange = (e) => {
-    const selectedCity = allCities.find((c) => c.name === e.target.value);
-    setCity(selectedCity?.name || "");
-
-    if (selectedCity?.latitude && selectedCity?.longitude) {
-      const newCenter = {
-        lat: parseFloat(selectedCity.latitude),
-        lng: parseFloat(selectedCity.longitude),
-      };
-      setMapCenter(newCenter);
-      mapRef.current.panTo(newCenter);
-      mapRef.current.setZoom(12);
-    }
-  };
+    fetchDetails();
+  }, [fetchDetails]);
 
   const calculatePolygonCentroid = (coords) => {
     let area = 0;
@@ -179,54 +158,55 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
     );
   };
 
-  const handleAddCity = async () => {
-    if (!country || !city) {
-      setAddError("Select country and city from above dropdown!");
-      return;
-    }
-    if (!polygon) {
-      setAddError("Draw polygon!");
-      return;
-    }
+  const handleEdit = async () => {
     setError("");
     setLoading(true);
 
-    const selectedCountry = allCountries?.filter(
-      (contry) => contry?.iso_code === country
-    );
+    const data = isZone
+      ? {
+          name: polygonData?.name,
+          zone_type: polygonData?.zone_type,
+          city_id: polygonData?.city_id?.id,
+          country_id: polygonData?.country_id?.id,
+          color: "#FF0000",
+          location: {
+            coordinates: [polygon],
+          },
+          center_location: {
+            coordinates: [mapCenter?.lng, mapCenter?.lat],
+          },
+        }
+      : {
+          name: polygonData?.name,
+          zone_type: polygonData?.zone_type,
+          city_id: polygonData?.city_id?.id,
+          country_id: polygonData?.country_id?.id,
+          color: "#FF0000",
+          location: {
+            coordinates: [polygon],
+          },
+          center_location: {
+            coordinates: [mapCenter?.lng, mapCenter?.lat],
+          },
+        };
 
-    const cityData = {
-      country_code: country,
-      name: city,
-      country_id: selectedCountry[0]?.id,
-      location: {
-        type: "Polygon",
-        coordinates: [polygon],
-      },
-      center_location: {
-        type: "Point",
-        coordinates: [mapCenter?.lat, mapCenter?.lng],
-      },
-      airport_business: true,
-      city_business: true,
-      zone_business: false,
-      is_business: true,
-      is_active: true,
-      is_deleted: false,
-    };
+    const url = isZone
+      ? `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/zones/update/${entityId}`
+      : `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/city/update-city/${entityId}`;
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_RIDE_URL}/super-admin/city/add-city`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-          body: JSON.stringify(cityData),
-          credentials: "include",
-        }
-      );
+      const res = await fetch(url, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        method: "PUT",
+        body: JSON.stringify(data),
+        credentials: "include",
+      });
       const result = await res?.json();
       if (result?.success) {
         setActiveComponent("AddLocation");
@@ -256,6 +236,8 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
     );
   }
 
+  console.log(polygon);
+
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -282,10 +264,15 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
           alt="BackArrow"
           className="cursor-pointer"
           onClick={() => {
-            setActiveComponent("AddLocation");
+            setEntityId(null);
+            isZone
+              ? setActiveComponent("Zones")
+              : setActiveComponent("AddLocation");
           }}
         />
-        <p className="font-redhat font-semibold text-2xl">Add location</p>
+        <p className="font-redhat font-semibold text-2xl">
+          {isZone ? "Update zone" : "Update city"}
+        </p>
       </div>
 
       {/* Dropdowns */}
@@ -295,99 +282,80 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
             htmlFor="fuel-type"
             className="text-sm font-medium text-gray-700 mb-1"
           >
-            Select country
+            Country
           </label>
           <TextField
-            id="fuel-type"
-            select
-            placeholder="Select fuel type"
             variant="outlined"
             size="small"
-            value={country}
-            onChange={handleCountryChange}
+            value={polygonData?.country_id?.name}
             fullWidth
-            SelectProps={{
-              displayEmpty: true,
-              IconComponent: ExpandMoreIcon,
-              MenuProps: {
-                PaperProps: {
-                  sx: {
-                    maxHeight: 200, // Set dropdown height
-                    overflowY: "auto", // Enable vertical scroll
-                  },
-                },
-                anchorOrigin: {
-                  vertical: "bottom",
-                  horizontal: "left",
-                },
-                transformOrigin: {
-                  vertical: "top",
-                  horizontal: "left",
-                },
-              },
-            }}
-          >
-            <MenuItem value="" disabled>
-              Select country
-            </MenuItem>
-            {allCountries.map((country) => (
-              <MenuItem key={country?.id} value={country?.iso_code}>
-                {country?.name}
-              </MenuItem>
-            ))}
-          </TextField>
+            disabled
+          />
         </div>
-
-        {cityLoading ? (
-          <LoadingAnimation width={100} height={100} />
-        ) : (
-          <div className="flex flex-col w-60">
-            <label
-              htmlFor="fuel-type"
-              className="text-sm font-medium text-gray-700 mb-1"
-            >
-              Select city to add
-            </label>
-            <TextField
-              id="fuel-type"
-              select
-              placeholder="Select fuel type"
-              variant="outlined"
-              size="small"
-              value={city}
-              onChange={handleCityChange}
-              fullWidth
-              SelectProps={{
-                displayEmpty: true,
-                IconComponent: ExpandMoreIcon,
-                MenuProps: {
-                  PaperProps: {
-                    sx: {
-                      maxHeight: 200,
-                      overflowY: "auto",
-                    },
-                  },
-                  anchorOrigin: {
-                    vertical: "bottom",
-                    horizontal: "left",
-                  },
-                  transformOrigin: {
-                    vertical: "top",
-                    horizontal: "left",
-                  },
-                },
-              }}
-            >
-              <MenuItem value="" disabled>
-                Select city
-              </MenuItem>
-              {allCities.map((city) => (
-                <MenuItem key={city.name} value={city.name}>
-                  {city.name}
+        <div className="flex flex-col w-60">
+          <label
+            htmlFor="fuel-type"
+            className="text-sm font-medium text-gray-700 mb-1"
+          >
+            City
+          </label>
+          <TextField
+            variant="outlined"
+            size="small"
+            value={isZone ? polygonData?.city_id?.name : polygonData?.name}
+            fullWidth
+            disabled
+          />
+        </div>
+        {isZone && (
+          <>
+            <div className="flex flex-col w-60">
+              <label
+                htmlFor="fuel-type"
+                className="text-sm font-medium text-gray-700 mb-1"
+              >
+                Select zone type
+              </label>
+              <TextField
+                id="fuel-type"
+                select
+                placeholder="Select map type"
+                variant="outlined"
+                size="small"
+                value={zoneType}
+                onChange={(e) => setZoneType(e.target.value)}
+                fullWidth
+                SelectProps={{
+                  displayEmpty: true,
+                  IconComponent: ExpandMoreIcon,
+                }}
+              >
+                <MenuItem value="" disabled>
+                  Select zone type
                 </MenuItem>
-              ))}
-            </TextField>
-          </div>
+                <MenuItem value="RED_ZONE">Heat zone</MenuItem>
+                <MenuItem value="BLUE_ZONE">Blue zone</MenuItem>
+                <MenuItem value="YELLOW_ZONE">Yellow zone</MenuItem>
+              </TextField>
+            </div>
+            <div className="flex flex-col">
+              <label
+                htmlFor="fuel-card-name"
+                className="text-sm font-medium text-gray-700 mb-1"
+              >
+                Enter zone name
+              </label>
+              <TextField
+                id="fuel-card-name"
+                placeholder="Enter zone name"
+                variant="outlined"
+                size="small"
+                value={zoneName}
+                onChange={(e) => setZoneName(e.target.value)}
+                fullWidth
+              />
+            </div>
+          </>
         )}
       </div>
 
@@ -455,7 +423,12 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
           />
         )}
 
-        {city && (
+        {isZone ? (
+          <Marker
+            position={mapCenter}
+            onClick={() => setShowInfoWindow(true)}
+          />
+        ) : (
           <Marker
             position={mapCenter}
             onClick={() => setShowInfoWindow(true)}
@@ -473,7 +446,6 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
       </GoogleMap>
 
       <Stack direction="row" spacing={2} marginTop="32px">
-        {/* Reset boundary area button */}
         <Button
           variant="outlined"
           sx={{
@@ -493,7 +465,6 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
           Reset boundary area
         </Button>
 
-        {/* Save and confirm button */}
         <Button
           variant="contained"
           sx={{
@@ -507,15 +478,13 @@ const UpdateCity = ({ cityId, setCityId, setActiveComponent }) => {
               backgroundColor: "#333",
             },
           }}
-          onClick={handleAddCity}
+          onClick={handleEdit}
         >
-          Save and confirm
+          Update zone
         </Button>
       </Stack>
-
-      {addError && <p className="text-sm text-red-400 font-bold">{addError}</p>}
     </>
   );
 };
 
-export default UpdateCity;
+export default UpdatePolygon;

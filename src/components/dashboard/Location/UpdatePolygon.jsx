@@ -357,9 +357,10 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
         {polygonCoords.length > 0 && (
           <Polygon
             paths={polygonCoords}
-            draggable
-            editable
-            onEdit={(e) => handlePolygonEdit(e.overlay)}
+            draggable={true}
+            editable={true}
+            onMouseUp={(e) => handlePolygonEdit(e.overlay)}
+            onDragEnd={(e) => handlePolygonEdit(e.overlay)}
             options={{
               strokeColor: "green",
               strokeWeight: 4,

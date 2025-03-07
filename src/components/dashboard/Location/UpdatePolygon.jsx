@@ -168,13 +168,14 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     setIsEdited(true);
   };
 
-  const handleReset = () => {
-    setPolygonCoords(initialCoords);
+  const redrawPolygon = () => {
+    setPolygonCoords([]);
     setIsEdited(false);
   };
 
-  const redrawPolygon = () => {
+  const handleReset = () => {
     setPolygonCoords([]);
+    setPolygonCoords(initialCoords);
     setIsEdited(false);
   };
 
@@ -340,11 +341,11 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
             editable
             onMouseUp={(e) => handlePolygonEdit(e)}
             options={{
-              fillColor: "#2196F3",
+              strokeColor: "green",
+              strokeWeight: 4,
+              fillColor: "#90EE90",
               fillOpacity: 0.4,
-              strokeColor: "#2196F3",
               strokeOpacity: 1,
-              strokeWeight: 2,
               editable: true,
               draggable: true,
             }}

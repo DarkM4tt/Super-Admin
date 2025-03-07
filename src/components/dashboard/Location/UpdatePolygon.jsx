@@ -411,7 +411,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
         </Button>
         <Button
           variant="contained"
-          disabled={!isEdited && polygonCoords}
+          // disabled={!isEdited && polygonCoords}
           sx={{
             backgroundColor: "black",
             color: "white",

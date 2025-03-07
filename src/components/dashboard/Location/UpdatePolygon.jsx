@@ -30,16 +30,18 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     let centroidY = 0;
 
     for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
-      const lat1 = coords[i][1];
-      const lng1 = coords[i][0];
-      const lat2 = coords[j][1];
-      const lng2 = coords[j][0];
+      const lat1 = coords[i].lat;
+      const lng1 = coords[i].lng;
+      const lat2 = coords[j].lat;
+      const lng2 = coords[j].lng;
 
       const factor = lat1 * lng2 - lat2 * lng1;
       area += factor;
       centroidX += (lat1 + lat2) * factor;
       centroidY += (lng1 + lng2) * factor;
     }
+
+    if (area === 0) return coords[0]; // Fallback to the first point if area is zero (e.g., line segment).
 
     area /= 2;
     centroidX = centroidX / (6 * area);
@@ -189,12 +191,6 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     // } finally {
     //   setLoading(false);
     // }
-  };
-
-  const redrawPolygon = () => {
-    setPolygonCoords([]);
-    setIsEdited(false);
-    setMapCenter(null);
   };
 
   const handleReset = () => {
@@ -411,26 +407,8 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
           Reset
         </Button>
         <Button
-          variant="outlined"
-          sx={{
-            borderColor: "black",
-            color: "black",
-            textTransform: "none",
-            padding: "5px 60px",
-            borderRadius: "8px",
-            fontSize: "14px",
-            "&:hover": {
-              borderColor: "black",
-              backgroundColor: "rgba(0, 0, 0, 0.04)",
-            },
-          }}
-          onClick={redrawPolygon}
-        >
-          Redraw
-        </Button>
-        <Button
           variant="contained"
-          // disabled={!isEdited && polygonCoords}
+          disabled={!isEdited && polygonCoords}
           sx={{
             backgroundColor: "black",
             color: "white",

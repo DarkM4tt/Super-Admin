@@ -166,7 +166,7 @@ const UpdatePolygon = ({
   const getStrokeColor = () => {
     if (!isZone) return "green";
     if (isZone && zoneType === "RED_ZONE") {
-      return "red";
+      return "#FF0000";
     } else if (isZone && zoneType === "BLUE_ZONE") {
       return "blue";
     }
@@ -273,7 +273,7 @@ const UpdatePolygon = ({
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
         <p className="text-gray">
-          {isZone ? "Dashboard" : "Location > "}
+          {isZone ? "Dashboard > " : "Location > "}
           <span className="text-black">
             {isZone ? "Zones" : "Add Location"}
           </span>
@@ -439,7 +439,7 @@ const UpdatePolygon = ({
               strokeColor: "green",
               strokeWeight: 4,
               fillColor: "#90EE90",
-              fillOpacity: 0.4,
+              fillOpacity: 0.2,
               strokeOpacity: 1,
             }}
           />

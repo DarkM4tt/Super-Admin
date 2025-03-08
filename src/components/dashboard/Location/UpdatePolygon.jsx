@@ -426,7 +426,7 @@ const UpdatePolygon = ({
               strokeColor: `${getStrokeColor()}`,
               strokeWeight: 4,
               fillColor: `${getOpacityColor()}`,
-              fillOpacity: 0.4,
+              fillOpacity: 0.6,
               strokeOpacity: 1,
               editable: true,
             }}

@@ -38,6 +38,7 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
   const [drawingControlEnabled, setDrawingControlEnabled] = useState(true);
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [polygon, setPolygon] = useState([]);
+  const [cityCoords, setCityCoords] = useState([]);
 
   const fetchCities = useCallback(async () => {
     if (!country) return;
@@ -96,6 +97,24 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
     country ? fetchCities() : fetchCountries();
   }, [fetchCountries, fetchCities, country]);
 
+  const getStrokeColor = () => {
+    if (mapType === "RED_ZONE") {
+      return "#FF0000";
+    } else if (mapType === "BLUE_ZONE") {
+      return "blue";
+    }
+    return "yellow";
+  };
+
+  const getOpacityColor = () => {
+    if (mapType === "RED_ZONE") {
+      return "#FF7F7F";
+    } else if (mapType === "BLUE_ZONE") {
+      return "#87CEFA";
+    }
+    return "#FFFF99";
+  };
+
   const onCityChange = (event) => {
     const city = event.target.value;
     setCity(city);
@@ -105,6 +124,10 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
         lat: parseFloat(city?.center_location?.coordinates[1]),
         lng: parseFloat(city?.center_location?.coordinates[0]),
       };
+      const cityCoords = city?.center_location?.coordinates[0].map(
+        ([lng, lat]) => ({ lat, lng })
+      );
+      setCityCoords(cityCoords);
       setMapCenter(newCenter);
       mapRef.current.panTo(newCenter);
       mapRef.current.setZoom(12);
@@ -127,6 +150,7 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
       mapRef.current.setZoom(5);
     }
     setCity("");
+    setCityCoords([]);
   };
 
   const calculatePolygonCentroid = (coords) => {
@@ -481,13 +505,26 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
           <Polygon
             paths={polygon}
             options={{
-              fillColor: "#2196F3",
-              fillOpacity: 0.4,
-              strokeColor: "#2196F3",
-              strokeOpacity: 1,
+              fillColor: `${getStrokeColor()}`,
+              strokeColor: `${getOpacityColor()}`,
+              fillOpacity: 0.6,
               strokeWeight: 2,
+              strokeOpacity: 1,
               editable: true,
               draggable: true,
+            }}
+          />
+        )}
+
+        {city && (
+          <Polygon
+            paths={cityCoords}
+            options={{
+              strokeColor: "green",
+              fillColor: "#90EE90",
+              fillOpacity: 0.2,
+              strokeWeight: 6,
+              strokeOpacity: 1,
             }}
           />
         )}

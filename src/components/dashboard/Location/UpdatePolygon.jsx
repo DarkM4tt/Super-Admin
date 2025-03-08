@@ -128,6 +128,8 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
     setError("");
     setButtonLoading(true);
 
+    const formattedCoords = polygonCoords.map(({ lat, lng }) => [lng, lat]);
+
     const data = isZone
       ? {
           name: entityData?.name,
@@ -136,7 +138,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
           country_id: entityData?.country_id?.id,
           color: "#FF0000",
           location: {
-            coordinates: [polygonCoords],
+            coordinates: [formattedCoords],
           },
           center_location: {
             coordinates: [mapCenter?.lng, mapCenter?.lat],
@@ -148,7 +150,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
           country_id: entityData?.country_id?.id,
           location: {
             type: "Polygon",
-            coordinates: [polygonCoords],
+            coordinates: [formattedCoords],
           },
           city_lat_lng: {
             type: "Point",

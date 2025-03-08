@@ -253,6 +253,7 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
       zone_type: mapType,
       city_id: city?.id,
       country_id: country?.id,
+      color: getStrokeColor(),
       location: {
         coordinates: [polygon],
       },

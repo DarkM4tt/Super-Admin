@@ -18,6 +18,7 @@ const UpdatePolygon = ({
 }) => {
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [polygonCoords, setPolygonCoords] = useState([]);
+  const [cityCoords, setCityCoords] = useState([]);
   const [initialCoords, setInitialCoords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -77,9 +78,13 @@ const UpdatePolygon = ({
           const polygon = zoneData?.location?.coordinates[0].map(
             ([lng, lat]) => ({ lat, lng })
           );
+          const cityPolygon = zoneData?.city_id?.location?.coordinates[0].map(
+            ([lng, lat]) => ({ lat, lng })
+          );
           setEntityData(zoneData);
           setPolygonCoords(polygon);
           setInitialCoords(polygon);
+          setCityCoords(cityPolygon);
           setZoneName(zoneData?.name);
           setZoneType(zoneData?.zone_type);
           setMapCenter({
@@ -138,6 +143,46 @@ const UpdatePolygon = ({
     }
   }, [polygonCoords, updatePolygonCoords]);
 
+  const handleReset = () => {
+    setPolygonCoords(initialCoords);
+    setIsEdited(false);
+    setMapCenter({
+      lat: entityData?.center_location?.coordinates[1],
+      lng: entityData?.center_location?.coordinates[0],
+    });
+  };
+
+  const isDisabled = () => {
+    if (isZone) {
+      return (
+        !isEdited &&
+        zoneType === entityData?.zone_type &&
+        zoneName === entityData?.name
+      );
+    }
+    return !isEdited;
+  };
+
+  const getStrokeColor = () => {
+    if (!isZone) return "green";
+    if (isZone && zoneType === "RED_ZONE") {
+      return "red";
+    } else if (isZone && zoneType === "BLUE_ZONE") {
+      return "blue";
+    }
+    return "yellow";
+  };
+
+  const getOpacityColor = () => {
+    if (!isZone) return "#90EE90";
+    if (isZone && zoneType === "RED_ZONE") {
+      return "#FF7F7F";
+    } else if (isZone && zoneType === "BLUE_ZONE") {
+      return "#87CEFA";
+    }
+    return "#FFFF99";
+  };
+
   const handleUpdate = async () => {
     setError("");
     setButtonLoading(true);
@@ -150,7 +195,7 @@ const UpdatePolygon = ({
           zone_type: zoneType,
           city_id: entityData?.city_id?.id,
           country_id: entityData?.country_id?.id,
-          color: "#FF0000",
+          color: getStrokeColor(),
           location: {
             coordinates: [formattedCoords],
           },
@@ -195,7 +240,9 @@ const UpdatePolygon = ({
       });
       const result = await res?.json();
       if (result?.success) {
-        setActiveComponent("AddLocation");
+        isZone
+          ? setActiveComponent("Zones")
+          : setActiveComponent("AddLocation");
       } else {
         throw new Error(result?.message);
       }
@@ -204,26 +251,6 @@ const UpdatePolygon = ({
     } finally {
       setButtonLoading(false);
     }
-  };
-
-  const handleReset = () => {
-    setPolygonCoords(initialCoords);
-    setIsEdited(false);
-    setMapCenter({
-      lat: entityData?.center_location?.coordinates[1],
-      lng: entityData?.center_location?.coordinates[0],
-    });
-  };
-
-  const isDisabled = () => {
-    if (isZone) {
-      return (
-        !isEdited &&
-        zoneType === entityData?.zone_type &&
-        zoneName === entityData?.name
-      );
-    }
-    return !isEdited;
   };
 
   if (loadError) {
@@ -246,10 +273,14 @@ const UpdatePolygon = ({
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
         <p className="text-gray">
-          {"Location > "}
-          <span className="text-black">Add Location</span>
+          {isZone ? "Dashboard" : "Location > "}
+          <span className="text-black">
+            {isZone ? "Zones" : "Add Location"}
+          </span>
           {" > "}
-          <span className="text-black">Add City</span>
+          <span className="text-black">
+            {isZone ? "Update zone" : "Update City"}
+          </span>
         </p>
 
         <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
@@ -387,19 +418,29 @@ const UpdatePolygon = ({
         {polygonCoords.length > 0 && (
           <Polygon
             paths={polygonCoords}
-            draggable
             editable
             ref={polygonRef}
             onLoad={onPolygonLoad}
             onMouseUp={updatePolygonCoords}
+            options={{
+              strokeColor: `${getStrokeColor()}`,
+              strokeWeight: 4,
+              fillColor: `${getOpacityColor()}`,
+              fillOpacity: 0.4,
+              strokeOpacity: 1,
+              editable: true,
+            }}
+          />
+        )}
+        {isZone && (
+          <Polygon
+            paths={cityCoords}
             options={{
               strokeColor: "green",
               strokeWeight: 4,
               fillColor: "#90EE90",
               fillOpacity: 0.4,
               strokeOpacity: 1,
-              editable: true,
-              draggable: true,
             }}
           />
         )}

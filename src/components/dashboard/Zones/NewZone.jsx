@@ -116,21 +116,22 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
   };
 
   const onCityChange = (event) => {
-    const city = event.target.value;
-    setCity(city);
-
-    if (city?.center_location) {
-      const newCenter = {
-        lat: parseFloat(city?.center_location?.coordinates[1]),
-        lng: parseFloat(city?.center_location?.coordinates[0]),
-      };
-      const cityCoords = city?.center_location?.coordinates[0].map(
-        ([lng, lat]) => ({ lat, lng })
-      );
-      setCityCoords(cityCoords);
-      setMapCenter(newCenter);
-      mapRef.current.panTo(newCenter);
-      mapRef.current.setZoom(12);
+    const cityData = event.target.value;
+    setCity(cityData);
+    const newCenter = {
+      lat: parseFloat(cityData?.center_location?.coordinates[1]),
+      lng: parseFloat(cityData?.center_location?.coordinates[0]),
+    };
+    const cityCoords = cityData?.location?.coordinates[0].map(([lng, lat]) => ({
+      lat,
+      lng,
+    }));
+    setCityCoords(cityCoords);
+    setMapCenter(newCenter);
+    if (mapRef.current) {
+      const bounds = new window.google.maps.LatLngBounds();
+      cityCoords.forEach((coord) => bounds.extend(coord));
+      mapRef.current.fitBounds(bounds);
     }
   };
 
@@ -498,10 +499,10 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
               drawingModes: [window.google.maps.drawing.OverlayType.POLYGON],
             },
             polygonOptions: {
-              fillColor: `${getStrokeColor()}`,
-              strokeColor: `${getOpacityColor()}`,
+              strokeColor: `${getStrokeColor()}`,
+              fillColor: `${getOpacityColor()}`,
+              strokeWeight: 4,
               fillOpacity: 0.8,
-              strokeWeight: 2,
               strokeOpacity: 1,
               editable: true,
               draggable: true,

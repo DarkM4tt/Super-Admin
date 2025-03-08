@@ -464,8 +464,8 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
             },
             polygonOptions: {
               strokeColor: "green",
-              strokeWeight: 4,
               fillColor: "#90EE90",
+              strokeWeight: 4,
               fillOpacity: 0.4,
               strokeOpacity: 1,
               editable: true,

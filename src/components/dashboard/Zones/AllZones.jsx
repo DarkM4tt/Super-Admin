@@ -322,8 +322,15 @@ const AllZones = ({ setActiveComponent, handleZoneClick }) => {
                         sx: { boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)" },
                       }}
                     >
-                      <MenuItem onClick={() => handleZoneClick(zone?.id)}>
-                        Edit
+                      <MenuItem
+                        onClick={() => handleZoneClick(selectedZone?.id, true)}
+                      >
+                        Update Polygon
+                      </MenuItem>
+                      <MenuItem
+                        onClick={() => handleZoneClick(selectedZone?.id, true)}
+                      >
+                        Update Prices
                       </MenuItem>
                       <MenuItem onClick={handleDeleteZone}>Delete</MenuItem>
                     </Menu>

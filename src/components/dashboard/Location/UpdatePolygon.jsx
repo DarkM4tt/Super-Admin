@@ -10,7 +10,12 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
 
-const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
+const UpdatePolygon = ({
+  isZone,
+  entityId,
+  setEntityId,
+  setActiveComponent,
+}) => {
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [polygonCoords, setPolygonCoords] = useState([]);
   const [initialCoords, setInitialCoords] = useState([]);
@@ -18,7 +23,6 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [error, setError] = useState("");
   const [entityData, setEntityData] = useState("");
-  const [isZone, setIsZone] = useState(false);
   const [zoneName, setZoneName] = useState("");
   const [zoneType, setZoneType] = useState("");
   const [isEdited, setIsEdited] = useState(false);
@@ -68,15 +72,25 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
       });
       const result = await res?.json();
       if (result?.success) {
-        if (result?.data?.zone) {
-          setIsZone(true);
-          setEntityData(result?.data?.zone);
+        if (isZone) {
+          const zoneData = result?.data?.zone;
+          const polygon = zoneData?.location?.coordinates[0].map(
+            ([lng, lat]) => ({ lat, lng })
+          );
+          setEntityData(zoneData);
+          setPolygonCoords(polygon);
+          setInitialCoords(polygon);
+          setZoneName(zoneData?.name);
+          setZoneType(zoneData?.zone_type);
+          setMapCenter({
+            lat: zoneData?.center_location?.coordinates[1],
+            lng: zoneData?.center_location?.coordinates[0],
+          });
         } else {
           const cityData = result?.data?.city;
           const polygon = cityData?.location?.coordinates[0].map(
             ([lng, lat]) => ({ lat, lng })
           );
-          setIsZone(false);
           setEntityData(cityData);
           setPolygonCoords(polygon);
           setInitialCoords(polygon);
@@ -132,8 +146,8 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
 
     const data = isZone
       ? {
-          name: entityData?.name,
-          zone_type: entityData?.zone_type,
+          name: zoneName,
+          zone_type: zoneType,
           city_id: entityData?.city_id?.id,
           country_id: entityData?.country_id?.id,
           color: "#FF0000",
@@ -199,6 +213,17 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
       lat: entityData?.center_location?.coordinates[1],
       lng: entityData?.center_location?.coordinates[0],
     });
+  };
+
+  const isDisabled = () => {
+    if (isZone) {
+      return (
+        !isEdited &&
+        zoneType === entityData?.zone_type &&
+        zoneName === entityData?.name
+      );
+    }
+    return !isEdited;
   };
 
   if (loadError) {
@@ -339,10 +364,9 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
       </div>
 
       <p className="font-sans mt-8 font-semibold text-base">
-        Mark the city boundary from the map. Make sure the city boundary covers
-        all area that you want to cover in that city and provide service. You
-        can search area or location from the search option in the map and make
-        the boundary by simply clicking on the boundary points.
+        {isZone
+          ? "Update the zone boundary from dragging the polygon visible on map. Make sure that the boundaries of your updated zone should not cross the boundary lines of city which is marked as green polygon. You can expand or compress the boundaries by dragging polygon corners which is visible in the map."
+          : "Update the city boundary from dragging the polygon visible on map. Make sure the city boundary covers all area that you want to cover in that city and provide service. You can expand or compress the boundaries by dragging polygon corners which is visible in map."}
       </p>
 
       <GoogleMap
@@ -403,7 +427,7 @@ const UpdatePolygon = ({ entityId, setEntityId, setActiveComponent }) => {
         </Button>
         <Button
           variant="contained"
-          disabled={!isEdited && polygonCoords}
+          disabled={isDisabled()}
           sx={{
             backgroundColor: "black",
             color: "white",

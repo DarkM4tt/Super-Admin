@@ -65,6 +65,7 @@ const Home = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
   const [entityId, setEntityId] = useState(null);
+  const [isZone, setIsZone] = useState(false);
   const [addLocationData, setAddLocationData] = useState({
     countryId: "",
     cityId: "",
@@ -156,8 +157,9 @@ const Home = () => {
     setActiveComponent("FuelStationDetails");
   };
 
-  const handleEntityClick = (entityId) => {
+  const handleEntityClick = (entityId, isZone) => {
     setEntityId(entityId);
+    setIsZone(isZone);
     setActiveComponent("UpdatePolygon");
   };
 
@@ -208,6 +210,7 @@ const Home = () => {
     if (entityId && activeComponent === "UpdatePolygon") {
       return (
         <UpdatePolygon
+          isZone={isZone}
           entityId={entityId}
           setEntityId={setEntityId}
           setActiveComponent={setActiveComponent}
@@ -226,7 +229,12 @@ const Home = () => {
       case "Partners":
         return <Partners onPartnerClick={handleOrgClick} />;
       case "Zones":
-        return <AllZones setActiveComponent={setActiveComponent} />;
+        return (
+          <AllZones
+            setActiveComponent={setActiveComponent}
+            handleZoneClick={handleEntityClick}
+          />
+        );
       case "NewZone":
         return (
           <NewZone

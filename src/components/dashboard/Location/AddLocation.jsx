@@ -347,12 +347,16 @@ const AddLocation = ({ setActiveComponent, handleEntityClick }) => {
                         }}
                       >
                         <MenuItem
-                          onClick={() => handleEntityClick(selectedCity?.id)}
+                          onClick={() =>
+                            handleEntityClick(selectedCity?.id, false)
+                          }
                         >
                           Update Polygon
                         </MenuItem>
                         <MenuItem
-                          onClick={() => handleEntityClick(selectedCity?.id)}
+                          onClick={() =>
+                            handleEntityClick(selectedCity?.id, false)
+                          }
                         >
                           Update Prices
                         </MenuItem>

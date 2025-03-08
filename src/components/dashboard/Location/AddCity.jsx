@@ -470,11 +470,11 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
           <Polygon
             paths={polygon}
             options={{
-              fillColor: "#2196F3",
+              strokeColor: "green",
+              strokeWeight: 4,
+              fillColor: "#90EE90",
               fillOpacity: 0.4,
-              strokeColor: "#2196F3",
               strokeOpacity: 1,
-              strokeWeight: 2,
               editable: true,
               draggable: true,
             }}

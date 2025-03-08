@@ -426,7 +426,7 @@ const UpdatePolygon = ({
               strokeColor: `${getStrokeColor()}`,
               strokeWeight: 4,
               fillColor: `${getOpacityColor()}`,
-              fillOpacity: 0.6,
+              fillOpacity: 0.8,
               strokeOpacity: 1,
               editable: true,
             }}
@@ -437,7 +437,7 @@ const UpdatePolygon = ({
             paths={cityCoords}
             options={{
               strokeColor: "green",
-              strokeWeight: 4,
+              strokeWeight: 6,
               fillColor: "#90EE90",
               fillOpacity: 0.2,
               strokeOpacity: 1,

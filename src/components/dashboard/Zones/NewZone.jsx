@@ -497,7 +497,15 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
               position: window.google.maps.ControlPosition.TOP_CENTER,
               drawingModes: [window.google.maps.drawing.OverlayType.POLYGON],
             },
-            polygonOptions: { editable: true, draggable: true },
+            polygonOptions: {
+              fillColor: `${getStrokeColor()}`,
+              strokeColor: `${getOpacityColor()}`,
+              fillOpacity: 0.8,
+              strokeWeight: 2,
+              strokeOpacity: 1,
+              editable: true,
+              draggable: true,
+            },
           }}
         />
 

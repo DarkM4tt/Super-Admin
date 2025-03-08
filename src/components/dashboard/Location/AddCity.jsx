@@ -462,7 +462,15 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
               position: window.google.maps.ControlPosition.TOP_CENTER,
               drawingModes: [window.google.maps.drawing.OverlayType.POLYGON],
             },
-            polygonOptions: { editable: true, draggable: true },
+            polygonOptions: {
+              strokeColor: "green",
+              strokeWeight: 4,
+              fillColor: "#90EE90",
+              fillOpacity: 0.4,
+              strokeOpacity: 1,
+              editable: true,
+              draggable: true,
+            },
           }}
         />
 

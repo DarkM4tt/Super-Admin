@@ -256,7 +256,7 @@ const AllZones = ({ setActiveComponent, handleZoneClick }) => {
                       fontSize: "16px",
                     }}
                   >
-                    {zone?.color || "No color"}
+                    {zone?.color === "#FF0000" ? "red" : zone?.color}
                   </TableCell>
                   <TableCell
                     sx={{

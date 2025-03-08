@@ -93,27 +93,36 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
     }
   }, []);
 
-  useEffect(() => {
-    country ? fetchCities() : fetchCountries();
-  }, [fetchCountries, fetchCities, country]);
-
-  const getStrokeColor = () => {
+  const getStrokeColor = useCallback(() => {
     if (mapType === "RED_ZONE") {
       return "#FF0000";
     } else if (mapType === "BLUE_ZONE") {
       return "blue";
     }
     return "yellow";
-  };
+  }, [mapType]);
 
-  const getOpacityColor = () => {
+  const getOpacityColor = useCallback(() => {
     if (mapType === "RED_ZONE") {
       return "#FF7F7F";
     } else if (mapType === "BLUE_ZONE") {
       return "#87CEFA";
     }
     return "#FFFF99";
-  };
+  }, [mapType]);
+
+  useEffect(() => {
+    country ? fetchCities() : fetchCountries();
+  }, [fetchCountries, fetchCities, country]);
+
+  useEffect(() => {
+    if (polygonRef.current) {
+      polygonRef.current.setOptions({
+        strokeColor: getStrokeColor(),
+        fillColor: getOpacityColor(),
+      });
+    }
+  }, [getOpacityColor, getStrokeColor, mapType]);
 
   const onCityChange = (event) => {
     const cityData = event.target.value;
@@ -184,6 +193,8 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
         polygonRef.current.setMap(null);
       }
 
+      polygonRef.current = e.overlay;
+
       const path = e.overlay.getPath();
       const coordinates = [];
 
@@ -200,7 +211,6 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
       }
 
       setPolygon(coordinates);
-      polygonRef.current = e.overlay;
       setDrawingControlEnabled(false);
 
       const centroid = calculatePolygonCentroid(coordinates);

@@ -157,7 +157,7 @@ const UpdatePolygon = ({
       return (
         !isEdited &&
         zoneType === entityData?.zone_type &&
-        zoneName === entityData?.name
+        zoneName?.trim() === entityData?.name
       );
     }
     return !isEdited;

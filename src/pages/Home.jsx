@@ -56,6 +56,7 @@ import LoadingAnimation from "../components/common/LoadingAnimation";
 import ZoneCharges from "../components/dashboard/Zones/ZoneCharges";
 import AddPrices from "../components/dashboard/Location/AddPrices";
 import UpdatePolygon from "../components/dashboard/Location/UpdatePolygon";
+import UpdatePrices from "../components/dashboard/Location/UpdateRideTypePrices";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -65,6 +66,7 @@ const Home = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
   const [entityId, setEntityId] = useState(null);
+  const [priceId, setPriceId] = useState(null);
   const [isZone, setIsZone] = useState(false);
   const [addLocationData, setAddLocationData] = useState({
     countryId: "",
@@ -163,6 +165,12 @@ const Home = () => {
     setActiveComponent("UpdatePolygon");
   };
 
+  const handlePriceClick = (priceId, isZone) => {
+    setPriceId(priceId);
+    setIsZone(isZone);
+    setActiveComponent("UpdatePrices");
+  };
+
   const renderActiveComponent = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
@@ -217,6 +225,16 @@ const Home = () => {
         />
       );
     }
+    if (priceId && activeComponent === "UpdatePrices") {
+      return (
+        <UpdatePrices
+          isZone={isZone}
+          priceId={priceId}
+          setPriceId={setPriceId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
 
     switch (activeComponent) {
       case "Dashboard":
@@ -233,6 +251,7 @@ const Home = () => {
           <AllZones
             setActiveComponent={setActiveComponent}
             handleZoneClick={handleEntityClick}
+            handlePriceClick={handlePriceClick}
           />
         );
       case "NewZone":
@@ -324,6 +343,7 @@ const Home = () => {
           <AddLocation
             setActiveComponent={setActiveComponent}
             handleEntityClick={handleEntityClick}
+            handlePriceClick={handlePriceClick}
           />
         );
       case "AddCity":

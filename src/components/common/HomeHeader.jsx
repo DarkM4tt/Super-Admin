@@ -32,8 +32,8 @@ const HomeHeader = ({ setActiveComponent }) => {
     } catch (error) {
       setError(error);
     } finally {
-      setLoading(false);
       navigate("/");
+      setLoading(false);
     }
   };
 

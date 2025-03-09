@@ -19,7 +19,11 @@ import { useCallback, useEffect, useState } from "react";
 import LoadingAnimation from "../../common/LoadingAnimation";
 import { formatCreatedAt } from "../../../utils/dates";
 
-const AllZones = ({ setActiveComponent, handleZoneClick }) => {
+const AllZones = ({
+  setActiveComponent,
+  handleZoneClick,
+  handlePriceClick,
+}) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [allZones, setAllZones] = useState([]);
@@ -328,7 +332,7 @@ const AllZones = ({ setActiveComponent, handleZoneClick }) => {
                         Update Polygon
                       </MenuItem>
                       <MenuItem
-                        onClick={() => handleZoneClick(selectedZone?.id, true)}
+                        onClick={() => handlePriceClick(selectedZone?.id, true)}
                       >
                         Update Prices
                       </MenuItem>

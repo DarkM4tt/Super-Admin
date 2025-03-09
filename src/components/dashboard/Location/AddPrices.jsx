@@ -7,8 +7,8 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 
 const AddPrices = ({ addLocationData, setActiveComponent }) => {
   const { countryId, cityId, zoneId, rideTypePrice } = addLocationData;
-  const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [rideTypes, setRideTypes] = useState([]);
   const [rows, setRows] = useState([

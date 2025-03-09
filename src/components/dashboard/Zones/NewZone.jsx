@@ -599,7 +599,10 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
             },
           }}
           disabled={
-            !city || !country || polygon?.length < 3 || zoneName.length < 4
+            !city ||
+            !country ||
+            polygon?.length < 3 ||
+            zoneName?.length?.trim() < 4
           }
           onClick={handleAddZone}
         >

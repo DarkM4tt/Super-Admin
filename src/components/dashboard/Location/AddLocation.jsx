@@ -22,7 +22,11 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 import { formatCreatedAt } from "../../../utils/dates";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
-const AddLocation = ({ setActiveComponent, handleEntityClick }) => {
+const AddLocation = ({
+  setActiveComponent,
+  handleEntityClick,
+  handlePriceClick,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -355,7 +359,7 @@ const AddLocation = ({ setActiveComponent, handleEntityClick }) => {
                         </MenuItem>
                         <MenuItem
                           onClick={() =>
-                            handleEntityClick(selectedCity?.id, false)
+                            handlePriceClick(selectedCity?.id, false)
                           }
                         >
                           Update Prices

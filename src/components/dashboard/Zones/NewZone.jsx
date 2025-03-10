@@ -17,6 +17,11 @@ import {
 import { getCountryCenter } from "../../../utils/dates";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
+const zoneColors = {
+  YELLOW_ZONE: "yellow",
+  BLUE_ZONE: "blue",
+  RED_ZONE: "red",
+};
 
 const NewZone = ({ setActiveComponent, setAddLocationData }) => {
   const [zoneName, setZoneName] = useState("");
@@ -28,10 +33,12 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
+
   const drawingManagerRef = useRef(null);
   const polygonRef = useRef(null);
   const mapRef = useRef(null);
   const searchBoxRef = useRef(null);
+
   const { isLoaded, loadError } = useGoogleMapsLoader();
   const [markerPosition, setMarkerPosition] = useState(null);
   const [showInfoWindow, setShowInfoWindow] = useState(false);
@@ -39,6 +46,7 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
   const [mapCenter, setMapCenter] = useState(DEFAULT_CENTER);
   const [polygon, setPolygon] = useState([]);
   const [cityCoords, setCityCoords] = useState([]);
+  const [prevZones, setPrevZones] = useState([]);
 
   const fetchCities = useCallback(async () => {
     if (!country) return;
@@ -93,6 +101,33 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
     }
   }, []);
 
+  const fetchPrevZones = useCallback(async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/zones?page=1&limit=100&city_id=${city?.id}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setPrevZones(result?.data?.zones?.results);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [city?.id]);
+
   const getStrokeColor = useCallback(() => {
     if (mapType === "RED_ZONE") {
       return "#FF0000";
@@ -123,6 +158,10 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
       });
     }
   }, [getOpacityColor, getStrokeColor, mapType]);
+
+  useEffect(() => {
+    city && fetchPrevZones();
+  }, [fetchPrevZones, city]);
 
   const onCityChange = (event) => {
     const cityData = event.target.value;
@@ -552,6 +591,26 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
             }}
           />
         )}
+
+        {prevZones.map((zone) => (
+          <Polygon
+            key={zone.id}
+            paths={zone.location.coordinates[0].map(([lng, lat]) => ({
+              lat,
+              lng,
+            }))}
+            options={{
+              fillColor: zoneColors[zone.zone_type] || "gray",
+              fillOpacity: 0.5,
+              strokeColor: zoneColors[zone.zone_type] || "gray",
+              strokeOpacity: 1,
+              strokeWeight: 2,
+              clickable: false,
+              draggable: false,
+              editable: false,
+            }}
+          />
+        ))}
 
         {markerPosition && (
           <Marker

@@ -1,25 +1,21 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useCallback, useEffect, useState } from "react";
-import { Button, IconButton, MenuItem, Select, TextField } from "@mui/material";
-import { Delete, Edit } from "@mui/icons-material";
+import { Button, IconButton, MenuItem, TextField } from "@mui/material";
+import { Delete, Save } from "@mui/icons-material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import LoadingAnimation from "../../common/LoadingAnimation";
 import BackArrow from "../../../assets/leftArrowBlack.svg";
 
 const UpdateRideTypePrices = ({
   isZone,
-  priceId,
-  setPriceId,
+  areaDetails,
+  setAreaDetails,
   setActiveComponent,
 }) => {
   const [rideTypes, setRideTypes] = useState([]);
   const [rideTypePrices, setRideTypePrices] = useState([]);
-  const [formData, setFormData] = useState({
-    city_id: "",
-    country_id: "",
-    zone_id: "",
-  });
   const [loading, setLoading] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
   const [error, setError] = useState("");
   const [newRows, setNewRows] = useState([]);
 
@@ -42,6 +38,7 @@ const UpdateRideTypePrices = ({
       setError(error.message);
     } finally {
       setLoading(false);
+      setButtonLoading(false);
     }
   }, []);
 
@@ -50,10 +47,10 @@ const UpdateRideTypePrices = ({
     const url = isZone
       ? `${
           import.meta.env.VITE_API_RIDE_URL
-        }/super-admin/ride-type-prices?zone_id=${priceId}`
+        }/super-admin/ride-type-prices?zone_id=${areaDetails?.id}`
       : `${
           import.meta.env.VITE_API_RIDE_URL
-        }/super-admin/ride-type-prices?city_id=${priceId}`;
+        }/super-admin/ride-type-prices?city_id=${areaDetails?.id}`;
 
     try {
       const res = await fetch(url, {
@@ -64,18 +61,14 @@ const UpdateRideTypePrices = ({
       if (result?.success) {
         const data = result?.data?.zoneRideTypes?.results;
         setRideTypePrices(data || []);
-        setFormData({
-          country_id: data.country_id,
-          city_id: data.city_id,
-          zone_id: data.country_id,
-        });
       } else throw new Error(result?.message);
     } catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
+      setButtonLoading(false);
     }
-  }, [isZone, priceId]);
+  }, [isZone, areaDetails]);
 
   useEffect(() => {
     fetchRideTypes();
@@ -128,8 +121,18 @@ const UpdateRideTypePrices = ({
     );
   };
 
+  const validateButton = (row) => {
+    return [
+      "base_fare",
+      "fare_per_km",
+      "fare_per_min",
+      "minimum_fare",
+      "waiting_charges_per_min",
+    ].every((field) => Number(row[field]) > 0);
+  };
+
   const handleDelete = async (id) => {
-    setLoading(true);
+    setButtonLoading(true);
     await fetch(
       `${import.meta.env.VITE_API_RIDE_URL}/super-admin/ride-type-prices/${id}`,
       {
@@ -141,8 +144,9 @@ const UpdateRideTypePrices = ({
   };
 
   const handleUpdate = async (index) => {
-    setLoading(true);
+    setButtonLoading(true);
     const { id, isEdited, ...data } = rideTypePrices[index];
+    console.log(isEdited);
     if (!validateRow(data))
       return alert(
         "Please ensure all fields contain non-negative numeric values."
@@ -152,11 +156,11 @@ const UpdateRideTypePrices = ({
     delete data.is_deleted;
 
     if (isZone) {
-      data.zone_id = priceId;
+      data.zone_id = areaDetails?.id;
       data.ride_type_price = "ZONE_BASE";
     } else {
       delete data.zone_id;
-      data.city_id = priceId;
+      data.city_id = areaDetails?.id;
       data.ride_type_price = "CITY_BASE";
     }
 
@@ -173,14 +177,32 @@ const UpdateRideTypePrices = ({
   };
 
   const handleCreate = async () => {
-    setLoading(true);
-    console.log("PAYLOAD", newRows);
-    const payload = newRows.map((item) => ({
-      ...item,
-      city_id: formData.city_id,
-      country_id: formData.country_id,
-      zone_id: formData.zone_id,
-    }));
+    setButtonLoading(true);
+    const payload = newRows.map((item) =>
+      isZone
+        ? {
+            ...item,
+            city_id: areaDetails?.city_id,
+            country_id: areaDetails?.country_id,
+            zone_id: areaDetails?.id,
+            ride_type_price: isZone ? "ZONE_BASE" : "CITY_BASE",
+            additional_charge_type: "FIXED",
+            additional_charges: 0,
+            discount_type: "PERCENTAGE",
+            discount_value: 0,
+          }
+        : {
+            ...item,
+            city_id: areaDetails?.id,
+            country_id: areaDetails?.country_id,
+            ride_type_price: isZone ? "ZONE_BASE" : "CITY_BASE",
+            additional_charge_type: "FIXED",
+            additional_charges: 0,
+            discount_type: "PERCENTAGE",
+            discount_value: 0,
+          }
+    );
+    console.log("PAYLOAD", payload);
     await fetch(
       `${
         import.meta.env.VITE_API_RIDE_URL
@@ -189,7 +211,7 @@ const UpdateRideTypePrices = ({
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newRows),
+        body: JSON.stringify(payload),
       }
     );
     fetchRideTypePrices();
@@ -231,17 +253,24 @@ const UpdateRideTypePrices = ({
           alt="BackArrow"
           className="cursor-pointer"
           onClick={() => {
-            setPriceId(null);
+            setAreaDetails(null);
             isZone
               ? setActiveComponent("Zones")
               : setActiveComponent("AddLocation");
           }}
         />
         <p className="font-redhat font-semibold text-2xl">
-          {isZone ? "Update zone prices" : "Update city prices"}
+          {isZone
+            ? `Update or add prices for ${areaDetails?.name} zone`
+            : `Update or add prices for ${areaDetails?.name} city`}
         </p>
       </div>
 
+      {rideTypePrices?.length === 0 && (
+        <p className="text-red-400 text-lg font-bold my-8">
+          Not prices for any ride types added yet!
+        </p>
+      )}
       {(rideTypePrices || []).map((row, index) => (
         <div key={row._id} className="flex space-x-2 mb-4 mt-8">
           <TextField
@@ -263,17 +292,28 @@ const UpdateRideTypePrices = ({
               value={row[field]}
               type="number"
               onChange={(e) => handleInputChange(index, field, e.target.value)}
-              inputProps={{ step: 0.1 }}
+              inputProps={{ step: 0.1, min: 0 }}
             />
           ))}
           <IconButton
             onClick={() => handleUpdate(index)}
             disabled={!row.isEdited}
+            sx={{
+              color: row.isEdited ? "#0A84C1" : "grey",
+            }}
           >
-            <Edit />
+            {buttonLoading ? (
+              <LoadingAnimation width={30} height={30} />
+            ) : (
+              <Save />
+            )}
           </IconButton>
           <IconButton onClick={() => handleDelete(row.id)}>
-            <Delete />
+            {buttonLoading ? (
+              <LoadingAnimation width={30} height={30} />
+            ) : (
+              <Delete sx={{ color: "red" }} />
+            )}
           </IconButton>
         </div>
       ))}
@@ -286,7 +326,7 @@ const UpdateRideTypePrices = ({
         return (
           <div key={index} className="flex space-x-2 mb-4 mt-8">
             <TextField
-              sx={{ width: "220px" }}
+              sx={{ width: "230px" }}
               select
               value={row?.ride_type?.toString() || ""}
               onChange={(e) =>
@@ -314,17 +354,25 @@ const UpdateRideTypePrices = ({
                   handleInputChange(index, field, e.target.value, true)
                 }
                 type="number"
-                inputProps={{ step: 0.1 }}
+                inputProps={{ step: 0.1, min: 0 }}
               />
             ))}
           </div>
         );
       })}
       <div className="flex justify-between">
-        <Button variant="contained" color="secondary" onClick={handleAddRow}>
-          + Add row
+        <Button
+          startIcon={<AddCircleOutlineIcon />}
+          sx={{
+            color: "black",
+            textTransform: "none",
+            fontWeight: 400,
+            fontSize: "14px",
+          }}
+          onClick={handleAddRow}
+        >
+          Click to add row
         </Button>
-        {/* <div> */}
         {newRows.length > 0 && (
           <div className="flex gap-4">
             <Button variant="outlined" onClick={handleClearNewRows}>
@@ -333,14 +381,17 @@ const UpdateRideTypePrices = ({
             <Button
               variant="contained"
               color="success"
-              disabled={newRows.every(validateRow)}
+              disabled={!newRows.every(validateButton)}
               onClick={handleCreate}
             >
-              Add Prices
+              {buttonLoading ? (
+                <LoadingAnimation width={30} height={30} />
+              ) : (
+                "Add Prices"
+              )}
             </Button>
           </div>
         )}
-        {/* </div> */}
       </div>
     </>
   );

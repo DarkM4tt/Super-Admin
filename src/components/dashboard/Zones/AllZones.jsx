@@ -332,7 +332,7 @@ const AllZones = ({
                         Update Polygon
                       </MenuItem>
                       <MenuItem
-                        onClick={() => handlePriceClick(selectedZone?.id, true)}
+                        onClick={() => handlePriceClick(selectedZone, true)}
                       >
                         Update Prices
                       </MenuItem>

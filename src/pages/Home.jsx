@@ -66,7 +66,7 @@ const Home = () => {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
   const [entityId, setEntityId] = useState(null);
-  const [priceId, setPriceId] = useState(null);
+  const [areaDetails, setAreaDetails] = useState(null);
   const [isZone, setIsZone] = useState(false);
   const [addLocationData, setAddLocationData] = useState({
     countryId: "",
@@ -165,8 +165,8 @@ const Home = () => {
     setActiveComponent("UpdatePolygon");
   };
 
-  const handlePriceClick = (priceId, isZone) => {
-    setPriceId(priceId);
+  const handlePriceClick = (area, isZone) => {
+    setAreaDetails(area);
     setIsZone(isZone);
     setActiveComponent("UpdatePrices");
   };
@@ -225,12 +225,12 @@ const Home = () => {
         />
       );
     }
-    if (priceId && activeComponent === "UpdatePrices") {
+    if (areaDetails && activeComponent === "UpdatePrices") {
       return (
         <UpdatePrices
           isZone={isZone}
-          priceId={priceId}
-          setPriceId={setPriceId}
+          areaDetails={areaDetails}
+          setAreaDetails={setAreaDetails}
           setActiveComponent={setActiveComponent}
         />
       );

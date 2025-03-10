@@ -358,9 +358,7 @@ const AddLocation = ({
                           Update Polygon
                         </MenuItem>
                         <MenuItem
-                          onClick={() =>
-                            handlePriceClick(selectedCity?.id, false)
-                          }
+                          onClick={() => handlePriceClick(selectedCity, false)}
                         >
                           Update Prices
                         </MenuItem>

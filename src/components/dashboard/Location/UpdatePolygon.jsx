@@ -495,32 +495,35 @@ const UpdatePolygon = ({
               lat,
               lng,
             }));
-
             return (
               <React.Fragment key={zone?.id}>
-                <Polygon
-                  paths={polygonPath}
-                  options={{
-                    fillColor: zoneColors[zone?.zone_type] || "gray",
-                    fillOpacity: 0.4,
-                    strokeColor: zoneColors[zone?.zone_type] || "gray",
-                    strokeOpacity: 1,
-                    strokeWeight: 2,
-                    draggable: false,
-                    editable: false,
-                  }}
-                />
-                <Marker
-                  position={{
-                    lat: zone?.center_location?.coordinates[1],
-                    lng: zone?.center_location?.coordinates[0],
-                  }}
-                  label={{
-                    text: zone?.name,
-                    color: "black",
-                    fontWeight: "bold",
-                  }}
-                />
+                {zone?.id !== entityId && (
+                  <Polygon
+                    paths={polygonPath}
+                    options={{
+                      fillColor: zoneColors[zone?.zone_type] || "gray",
+                      fillOpacity: 0.4,
+                      strokeColor: zoneColors[zone?.zone_type] || "gray",
+                      strokeOpacity: 1,
+                      strokeWeight: 1,
+                      draggable: false,
+                      editable: false,
+                    }}
+                  />
+                )}
+                {zone?.id !== entityId && (
+                  <Marker
+                    position={{
+                      lat: zone?.center_location?.coordinates[1],
+                      lng: zone?.center_location?.coordinates[0],
+                    }}
+                    label={{
+                      text: zone?.name,
+                      color: "black",
+                      fontWeight: "bold",
+                    }}
+                  />
+                )}
               </React.Fragment>
             );
           })}

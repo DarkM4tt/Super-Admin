@@ -310,6 +310,8 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
     );
   }
 
+  console.log(zoneName);
+
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -454,9 +456,13 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
             <MenuItem value="" disabled>
               Select zone type
             </MenuItem>
-            <MenuItem value="RED_ZONE">Heat zone</MenuItem>
-            <MenuItem value="BLUE_ZONE">Blue zone</MenuItem>
-            <MenuItem value="YELLOW_ZONE">Yellow zone</MenuItem>
+            <MenuItem value="RED_ZONE">Red zone (Maximum demand area)</MenuItem>
+            <MenuItem value="YELLOW_ZONE">
+              Yellow zone (Medium demand area)
+            </MenuItem>
+            <MenuItem value="BLUE_ZONE">
+              Blue zone (Minimum demand area)
+            </MenuItem>
           </TextField>
         </div>
         <div className="flex flex-col">
@@ -599,10 +605,7 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
             },
           }}
           disabled={
-            !city ||
-            !country ||
-            polygon?.length < 3 ||
-            zoneName?.length?.trim() < 4
+            !city || !country || polygon?.length < 3 || zoneName?.length < 4
           }
           onClick={handleAddZone}
         >

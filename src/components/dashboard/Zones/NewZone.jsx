@@ -2,7 +2,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import BackArrow from "../../../assets/leftArrowBlack.svg";
 import { Button, MenuItem, TextField } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import LoadingAnimation from "../../common/LoadingAnimation";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
@@ -103,8 +103,6 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
 
   const fetchPrevZones = useCallback(async () => {
     setError("");
-    setLoading(true);
-
     try {
       const res = await fetch(
         `${
@@ -123,8 +121,6 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
       }
     } catch (error) {
       setError(error);
-    } finally {
-      setLoading(false);
     }
   }, [city?.id]);
 
@@ -592,25 +588,42 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
           />
         )}
 
-        {prevZones.map((zone) => (
-          <Polygon
-            key={zone.id}
-            paths={zone.location.coordinates[0].map(([lng, lat]) => ({
+        {prevZones?.length > 0 &&
+          prevZones?.map((zone) => {
+            const { coordinates } = zone.location;
+            const polygonPath = coordinates[0].map(([lng, lat]) => ({
               lat,
               lng,
-            }))}
-            options={{
-              fillColor: zoneColors[zone.zone_type] || "gray",
-              fillOpacity: 0.5,
-              strokeColor: zoneColors[zone.zone_type] || "gray",
-              strokeOpacity: 1,
-              strokeWeight: 2,
-              clickable: false,
-              draggable: false,
-              editable: false,
-            }}
-          />
-        ))}
+            }));
+
+            return (
+              <React.Fragment key={zone?.id}>
+                <Polygon
+                  paths={polygonPath}
+                  options={{
+                    fillColor: zoneColors[zone?.zone_type] || "gray",
+                    fillOpacity: 0.4,
+                    strokeColor: zoneColors[zone?.zone_type] || "gray",
+                    strokeOpacity: 1,
+                    strokeWeight: 2,
+                    draggable: false,
+                    editable: false,
+                  }}
+                />
+                <Marker
+                  position={{
+                    lat: zone?.center_location?.coordinates[1],
+                    lng: zone?.center_location?.coordinates[0],
+                  }}
+                  label={{
+                    text: zone?.name,
+                    color: "black",
+                    fontWeight: "bold",
+                  }}
+                />
+              </React.Fragment>
+            );
+          })}
 
         {markerPosition && (
           <Marker

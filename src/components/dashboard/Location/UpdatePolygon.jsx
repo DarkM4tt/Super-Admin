@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import BackArrow from "../../../assets/leftArrowBlack.svg";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button, MenuItem, Stack, TextField } from "@mui/material";
@@ -9,6 +9,11 @@ import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
 import LoadingAnimation from "../../common/LoadingAnimation";
 
 const DEFAULT_CENTER = { lat: 38.7169, lng: -9.1399 };
+const zoneColors = {
+  YELLOW_ZONE: "yellow",
+  BLUE_ZONE: "blue",
+  RED_ZONE: "red",
+};
 
 const UpdatePolygon = ({
   isZone,
@@ -27,6 +32,8 @@ const UpdatePolygon = ({
   const [zoneName, setZoneName] = useState("");
   const [zoneType, setZoneType] = useState("");
   const [isEdited, setIsEdited] = useState(false);
+  const [prevZones, setPrevZones] = useState([]);
+
   const { isLoaded, loadError } = useGoogleMapsLoader();
   const polygonRef = useRef(null);
 
@@ -130,6 +137,31 @@ const UpdatePolygon = ({
     setMapCenter(newCenter);
   }, []);
 
+  const fetchPrevZones = useCallback(async () => {
+    setError("");
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/zones?page=1&limit=100&city_id=${
+          entityData?.city_id?.id
+        }`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setPrevZones(result?.data?.zones?.results);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    }
+  }, [entityData?.city_id?.id]);
+
   useEffect(() => {
     fetchDetails();
   }, [fetchDetails]);
@@ -142,6 +174,10 @@ const UpdatePolygon = ({
       path.addListener("remove_at", updatePolygonCoords);
     }
   }, [polygonCoords, updatePolygonCoords]);
+
+  useEffect(() => {
+    isZone && entityData?.city_id?.id && fetchPrevZones();
+  }, [fetchPrevZones, entityData?.city_id?.id, isZone]);
 
   const handleReset = () => {
     setPolygonCoords(initialCoords);
@@ -450,6 +486,44 @@ const UpdatePolygon = ({
             }}
           />
         )}
+
+        {isZone &&
+          prevZones?.length > 0 &&
+          prevZones?.map((zone) => {
+            const { coordinates } = zone.location;
+            const polygonPath = coordinates[0].map(([lng, lat]) => ({
+              lat,
+              lng,
+            }));
+
+            return (
+              <React.Fragment key={zone?.id}>
+                <Polygon
+                  paths={polygonPath}
+                  options={{
+                    fillColor: zoneColors[zone?.zone_type] || "gray",
+                    fillOpacity: 0.4,
+                    strokeColor: zoneColors[zone?.zone_type] || "gray",
+                    strokeOpacity: 1,
+                    strokeWeight: 2,
+                    draggable: false,
+                    editable: false,
+                  }}
+                />
+                <Marker
+                  position={{
+                    lat: zone?.center_location?.coordinates[1],
+                    lng: zone?.center_location?.coordinates[0],
+                  }}
+                  label={{
+                    text: zone?.name,
+                    color: "black",
+                    fontWeight: "bold",
+                  }}
+                />
+              </React.Fragment>
+            );
+          })}
         {mapCenter && <Marker position={mapCenter} />}
       </GoogleMap>
 

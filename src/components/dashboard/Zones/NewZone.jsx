@@ -310,8 +310,6 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
     );
   }
 
-  console.log(zoneName);
-
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -605,7 +603,10 @@ const NewZone = ({ setActiveComponent, setAddLocationData }) => {
             },
           }}
           disabled={
-            !city || !country || polygon?.length < 3 || zoneName?.length < 4
+            !city ||
+            !country ||
+            polygon?.length < 3 ||
+            zoneName?.trim()?.length < 4
           }
           onClick={handleAddZone}
         >

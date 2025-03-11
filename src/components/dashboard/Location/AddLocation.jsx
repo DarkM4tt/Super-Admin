@@ -295,7 +295,7 @@ const AddLocation = ({
                 {allCities.map((city, idx) => (
                   <TableRow
                     key={city?.id}
-                    // onClick={() => onPartnerClick(org?._id)}
+                    onClick={() => handleEntityClick(selectedCity?.id, false)}
                     sx={{
                       cursor: "pointer",
                     }}

@@ -242,6 +242,7 @@ const AllZones = ({
               {allZones.map((zone) => (
                 <TableRow
                   key={zone?.id}
+                  onClick={() => handleZoneClick(selectedZone?.id, true)}
                   sx={{
                     cursor: "pointer",
                   }}

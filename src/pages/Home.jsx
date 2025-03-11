@@ -364,6 +364,7 @@ const Home = () => {
       case "Drivers":
         return (
           <Drivers
+            selectedOrgId={selectedOrgId}
             onDriverClick={handleDriverClick}
             setActiveComponent={setActiveComponent}
           />

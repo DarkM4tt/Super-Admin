@@ -176,8 +176,6 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
     );
   }
 
-  console.log(allVehicles);
-
   return (
     <>
       {/* Vehicles Heading */}
@@ -202,7 +200,7 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
 
       {/* Manage Heading */}
       <Box sx={{ fontSize: "24px", fontWeight: "500", marginBottom: "20px" }}>
-        ABC Company Ltd &gt;&gt; List of vehicles
+        List of vehicles
       </Box>
 
       {/* Tabs */}

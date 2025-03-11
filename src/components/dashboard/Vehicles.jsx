@@ -26,7 +26,7 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
     if (activeTab === 0) {
       return `${
         import.meta.env.VITE_API_URL
-      }/organizations/super-admin/all-vehicles?page=1&limit=100&organization_id=${selectedOrgId}`;
+      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=APPROVED&organization_id=${selectedOrgId}`;
     } else if (activeTab === 1) {
       return `${
         import.meta.env.VITE_API_URL
@@ -35,10 +35,14 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
       return `${
         import.meta.env.VITE_API_URL
       }/organizations/super-admin/all-vehicles?page=1&limit=100&status=NEW-REQUEST&organization_id=${selectedOrgId}`;
+    } else if (activeTab === 3) {
+      return `${
+        import.meta.env.VITE_API_URL
+      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=ASSIGNED&organization_id=${selectedOrgId}`;
     } else {
       return `${
         import.meta.env.VITE_API_URL
-      }/organizations/super-admin/all-organizations?page=1&limit=100&is_active=true&organization_id=${selectedOrgId}`;
+      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=REJECTED&organization_id=${selectedOrgId}`;
     }
   }, [activeTab, selectedOrgId]);
 
@@ -72,7 +76,7 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
     fetchVehicles();
   }, [fetchVehicles, activeTab]);
 
-  const VehiclesTable = ({ pending }) => {
+  const VehiclesTable = ({ status }) => {
     return (
       <Box
         sx={{
@@ -157,11 +161,13 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
               </TableBody>
             </Table>
           </TableContainer>
-        ) : pending ? (
-          <p className="text-lg text-red-400 font-bold">No pending vehicles!</p>
+        ) : status ? (
+          <p className="text-lg text-red-400 font-bold">
+            No {status} vehicles!
+          </p>
         ) : (
           <p className="text-lg text-red-400 font-bold">
-            No vehicles added up yet!
+            No vehicles approved yet!
           </p>
         )}
       </Box>
@@ -222,20 +228,23 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
         <Tab label="All vehicles" />
         <Tab label="Pending vehicles" />
         <Tab label="New requests" />
-        <Tab label="Active" />
+        <Tab label="Assigned" />
+        <Tab label="Rejected" />
       </Tabs>
 
       {loading ? (
         <LoadingAnimation height={500} width={500} />
       ) : (
         <>
-          {activeTab === 0 && <VehiclesTable pending={false} />}
+          {activeTab === 0 && <VehiclesTable />}
 
-          {activeTab === 1 && <VehiclesTable pending={true} />}
+          {activeTab === 1 && <VehiclesTable status="pending" />}
 
-          {activeTab === 2 && <VehiclesTable pending={true} />}
+          {activeTab === 2 && <VehiclesTable status="new" />}
 
-          {activeTab === 3 && <VehiclesTable pending={true} />}
+          {activeTab === 3 && <VehiclesTable status="assigned" />}
+
+          {activeTab === 4 && <VehiclesTable status="rejected" />}
         </>
       )}
     </>

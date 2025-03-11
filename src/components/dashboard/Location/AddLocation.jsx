@@ -190,7 +190,8 @@ const AddLocation = ({
     setSelectedCity(city);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (event) => {
+    event.stopPropagation();
     setMenuAnchor(null);
     setSelectedCity(null);
   };
@@ -273,8 +274,9 @@ const AddLocation = ({
                   {[
                     "SL",
                     "City",
-                    "Country code",
+                    "Total zones",
                     "Status",
+                    "City area",
                     "Last edited",
                     "Options",
                   ].map((header) => (
@@ -305,7 +307,7 @@ const AddLocation = ({
                       {city?.name || <p className="text-red-500">No name</p>}
                     </TableCell>
                     <TableCell>
-                      <p>{city?.country_code}</p>
+                      <p>{city?.total_zones}</p>
                     </TableCell>
                     <TableCell>
                       <Switch
@@ -325,6 +327,9 @@ const AddLocation = ({
                         }}
                       />
                       {city?.is_active ? "On" : "Off"}
+                    </TableCell>
+                    <TableCell>
+                      <p>{city?.city_area || "100 sqkm"}</p>
                     </TableCell>
                     <TableCell>
                       {city?.updatedAt
@@ -428,7 +433,7 @@ const AddLocation = ({
                   {[
                     "SL",
                     "Country",
-                    "Phone code",
+                    "Operating cities",
                     "ISO code",
                     "Currency",
                     "Status",
@@ -459,14 +464,25 @@ const AddLocation = ({
                     <TableCell>
                       {country?.name || <p className="text-red-500">No name</p>}
                     </TableCell>
-                    <TableCell>+{country?.phone_code}</TableCell>
+                    <TableCell>{country?.total_cities}</TableCell>
                     <TableCell>{country?.iso_code}</TableCell>
                     <TableCell>{country?.currency}</TableCell>
                     <TableCell>
                       <Switch
                         checked={country?.is_active}
                         onChange={() => handleToggleStatus(country?.id, false)}
-                        color="info"
+                        sx={{
+                          "& .MuiSwitch-track": {
+                            backgroundColor: country?.is_active
+                              ? "#22cfcf"
+                              : "red",
+                            opacity: 1,
+                          },
+                          "& .Mui-checked + .MuiSwitch-track": {
+                            backgroundColor: "#22cfcf",
+                            opacity: 1,
+                          },
+                        }}
                       />
                     </TableCell>
                   </TableRow>

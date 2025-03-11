@@ -37,6 +37,10 @@ const Partners = ({ onPartnerClick }) => {
       return `${
         import.meta.env.VITE_API_URL
       }/organizations/super-admin/all-organizations?page=1&limit=100&status=NEW-REQUEST`;
+    } else if (activeTab === 3) {
+      return `${
+        import.meta.env.VITE_API_URL
+      }/organizations/super-admin/all-organizations?page=1&limit=100&status=REJECTED`;
     } else {
       return `${
         import.meta.env.VITE_API_URL
@@ -78,7 +82,9 @@ const Partners = ({ onPartnerClick }) => {
     const totalDocs = 6;
     const notUploadedCount = totalDocs - partner?.totalDocuments;
     const pendingCount = partner?.unverifiedDocuments;
-    return { notUploadedCount, pendingCount };
+    const approvedCount = partner?.verifiedDocuments;
+    const isAllApproved = approvedCount === totalDocs;
+    return { notUploadedCount, pendingCount, isAllApproved };
   };
 
   const PartnersTable = ({ status }) => {
@@ -139,7 +145,7 @@ const Partners = ({ onPartnerClick }) => {
                 }}
               >
                 {allPartners.map((org, idx) => {
-                  const { notUploadedCount, pendingCount } =
+                  const { notUploadedCount, pendingCount, isAllApproved } =
                     getVerificationStatus(org);
 
                   return (
@@ -202,6 +208,11 @@ const Partners = ({ onPartnerClick }) => {
                                 <p>{pendingCount}</p>
                               </span>
                             )}
+                            {isAllApproved && (
+                              <p className="text-green-400 font-bold mr-20">
+                                Approved
+                              </p>
+                            )}
                           </div>
                         </TableCell>
                       ) : (
@@ -219,7 +230,7 @@ const Partners = ({ onPartnerClick }) => {
           </p>
         ) : (
           <p className="text-lg text-red-400 font-bold">
-            No partners signed up yet!
+            No partners approved yet!
           </p>
         )}
       </Box>
@@ -270,6 +281,7 @@ const Partners = ({ onPartnerClick }) => {
         <Tab label="All organisations" />
         <Tab label="Pending organisations" />
         <Tab label="New requests" />
+        <Tab label="Rejected" />
         <Tab label="Incomplete" />
       </Tabs>
 
@@ -283,7 +295,9 @@ const Partners = ({ onPartnerClick }) => {
 
           {activeTab === 2 && <PartnersTable status="new" />}
 
-          {activeTab === 3 && <PartnersTable status="incomplete" />}
+          {activeTab === 3 && <PartnersTable status="rejected" />}
+
+          {activeTab === 4 && <PartnersTable status="incomplete" />}
         </>
       )}
     </Box>

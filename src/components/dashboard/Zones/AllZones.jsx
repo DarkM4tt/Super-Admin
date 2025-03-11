@@ -127,9 +127,19 @@ const AllZones = ({
     setSelectedZone(zone);
   };
 
-  const handleMenuClose = () => {
+  const handleMenuClose = (event) => {
+    event.stopPropagation();
     setMenuAnchor(null);
     setSelectedZone(null);
+  };
+
+  const getZoneType = (type) => {
+    if (type === "RED_ZONE") {
+      return "Heat zone";
+    } else if (type === "BLUE_ZONE") {
+      return "Blue zone";
+    }
+    return "Yellow zone";
   };
 
   if (error) {
@@ -226,7 +236,7 @@ const AllZones = ({
               >
                 {[
                   "Zone name",
-                  "Color",
+                  "Total rides",
                   "Map type",
                   "Created on",
                   "Zones status",
@@ -261,7 +271,7 @@ const AllZones = ({
                       fontSize: "16px",
                     }}
                   >
-                    {zone?.color === "#FF0000" ? "red" : zone?.color}
+                    {zone?.total_rides || 0}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -269,7 +279,7 @@ const AllZones = ({
                       fontSize: "16px",
                     }}
                   >
-                    {zone?.zone_type || "No type"}
+                    {getZoneType(zone?.zone_type) || "No type"}
                   </TableCell>
                   <TableCell
                     sx={{
@@ -277,9 +287,7 @@ const AllZones = ({
                       fontSize: "16px",
                     }}
                   >
-                    {zone?.updatedAt
-                      ? formatCreatedAt(zone?.updatedAt)
-                      : formatCreatedAt(zone?.createdAt)}
+                    {zone?.createdAt && formatCreatedAt(zone?.createdAt)}
                   </TableCell>
                   <TableCell
                     sx={{

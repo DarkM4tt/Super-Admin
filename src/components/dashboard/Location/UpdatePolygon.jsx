@@ -511,19 +511,6 @@ const UpdatePolygon = ({
                     }}
                   />
                 )}
-                {zone?.id !== entityId && (
-                  <Marker
-                    position={{
-                      lat: zone?.center_location?.coordinates[1],
-                      lng: zone?.center_location?.coordinates[0],
-                    }}
-                    label={{
-                      text: zone?.name,
-                      color: "black",
-                      fontWeight: "bold",
-                    }}
-                  />
-                )}
               </React.Fragment>
             );
           })}

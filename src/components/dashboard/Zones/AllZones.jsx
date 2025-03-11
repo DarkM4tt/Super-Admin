@@ -242,7 +242,7 @@ const AllZones = ({
               {allZones.map((zone) => (
                 <TableRow
                   key={zone?.id}
-                  onClick={() => handleZoneClick(selectedZone?.id, true)}
+                  onClick={() => handleZoneClick(zone?.id, true)}
                   sx={{
                     cursor: "pointer",
                   }}
@@ -310,7 +310,10 @@ const AllZones = ({
                     }}
                   >
                     <IconButton
-                      onClick={(event) => handleMenuOpen(event, zone)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        handleMenuOpen(event, zone);
+                      }}
                     >
                       <MoreHorizIcon />
                     </IconButton>
@@ -328,16 +331,29 @@ const AllZones = ({
                       }}
                     >
                       <MenuItem
-                        onClick={() => handleZoneClick(selectedZone?.id, true)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleZoneClick(selectedZone?.id, true);
+                        }}
                       >
                         Update Polygon
                       </MenuItem>
                       <MenuItem
-                        onClick={() => handlePriceClick(selectedZone, true)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handlePriceClick(selectedZone, true);
+                        }}
                       >
                         Update Prices
                       </MenuItem>
-                      <MenuItem onClick={handleDeleteZone}>Delete</MenuItem>
+                      <MenuItem
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleDeleteZone();
+                        }}
+                      >
+                        Delete
+                      </MenuItem>
                     </Menu>
                   </TableCell>
                 </TableRow>

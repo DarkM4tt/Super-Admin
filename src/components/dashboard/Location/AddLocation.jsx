@@ -295,7 +295,7 @@ const AddLocation = ({
                 {allCities.map((city, idx) => (
                   <TableRow
                     key={city?.id}
-                    onClick={() => handleEntityClick(selectedCity?.id, false)}
+                    onClick={() => handleEntityClick(city?.id, false)}
                     sx={{
                       cursor: "pointer",
                     }}
@@ -333,7 +333,10 @@ const AddLocation = ({
                     </TableCell>
                     <TableCell>
                       <IconButton
-                        onClick={(event) => handleMenuOpen(event, city)}
+                        onClick={(event) => {
+                          event.stopPropagation(); // Prevents row click
+                          handleMenuOpen(event, city);
+                        }}
                       >
                         <MoreHorizIcon />
                       </IconButton>
@@ -351,18 +354,29 @@ const AddLocation = ({
                         }}
                       >
                         <MenuItem
-                          onClick={() =>
-                            handleEntityClick(selectedCity?.id, false)
-                          }
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleEntityClick(selectedCity?.id, false);
+                          }}
                         >
                           Update Polygon
                         </MenuItem>
                         <MenuItem
-                          onClick={() => handlePriceClick(selectedCity, false)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handlePriceClick(selectedCity, false);
+                          }}
                         >
                           Update Prices
                         </MenuItem>
-                        <MenuItem onClick={handleDeleteCity}>Delete</MenuItem>
+                        <MenuItem
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleDeleteCity();
+                          }}
+                        >
+                          Delete
+                        </MenuItem>
                       </Menu>
                     </TableCell>
                   </TableRow>

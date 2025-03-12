@@ -311,6 +311,7 @@ const AddLocation = ({
                     <TableCell>
                       <Switch
                         checked={city?.is_active}
+                        onClick={(event) => event.stopPropagation()}
                         onChange={() => handleToggleStatus(city?.id, true)}
                         sx={{
                           "& .MuiSwitch-track": {

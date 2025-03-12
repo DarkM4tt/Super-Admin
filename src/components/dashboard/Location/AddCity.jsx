@@ -449,7 +449,7 @@ const AddCity = ({ setActiveComponent, setAddLocationData }) => {
           <input
             type="text"
             placeholder="Search places..."
-            className="absolute top-2 left-52 w-64 p-2 rounded-md border border-gray-300"
+            className="absolute top-2 left-52 w-52 p-2 rounded-md border border-gray-300"
           />
         </StandaloneSearchBox>
 

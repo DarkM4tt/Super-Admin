@@ -249,7 +249,7 @@ const AddPrices = ({ addLocationData, setActiveComponent }) => {
                 label={fieldLabels[field]}
                 value={row[field]}
                 onChange={(e) => updateRow(row.id, field, e.target.value)}
-                inputProps={{ step: 0.1 }}
+                inputProps={{ step: 0.1, min: 0 }}
                 sx={{ borderRadius: "10px" }}
               />
             ))}

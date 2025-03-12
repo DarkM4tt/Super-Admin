@@ -297,6 +297,7 @@ const AllZones = ({
                   >
                     <Switch
                       checked={zone?.is_active}
+                      onClick={(event) => event.stopPropagation()}
                       onChange={() => handleToggleStatus(zone?.id)}
                       sx={{
                         "& .MuiSwitch-track": {

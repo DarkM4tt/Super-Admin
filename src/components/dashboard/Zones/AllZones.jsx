@@ -128,7 +128,7 @@ const AllZones = ({
   };
 
   const handleMenuClose = (event) => {
-    event.stopPropagation();
+    event?.stopPropagation();
     setMenuAnchor(null);
     setSelectedZone(null);
   };
@@ -332,7 +332,7 @@ const AllZones = ({
                         left: menuPosition.left,
                       }}
                       open={Boolean(menuAnchor)}
-                      onClose={handleMenuClose}
+                      onClose={(event) => handleMenuClose(event)}
                       PaperProps={{
                         elevation: 2,
                         sx: { boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)" },

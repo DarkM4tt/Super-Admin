@@ -7,8 +7,6 @@ import {
   InputAdornment,
   IconButton,
   Box,
-  ToggleButtonGroup,
-  ToggleButton,
   FormControlLabel,
   Radio,
   Typography,
@@ -25,12 +23,6 @@ const CreateNewRewardModal = ({
   setFormData,
   onSave,
 }) => {
-  const [selected, setSelected] = useState("Customers");
-
-  const handleSwitchChange = (event) => {
-    setSelected(event.target.value);
-  };
-
   const handleChange = (field, value) => {
     setFormData((prevData) => ({
       ...prevData,
@@ -68,112 +60,41 @@ const CreateNewRewardModal = ({
           </IconButton>
         </div>
 
-        {/* Switches */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: "20px",
-            marginTop: 2,
-          }}
-        >
-          <FormControlLabel
-            control={
-              <Radio
-                checked={selected === "Drivers"}
-                onChange={handleSwitchChange}
-                value="Drivers"
-                sx={{
-                  "&.Mui-checked": {
-                    color: "#00cbc4",
-                  },
-                  color: "#6d6d6d",
-                }}
-              />
-            }
-            label={
-              <Typography
-                sx={{
-                  color: "black",
-                  fontSize: "16px",
-                  fontWeight: 600,
-                }}
-              >
-                Drivers
-              </Typography>
-            }
-          />
-          <FormControlLabel
-            control={
-              <Radio
-                checked={selected === "Customers"}
-                onChange={handleSwitchChange}
-                value="Customers"
-                sx={{
-                  "&.Mui-checked": {
-                    color: "#00cbc4",
-                  },
-                  color: "#6d6d6d",
-                }}
-              />
-            }
-            label={
-              <Typography
-                sx={{
-                  color: "black",
-                  fontSize: "16px",
-                  fontWeight: 600,
-                }}
-              >
-                Customers
-              </Typography>
-            }
-          />
-        </Box>
-
-        {/* Modal Body */}
         <div className="grid grid-cols-2 gap-6 mt-6">
-          {/* Student coupon */}
+          {/* Coupon name */}
           <div className="flex flex-col">
             <label
-              htmlFor="fuel-card-name"
+              htmlFor="coupon_name"
               className="font-redhat font-semibold text-base mb-4"
             >
-              Select reward sector
+              Enter coupon name
             </label>
             <TextField
-              id="fuel-card-name"
-              placeholder="Student coupon"
+              id="coupon_name"
+              placeholder="Enter name"
               variant="outlined"
               size="small"
-              value={formData.cardName}
-              onChange={(e) => handleChange("cardName", e.target.value)}
+              value={formData.coupon_name}
+              onChange={(e) => handleChange("coupon_name", e.target.value)}
               fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <ExpandMoreIcon sx={{ color: "black" }} />
-                  </InputAdornment>
-                ),
-              }}
             />
           </div>
 
-          {/* Select service type */}
+          {/* Select coupon city */}
           <div className="flex flex-col">
             <label
-              htmlFor="fuel-type"
+              htmlFor="city"
               className="font-redhat font-semibold text-base mb-4"
             >
-              Select service type
+              Select coupon city
             </label>
             <TextField
-              id="fuel-type"
+              id="city"
               select
               variant="outlined"
               size="small"
-              value={formData.fuelType}
-              onChange={(e) => handleChange("fuelType", e.target.value)}
+              value={formData.city_id}
+              onChange={(e) => handleChange("city_id", e.target.value)}
               fullWidth
               SelectProps={{
                 displayEmpty: true,
@@ -181,12 +102,53 @@ const CreateNewRewardModal = ({
               }}
             >
               <MenuItem value="" disabled>
-                Intercity
+                Select city
               </MenuItem>
               <MenuItem value="diesel">Diesel</MenuItem>
               <MenuItem value="petrol">Petrol</MenuItem>
             </TextField>
           </div>
+
+          {/* Min amount */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="amount"
+              className="font-redhat font-semibold text-base mb-4"
+            >
+              Min amount (spend in app)
+            </label>
+            <TextField
+              id="amount"
+              variant="outlined"
+              size="small"
+              type="number"
+              value={formData.min_amount}
+              onChange={(e) => handleChange("min_amount", e.target.value)}
+              inputProps={{ step: 1, min: 0 }}
+              fullWidth
+            />
+          </div>
+
+          {/* For how many rides */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="rides"
+              className="font-redhat font-semibold text-base mb-4"
+            >
+              For how many rides
+            </label>
+            <TextField
+              id="rides"
+              variant="outlined"
+              size="small"
+              type="number"
+              value={formData.usage_limit}
+              onChange={(e) => handleChange("usage_limit", e.target.value)}
+              inputProps={{ step: 1, min: 0 }}
+              fullWidth
+            />
+          </div>
+
           {/* Select applicable customers from list */}
           <div className="flex flex-col">
             <label
@@ -264,31 +226,29 @@ const CreateNewRewardModal = ({
             </TextField>
           </div>
           <div className="flex flex-col justify-end">
-          <Button
-            variant="contained"
-            onClick={onSave}
-            sx={{
-              backgroundColor: "black",
-              color: "white",
-              textTransform: "none",
-              borderRadius: "8px",
-              width: "100%",
-              paddingX: "16px",
-              paddingY: "8px",
-              "&:hover": {
-                backgroundColor: "#333333",
-              },
-            }}
-          >
-            Add coupon
-          </Button>
+            <Button
+              variant="contained"
+              onClick={onSave}
+              sx={{
+                backgroundColor: "black",
+                color: "white",
+                textTransform: "none",
+                borderRadius: "8px",
+                width: "100%",
+                paddingX: "16px",
+                paddingY: "8px",
+                "&:hover": {
+                  backgroundColor: "#333333",
+                },
+              }}
+            >
+              Add coupon
+            </Button>
           </div>
         </div>
 
         {/* Modal Footer */}
-        <div className="flex justify-end mt-6">
-         
-        </div>
+        <div className="flex justify-end mt-6"></div>
       </Box>
     </Modal>
   );

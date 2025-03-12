@@ -21,13 +21,17 @@ const Rewards = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
   const [formData, setFormData] = useState({
-    cardName: "",
-    fuelType: "",
-    fuelCategory: "",
-    Rewards: "",
-    cardLimit: "",
-    revenueNeeded: "",
-    amount: "",
+    country_id: "",
+    coupon_name: "",
+    city_id: "",
+    min_amount: 0,
+    usage_limit: 0,
+    discount_type: "",
+    discount_value: 0,
+    coupon_type: "REGULAR",
+    valid_from: null,
+    valid_until: null,
+    description: "",
   });
   const dropdownOptions = [
     { title: "Fuel Stations", value: "stations" },
@@ -43,41 +47,41 @@ const Rewards = () => {
     setActiveTab(newValue);
   };
 
-  const EntityTable = () => {
+  const CouponsTable = () => {
     const driversData = [
       {
         id: 1,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
-        customerID:"@iamomerbotosh112kmsas_khan",
+        customerID: "@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
       {
         id: 2,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
-        customerID:"@iamomerbotosh112kmsas_khan",
+        customerID: "@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
       {
         id: 3,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
-        customerID:"@iamomerbotosh112kmsas_khan",
+        customerID: "@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
       {
         id: 4,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
-        customerID:"@iamomerbotosh112kmsas_khan",
+        customerID: "@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
       {
         id: 5,
         name: "Omar Botosh",
         assignedVehicle: "MX 019MMA9",
-        customerID:"@iamomerbotosh112kmsas_khan",
+        customerID: "@iamomerbotosh112kmsas_khan",
         totalRides: 789,
       },
     ];
@@ -96,7 +100,9 @@ const Rewards = () => {
         }}
       >
         <div className="flex justify-between items-center">
-          <p className="font-redhat font-semibold text-2xl">List of applicable customers</p>
+          <p className="font-redhat font-semibold text-2xl">
+            List of applicable customers
+          </p>
           <CustomDropdown options={dropdownOptions} />
         </div>
         <TableContainer>
@@ -109,7 +115,7 @@ const Rewards = () => {
                   fontWeight: "400",
                   fontSize: "16px",
                   borderBottom: "none",
-                  color:"black"
+                  color: "black",
                 },
                 "& .MuiTableCell-root:first-of-type": {
                   borderTopLeftRadius: "10px",
@@ -126,14 +132,18 @@ const Rewards = () => {
                   backgroundColor: "#f5f5f5",
                   borderRadius: "10px",
                   fontSize: "16px",
-                  paddingBottom:"24px"
+                  paddingBottom: "24px",
                 }}
               >
-                {["Customer name", "Total ride taken", "Total spends","Customer ID","Options"].map(
-                  (header) => (
-                    <TableCell key={header}>{header}</TableCell>
-                  )
-                )}
+                {[
+                  "Customer name",
+                  "Total ride taken",
+                  "Total spends",
+                  "Customer ID",
+                  "Options",
+                ].map((header) => (
+                  <TableCell key={header}>{header}</TableCell>
+                ))}
               </TableRow>
             </TableHead>
 
@@ -148,10 +158,26 @@ const Rewards = () => {
                     fontSize: "16px",
                   }}
                 >
-                  <TableCell sx={{fontWeight:"600",fontSize:"16px",color:"black"}}>{org.name}</TableCell>
-                  <TableCell  sx={{fontWeight:"600",fontSize:"16px",color:"black"}}>{org.assignedVehicle}</TableCell>
-                  <TableCell  sx={{fontWeight:"600",fontSize:"16px",color:"black"}}>{org.totalRides}</TableCell>
-                  <TableCell  sx={{fontWeight:"600",fontSize:"16px",color:"black"}}>{org.customerID}</TableCell>
+                  <TableCell
+                    sx={{ fontWeight: "600", fontSize: "16px", color: "black" }}
+                  >
+                    {org.name}
+                  </TableCell>
+                  <TableCell
+                    sx={{ fontWeight: "600", fontSize: "16px", color: "black" }}
+                  >
+                    {org.assignedVehicle}
+                  </TableCell>
+                  <TableCell
+                    sx={{ fontWeight: "600", fontSize: "16px", color: "black" }}
+                  >
+                    {org.totalRides}
+                  </TableCell>
+                  <TableCell
+                    sx={{ fontWeight: "600", fontSize: "16px", color: "black" }}
+                  >
+                    {org.customerID}
+                  </TableCell>
                   <TableCell>
                     <button>
                       <MoreHorizIcon className="text-black" />
@@ -219,22 +245,22 @@ const Rewards = () => {
           </p>
         </div>
         <div className="flex gap-6">
-        <div
-          className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer"
-          onClick={() => setModalOpen(true)}
-        >
-          <span className="pr-1">
-            {" "}
-            <AddIcon fontSize="small" />
-          </span>{" "}
-          Create new reward{" "}
-        </div>
-        <div
-          className="py-3 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer"
-          onClick={() => setModalOpen(true)}
-        >
-         In-app reward
-        </div>
+          <div
+            className="py-2 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer"
+            onClick={() => setModalOpen(true)}
+          >
+            <span className="pr-1">
+              {" "}
+              <AddIcon fontSize="small" />
+            </span>{" "}
+            Create new coupon{" "}
+          </div>
+          <div
+            className="py-2 px-4 text-base font-redhat bg-[#000000] text-white rounded-[56px] cursor-pointer"
+            onClick={() => setModalOpen(true)}
+          >
+            In-app reward
+          </div>
         </div>
       </div>
 
@@ -250,10 +276,15 @@ const Rewards = () => {
               textTransform: "none",
               fontWeight: 400,
               color: "#9e9e9e",
-              paddingY:"8px",
-              fontSize:"16px"
+              paddingY: "8px",
+              fontSize: "16px",
             },
-            ".Mui-selected": { color: "#1976d2", fontWeight: "600",paddingY:"8px", fontSize:"16px" },
+            ".Mui-selected": {
+              color: "#1976d2",
+              fontWeight: "600",
+              paddingY: "8px",
+              fontSize: "16px",
+            },
             ".MuiTabs-indicator": { backgroundColor: "#1976d2" },
           }}
         >
@@ -279,7 +310,7 @@ const Rewards = () => {
         </Button>
       </div>
 
-      {activeTab === 0 && <EntityTable />}
+      {activeTab === 0 && <CouponsTable />}
       {activeTab === 1 && <p className="text-red-400 p-6">Empty</p>}
       {activeTab === 2 && <p className="text-red-400 p-6">Empty</p>}
 

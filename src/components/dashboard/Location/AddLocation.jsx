@@ -191,7 +191,7 @@ const AddLocation = ({
   };
 
   const handleMenuClose = (event) => {
-    event.stopPropagation();
+    event?.stopPropagation();
     setMenuAnchor(null);
     setSelectedCity(null);
   };
@@ -213,7 +213,6 @@ const AddLocation = ({
       const result = await res?.json();
       if (result?.success) {
         fetchCities();
-        handleMenuClose();
       } else {
         throw new Error(result?.message);
       }
@@ -352,7 +351,7 @@ const AddLocation = ({
                           left: menuPosition.left,
                         }}
                         open={Boolean(menuAnchor)}
-                        onClose={handleMenuClose}
+                        onClose={(event) => handleMenuClose(event)}
                         PaperProps={{
                           elevation: 2,
                           sx: { boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.1)" },

@@ -17,6 +17,7 @@ import PartnerIcon from "../../assets/partnerImage.png";
 import SearchIcon from "@mui/icons-material/Search";
 // import { formatCreatedAt } from "../../utils/dates";
 import LoadingAnimation from "../common/LoadingAnimation";
+import { formatCreatedAt } from "../../utils/dates";
 
 const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
   const [activeTab, setActiveTab] = useState(0);
@@ -28,7 +29,7 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
     if (activeTab === 0) {
       return `${
         import.meta.env.VITE_API_AUTH_URL
-      }/super-admin/all-drivers?page=1&limit=100&organization_id=${selectedOrgId}`;
+      }/super-admin/all-drivers?page=1&limit=100&status=APPROVED&organization_id=${selectedOrgId}`;
     } else if (activeTab === 1) {
       return `${
         import.meta.env.VITE_API_AUTH_URL
@@ -37,10 +38,14 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
       return `${
         import.meta.env.VITE_API_AUTH_URL
       }/super-admin/all-drivers?page=1&limit=100&status=NEW-REQUEST&organization_id=${selectedOrgId}`;
+    } else if (activeTab === 3) {
+      return `${
+        import.meta.env.VITE_API_AUTH_URL
+      }/super-admin/all-drivers?page=1&limit=100&status=ASSIGNED&organization_id=${selectedOrgId}`;
     } else {
       return `${
         import.meta.env.VITE_API_AUTH_URL
-      }/super-admin/all-drivers?page=1&limit=100&is_active=true&organization_id=${selectedOrgId}`;
+      }/super-admin/all-drivers?page=1&limit=100&status=REJECTED&organization_id=${selectedOrgId}`;
     }
   }, [activeTab, selectedOrgId]);
 
@@ -109,9 +114,8 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
               >
                 <TableRow>
                   {[
-                    "ID",
                     "Name",
-                    "Operating since",
+                    "Joined on",
                     "Total drivers",
                     "Total vehicles",
                     "Listing drivers",
@@ -131,7 +135,7 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
                   },
                 }}
               >
-                {allDrivers.map((driver, idx) => {
+                {allDrivers.map((driver) => {
                   return (
                     <TableRow
                       key={driver?._id}
@@ -140,7 +144,6 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
                         cursor: "pointer",
                       }}
                     >
-                      <TableCell>{idx + 1}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <img src={PartnerIcon} alt="AppleIcon" />
@@ -150,18 +153,15 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {/* {formatCreatedAt(driver?.createdAt) || (
+                        {formatCreatedAt(driver?.createdAt) || (
                           <p className="text-red-200">Unknown</p>
-                        )} */}
-                        34
+                        )}
                       </TableCell>
-                      <TableCell>1</TableCell>
-                      <TableCell>2</TableCell>
-                      {status ? (
-                        <TableCell>320</TableCell>
-                      ) : (
-                        <TableCell>420</TableCell>
-                      )}
+                      <TableCell>{driver?.email}</TableCell>
+                      <TableCell>
+                        {formatCreatedAt(driver?.last_login)}
+                      </TableCell>
+                      <TableCell>420</TableCell>
                       <TableCell>
                         <MoreHoriz />
                       </TableCell>
@@ -172,12 +172,10 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
             </Table>
           </TableContainer>
         ) : status ? (
-          <p className="text-lg text-red-400 font-bold">
-            No {status} organisations!
-          </p>
+          <p className="text-lg text-red-400 font-bold">No {status} drivers!</p>
         ) : (
           <p className="text-lg text-red-400 font-bold">
-            No partners signed up yet!
+            No drivers approved yet!
           </p>
         )}
       </Box>
@@ -250,7 +248,9 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
 
           {activeTab === 2 && <DriversTable status="new" />}
 
-          {activeTab === 3 && <DriversTable status="incomplete" />}
+          {activeTab === 3 && <DriversTable status="assigned" />}
+
+          {activeTab === 4 && <DriversTable status="rejected" />}
         </>
       )}
     </>

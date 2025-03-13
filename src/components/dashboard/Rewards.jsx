@@ -40,7 +40,8 @@ const Rewards = () => {
     description: "",
   });
   const [editFormData, setEditFormData] = useState({
-    country_id: "67a4b5d0908650882bf69050",
+    coupon_id: "",
+    country_id: "",
     coupon_name: "",
     city_id: "",
     min_amount: 0,
@@ -73,14 +74,30 @@ const Rewards = () => {
   };
 
   const handleUpdateCoupon = async () => {
+    setButtonLoading(true);
+    const payload = {
+      country_id: editFormData?.country_id,
+      city_id: editFormData?.city_id,
+      coupon_name: editFormData?.coupon_name?.toUpperCase(),
+      description: editFormData?.description,
+      discount_type: editFormData?.discount_type,
+      coupon_type: editFormData?.coupon_type,
+      discount_value: +editFormData?.discount_value,
+      valid_from: convertToISO(editFormData?.valid_from),
+      valid_until: convertToISO(editFormData?.valid_until),
+      usage_limit: +editFormData?.usage_limit,
+      min_amount: +editFormData?.min_amount,
+    };
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_RIDE_URL}/super-admin/coupons/update`,
+        `${import.meta.env.VITE_API_RIDE_URL}/super-admin/coupons/update/${
+          editFormData?.coupon_id
+        }`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify(editFormData),
+          body: JSON.stringify(payload),
         }
       );
       const result = await res.json();
@@ -93,6 +110,7 @@ const Rewards = () => {
       console.error("Update failed:", error);
     } finally {
       handleEditModalClose();
+      setButtonLoading(false);
     }
   };
 
@@ -541,7 +559,6 @@ const Rewards = () => {
       {activeTab === 1 && <p className="text-red-400 p-6">Empty</p>}
       {activeTab === 2 && <p className="text-red-400 p-6">Empty</p>}
 
-      {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
       <CreateNewRewardModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -550,9 +567,7 @@ const Rewards = () => {
         setFormData={setFormData}
         onSave={handleSave}
       />
-      {/* </LocalizationProvider> */}
 
-      {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
       <UpdateCouponModal
         open={editModalOpen}
         onClose={handleEditModalClose}
@@ -562,42 +577,8 @@ const Rewards = () => {
         selectedCoupon={selectedCoupon}
         buttonLoading={buttonLoading}
       />
-      {/* </LocalizationProvider> */}
     </>
   );
 };
 
 export default Rewards;
-
-{
-  /* Select date range */
-}
-{
-  /* <div className="flex flex-col">
-            <label
-              htmlFor="city"
-              className="font-redhat font-semibold text-base mb-4"
-            >
-              Select date range
-            </label>
-            <TextField
-              id="city"
-              select
-              variant="outlined"
-              size="small"
-              value={formData.city_id}
-              onChange={(e) => handleChange("city_id", e.target.value)}
-              fullWidth
-              SelectProps={{
-                displayEmpty: true,
-                IconComponent: ExpandMoreIcon,
-              }}
-            >
-              <MenuItem value="" disabled>
-                Select service type
-              </MenuItem>
-              <MenuItem value="REGULAR">Regular</MenuItem>
-              <MenuItem value="INTERCITY">Intercity</MenuItem>
-            </TextField>
-          </div> */
-}

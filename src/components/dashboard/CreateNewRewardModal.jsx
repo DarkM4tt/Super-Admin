@@ -456,54 +456,6 @@ const CreateNewRewardModal = ({
             />
           </div>
 
-          {/* <Typography variant="body2" fontWeight={600}>
-            Select date range{" "}
-            <span style={{ fontWeight: 400 }}>(validity)</span>
-          </Typography>
-          <TextField
-            placeholder={
-              formData.valid_from && formData.valid_until
-                ? `${new Date(
-                    formData.valid_from
-                  ).toLocaleDateString()} - ${new Date(
-                    formData.valid_until
-                  ).toLocaleDateString()}`
-                : "Select coupon validity"
-            }
-            onClick={() => setOpenDate(true)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <CalendarToday fontSize="small" />
-                </InputAdornment>
-              ),
-            }}
-            sx={{
-              width: "100%",
-              borderRadius: "12px",
-              boxShadow: 1,
-              "& .MuiOutlinedInput-root": {
-                height: "40px",
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "grey.400",
-                },
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "blue.500",
-                },
-              },
-            }}
-          />
-          <DateRangePicker
-            open={openDate}
-            onClose={() => setOpenDate(false)}
-            value={[formData.valid_from, formData.valid_until]}
-            onChange={handleDateChange}
-            localeText={{ start: "Start date", end: "End date" }}
-            slotProps={{
-              textField: { placeholder: "Select coupon validity" },
-            }}
-          /> */}
-
           {/* Select description */}
           <div className="flex flex-col">
             <label

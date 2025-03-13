@@ -36,6 +36,7 @@ const CreateNewRewardModal = ({
     !formData?.city_id ||
     formData?.usage_limit < 1 ||
     formData?.discount_value < 1 ||
+    formData?.min_amount < 0 ||
     !formData?.valid_from ||
     !formData?.valid_until ||
     formData?.description?.trim()?.length < 3;
@@ -107,6 +108,7 @@ const CreateNewRewardModal = ({
 
   const handleChange = (field, value) => {
     if (field === "country_id") formData.city_id = "";
+    if (field === "valid_from") formData.valid_until = "";
     setFormData((prevData) => ({
       ...prevData,
       [field]: value,
@@ -429,19 +431,25 @@ const CreateNewRewardModal = ({
           {/* Coupon valid until */}
           <div className="flex flex-col">
             <label
-              htmlFor="validFrom"
+              htmlFor="validUntil"
               className="font-redhat font-semibold text-base mb-4"
             >
               Coupon valid until
             </label>
             <TextField
-              id="validFrom"
+              id="validUntil"
               type="date"
               variant="outlined"
               size="small"
+              shouldDisableDate={(date) =>
+                formData.valid_from && date < formData.valid_from
+              }
               value={formData.valid_until}
               onChange={(e) => handleChange("valid_until", e.target.value)}
               fullWidth
+              inputProps={{
+                min: formData.valid_from || "",
+              }}
             />
           </div>
 

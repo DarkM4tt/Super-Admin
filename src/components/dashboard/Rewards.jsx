@@ -203,6 +203,7 @@ const Rewards = () => {
     formData.discount_value = +formData.discount_value;
     formData.valid_from = convertToISO(formData.valid_from);
     formData.valid_until = convertToISO(formData.valid_until);
+    formData.coupon_name = formData.coupon_name?.toUpperCase();
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_RIDE_URL}/super-admin/coupons/create`,

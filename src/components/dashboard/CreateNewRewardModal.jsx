@@ -424,6 +424,9 @@ const CreateNewRewardModal = ({
               size="small"
               value={formData.valid_from}
               onChange={(e) => handleChange("valid_from", e.target.value)}
+              inputProps={{
+                min: new Date().toISOString().split("T")[0],
+              }}
               fullWidth
             />
           </div>

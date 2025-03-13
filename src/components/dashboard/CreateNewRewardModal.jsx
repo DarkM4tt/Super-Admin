@@ -7,14 +7,16 @@ import {
   InputAdornment,
   IconButton,
   Box,
-  FormControlLabel,
-  Radio,
-  Typography,
+  // Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CloseIcon from "@mui/icons-material/Close";
 import rewardIcon from "../../assets/reward.png";
-import { useState } from "react";
+import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+// import { CalendarToday, ChevronLeft, ChevronRight } from "@mui/icons-material";
+// import { DateRangePicker } from "@mui/x-date-pickers-pro";
+import { useCallback, useEffect, useState } from "react";
+import LoadingAnimation from "../common/LoadingAnimation";
 
 const CreateNewRewardModal = ({
   open,
@@ -22,8 +24,89 @@ const CreateNewRewardModal = ({
   formData,
   setFormData,
   onSave,
+  buttonLoading,
 }) => {
+  // const [openDate, setOpenDate] = useState(false);
+  const [allCities, setAllCities] = useState([]);
+  const [allCountries, setAllCountries] = useState([]);
+
+  const isDisabled =
+    formData?.coupon_name?.trim()?.length < 4 ||
+    !formData?.country_id ||
+    !formData?.city_id ||
+    formData?.usage_limit < 1 ||
+    formData?.discount_value < 1 ||
+    !formData?.valid_from ||
+    !formData?.valid_until ||
+    formData?.description?.trim()?.length < 3;
+
+  const toggleDiscountType = () => {
+    const newType = formData.discount_type === "FIXED" ? "PERCENTAGE" : "FIXED";
+    handleChange("discount_type", newType);
+  };
+
+  const handleInputChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, "");
+    handleChange("discount_value", value ? parseInt(value, 10) : 0);
+  };
+
+  const fetchCountries = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/country/get-countries?page=1&limit=100`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setAllCountries(result?.data?.countries?.results);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  const fetchCities = useCallback(async () => {
+    if (!formData?.country_id) return;
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/city/get-cities?page=1&limit=100&country_id=${
+          formData?.country_id
+        }`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setAllCities(result?.data?.cities?.results);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [formData?.country_id]);
+
+  useEffect(() => {
+    fetchCountries();
+  }, [fetchCountries]);
+
+  useEffect(() => {
+    formData?.country_id && fetchCities();
+  }, [fetchCities, formData?.country_id]);
+
   const handleChange = (field, value) => {
+    if (field === "country_id") formData.city_id = "";
     setFormData((prevData) => ({
       ...prevData,
       [field]: value,
@@ -38,7 +121,9 @@ const CreateNewRewardModal = ({
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "600px",
+          width: "700px",
+          height: "600px",
+          overflowY: "auto",
           bgcolor: "white",
           borderRadius: "8px",
           boxShadow: 24,
@@ -51,7 +136,7 @@ const CreateNewRewardModal = ({
             <img src={rewardIcon} alt="Fuel Gas Icon" className="w-20 mr-3" />
             <div>
               <p className="text-2xl font-redhat font-semibold text-black">
-                Create new reward
+                Create new coupon
               </p>
             </div>
           </div>
@@ -60,7 +145,7 @@ const CreateNewRewardModal = ({
           </IconButton>
         </div>
 
-        <div className="grid grid-cols-2 gap-6 mt-6">
+        <div className="grid grid-cols-2 gap-6 mt-14">
           {/* Coupon name */}
           <div className="flex flex-col">
             <label
@@ -74,10 +159,64 @@ const CreateNewRewardModal = ({
               placeholder="Enter name"
               variant="outlined"
               size="small"
-              value={formData.coupon_name}
+              value={formData?.coupon_name?.toUpperCase()}
               onChange={(e) => handleChange("coupon_name", e.target.value)}
               fullWidth
             />
+          </div>
+
+          {/* Select coupon country */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="city"
+              className="font-redhat font-semibold text-base mb-4"
+            >
+              Select coupon country
+            </label>
+            <TextField
+              id="city"
+              select
+              variant="outlined"
+              size="small"
+              value={formData.country_id}
+              onChange={(e) => handleChange("country_id", e.target.value)}
+              fullWidth
+              SelectProps={{
+                displayEmpty: true,
+                IconComponent: ExpandMoreIcon,
+                MenuProps: {
+                  PaperProps: {
+                    sx: {
+                      maxHeight: 200,
+                      overflowY: "auto",
+                    },
+                  },
+                  anchorOrigin: {
+                    vertical: "bottom",
+                    horizontal: "left",
+                  },
+                  transformOrigin: {
+                    vertical: "top",
+                    horizontal: "left",
+                  },
+                },
+              }}
+            >
+              {allCountries?.length === 0 ? (
+                <MenuItem value="" disabled>
+                  Not countries yet!
+                </MenuItem>
+              ) : (
+                <MenuItem value="" disabled>
+                  Select country
+                </MenuItem>
+              )}
+              {allCountries?.map((country) => (
+                <MenuItem key={country?.id} value={country?.id}>
+                  {country?.name}
+                </MenuItem>
+              ))}
+            </TextField>
           </div>
 
           {/* Select coupon city */}
@@ -99,13 +238,38 @@ const CreateNewRewardModal = ({
               SelectProps={{
                 displayEmpty: true,
                 IconComponent: ExpandMoreIcon,
+                MenuProps: {
+                  PaperProps: {
+                    sx: {
+                      maxHeight: 200,
+                      overflowY: "auto",
+                    },
+                  },
+                  anchorOrigin: {
+                    vertical: "bottom",
+                    horizontal: "left",
+                  },
+                  transformOrigin: {
+                    vertical: "top",
+                    horizontal: "left",
+                  },
+                },
               }}
             >
-              <MenuItem value="" disabled>
-                Select city
-              </MenuItem>
-              <MenuItem value="diesel">Diesel</MenuItem>
-              <MenuItem value="petrol">Petrol</MenuItem>
+              {allCities?.length === 0 ? (
+                <MenuItem value="" disabled>
+                  Not cities yet!
+                </MenuItem>
+              ) : (
+                <MenuItem value="" disabled>
+                  Select city
+                </MenuItem>
+              )}
+              {allCities?.map((city) => (
+                <MenuItem key={city?.id} value={city?.id}>
+                  {city?.name}
+                </MenuItem>
+              ))}
             </TextField>
           </div>
 
@@ -126,6 +290,7 @@ const CreateNewRewardModal = ({
               onChange={(e) => handleChange("min_amount", e.target.value)}
               inputProps={{ step: 1, min: 0 }}
               fullWidth
+              placeholder="Enter mininium amount"
             />
           </div>
 
@@ -146,25 +311,88 @@ const CreateNewRewardModal = ({
               onChange={(e) => handleChange("usage_limit", e.target.value)}
               inputProps={{ step: 1, min: 0 }}
               fullWidth
+              placeholder="Enter usage limit"
             />
           </div>
 
-          {/* Select applicable customers from list */}
+          {/* Select applicable customers */}
           <div className="flex flex-col">
             <label
-              htmlFor="fuel-category"
+              htmlFor="customers"
               className="font-redhat font-semibold text-base mb-4"
             >
-              Select applicable customers from list
+              Select applicable customers
             </label>
             <TextField
-              id="fuel-category"
-              select
-              placeholder="Select fuel category"
+              id="customers"
+              placeholder="Select customers"
               variant="outlined"
               size="small"
-              value={formData.fuelCategory}
-              onChange={(e) => handleChange("fuelCategory", e.target.value)}
+              value="All customers"
+              fullWidth
+              disabled
+            />
+          </div>
+
+          {/* Coupon discount amount */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="type"
+              className="font-redhat font-semibold text-base mb-4"
+            >
+              Coupon discount amount (
+              {formData.discount_type === "FIXED" ? "Fixed" : "Percentage"})
+            </label>
+            <TextField
+              type="text"
+              id="type"
+              value={formData.discount_value}
+              onChange={handleInputChange}
+              placeholder={
+                formData.discount_type === "PERCENTAGE"
+                  ? "% percentage"
+                  : "€ fixed"
+              }
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  height: "45px",
+                },
+              }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={toggleDiscountType}
+                      size="small"
+                      sx={{ p: 0, height: "24px", width: "24px" }}
+                    >
+                      {formData.discount_type === "FIXED" ? (
+                        <ChevronRight />
+                      ) : (
+                        <ChevronLeft />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </div>
+
+          {/* Select service type */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="coupon_type"
+              className="font-redhat font-semibold text-base mb-4"
+            >
+              Select service type
+            </label>
+            <TextField
+              id="coupon_type"
+              select
+              variant="outlined"
+              size="small"
+              value={formData.coupon_type}
+              onChange={(e) => handleChange("coupon_type", e.target.value)}
               fullWidth
               SelectProps={{
                 displayEmpty: true,
@@ -172,59 +400,125 @@ const CreateNewRewardModal = ({
               }}
             >
               <MenuItem value="" disabled>
-                Select customers
+                Select service type
               </MenuItem>
-              <MenuItem value="regular">Regular</MenuItem>
-              <MenuItem value="premium">Premium</MenuItem>
+              <MenuItem value="REGULAR">Regular</MenuItem>
+              <MenuItem value="INTRACITY">Intercity</MenuItem>
             </TextField>
           </div>
-          {/* Reward amount */}
+
+          {/* Coupon valid from */}
           <div className="flex flex-col">
             <label
-              htmlFor="amount"
+              htmlFor="validFrom"
               className="font-redhat font-semibold text-base mb-4"
             >
-              Reward amount
+              Coupon valid from
             </label>
             <TextField
-              id="amount"
-              placeholder="€ 11"
+              id="validFrom"
+              type="date"
               variant="outlined"
               size="small"
-              value={formData.amount}
-              onChange={(e) => handleChange("amount", e.target.value)}
+              value={formData.valid_from}
+              onChange={(e) => handleChange("valid_from", e.target.value)}
               fullWidth
             />
           </div>
 
-          {/* Fow how many rides */}
+          {/* Coupon valid until */}
           <div className="flex flex-col">
             <label
-              htmlFor="fuel-type"
+              htmlFor="validFrom"
               className="font-redhat font-semibold text-base mb-4"
             >
-              Fow how many rides
+              Coupon valid until
             </label>
             <TextField
-              id="fuel-type"
-              select
+              id="validFrom"
+              type="date"
               variant="outlined"
               size="small"
-              value={formData.fuelType}
-              onChange={(e) => handleChange("fuelType", e.target.value)}
+              value={formData.valid_until}
+              onChange={(e) => handleChange("valid_until", e.target.value)}
               fullWidth
-              SelectProps={{
-                displayEmpty: true,
-                IconComponent: ExpandMoreIcon,
-              }}
-            >
-              <MenuItem value="" disabled>
-                5
-              </MenuItem>
-              <MenuItem value="diesel">4</MenuItem>
-              <MenuItem value="petrol">3</MenuItem>
-            </TextField>
+            />
           </div>
+
+          {/* <Typography variant="body2" fontWeight={600}>
+            Select date range{" "}
+            <span style={{ fontWeight: 400 }}>(validity)</span>
+          </Typography>
+          <TextField
+            placeholder={
+              formData.valid_from && formData.valid_until
+                ? `${new Date(
+                    formData.valid_from
+                  ).toLocaleDateString()} - ${new Date(
+                    formData.valid_until
+                  ).toLocaleDateString()}`
+                : "Select coupon validity"
+            }
+            onClick={() => setOpenDate(true)}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <CalendarToday fontSize="small" />
+                </InputAdornment>
+              ),
+            }}
+            sx={{
+              width: "100%",
+              borderRadius: "12px",
+              boxShadow: 1,
+              "& .MuiOutlinedInput-root": {
+                height: "40px",
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "grey.400",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "blue.500",
+                },
+              },
+            }}
+          />
+          <DateRangePicker
+            open={openDate}
+            onClose={() => setOpenDate(false)}
+            value={[formData.valid_from, formData.valid_until]}
+            onChange={handleDateChange}
+            localeText={{ start: "Start date", end: "End date" }}
+            slotProps={{
+              textField: { placeholder: "Select coupon validity" },
+            }}
+          /> */}
+
+          {/* Select description */}
+          <div className="flex flex-col">
+            <label
+              htmlFor="description"
+              className="font-redhat font-semibold text-base mb-4"
+            >
+              Enter coupon description
+            </label>
+            <TextField
+              id="description"
+              type=""
+              variant="outlined"
+              placeholder="Upto 20 words..."
+              size="small"
+              value={formData.description}
+              onChange={(e) => handleChange("description", e.target.value)}
+              fullWidth
+              multiline
+              sx={{
+                "& .MuiInputBase-root": {
+                  height: "80px",
+                },
+              }}
+            />
+          </div>
+
           <div className="flex flex-col justify-end">
             <Button
               variant="contained"
@@ -241,14 +535,16 @@ const CreateNewRewardModal = ({
                   backgroundColor: "#333333",
                 },
               }}
+              disabled={isDisabled}
             >
-              Add coupon
+              {buttonLoading ? (
+                <LoadingAnimation width={30} height={30} />
+              ) : (
+                "Add coupon"
+              )}
             </Button>
           </div>
         </div>
-
-        {/* Modal Footer */}
-        <div className="flex justify-end mt-6"></div>
       </Box>
     </Modal>
   );

@@ -78,8 +78,8 @@ const Rewards = () => {
     const payload = {
       country_id: editFormData?.country_id,
       city_id: editFormData?.city_id,
-      coupon_name: editFormData?.coupon_name?.toUpperCase(),
-      description: editFormData?.description,
+      coupon_name: editFormData?.coupon_name?.trim()?.toUpperCase(),
+      description: editFormData?.description?.trim(),
       discount_type: editFormData?.discount_type,
       coupon_type: editFormData?.coupon_type,
       discount_value: +editFormData?.discount_value,
@@ -221,7 +221,8 @@ const Rewards = () => {
     formData.discount_value = +formData.discount_value;
     formData.valid_from = convertToISO(formData.valid_from);
     formData.valid_until = convertToISO(formData.valid_until);
-    formData.coupon_name = formData.coupon_name?.toUpperCase();
+    formData.coupon_name = formData?.coupon_name?.trim()?.toUpperCase();
+    formData.description = formData?.description?.trim();
     try {
       const res = await fetch(
         `${import.meta.env.VITE_API_RIDE_URL}/super-admin/coupons/create`,
@@ -356,7 +357,9 @@ const Rewards = () => {
                         color: "black",
                       }}
                     >
-                      {coupon?.coupon_type}
+                      {coupon?.coupon_type === "REGULAR"
+                        ? "Regular"
+                        : "BOLD Miles"}
                     </TableCell>
                     <TableCell
                       sx={{
@@ -431,7 +434,8 @@ const Rewards = () => {
                       >
                         <MenuItem
                           onClick={(event) => {
-                            event.stopPropagation();
+                            event?.stopPropagation();
+                            handleMenuClose();
                             handleEditModalOpen();
                           }}
                         >

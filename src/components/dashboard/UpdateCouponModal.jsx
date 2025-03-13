@@ -257,7 +257,7 @@ const UpdateCouponModal = ({
                 Select service type
               </MenuItem>
               <MenuItem value="REGULAR">Regular</MenuItem>
-              <MenuItem value="INTRACITY">Intercity</MenuItem>
+              <MenuItem value="INTRACITY">BOLD Miles</MenuItem>
             </TextField>
           </div>
 

@@ -19,8 +19,6 @@ import {
   Tabs,
 } from "@mui/material";
 import CreateNewRewardModal from "./CreateNewRewardModal";
-import { LocalizationProvider } from "@mui/x-date-pickers-pro";
-import { AdapterDayjs } from "@mui/x-date-pickers-pro/AdapterDayjs";
 import UpdateCouponModal from "./UpdateCouponModal";
 
 const Rewards = () => {
@@ -542,28 +540,28 @@ const Rewards = () => {
       {activeTab === 1 && <p className="text-red-400 p-6">Empty</p>}
       {activeTab === 2 && <p className="text-red-400 p-6">Empty</p>}
 
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <CreateNewRewardModal
-          open={modalOpen}
-          onClose={() => setModalOpen(false)}
-          buttonLoading={buttonLoading}
-          formData={formData}
-          setFormData={setFormData}
-          onSave={handleSave}
-        />
-      </LocalizationProvider>
+      {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
+      <CreateNewRewardModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        buttonLoading={buttonLoading}
+        formData={formData}
+        setFormData={setFormData}
+        onSave={handleSave}
+      />
+      {/* </LocalizationProvider> */}
 
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <UpdateCouponModal
-          open={editModalOpen}
-          onClose={handleEditModalClose}
-          editFormData={editFormData}
-          setEditFormData={setEditFormData}
-          onUpdate={handleUpdateCoupon}
-          selectedCoupon={selectedCoupon}
-          buttonLoading={buttonLoading}
-        />
-      </LocalizationProvider>
+      {/* <LocalizationProvider dateAdapter={AdapterDayjs}> */}
+      <UpdateCouponModal
+        open={editModalOpen}
+        onClose={handleEditModalClose}
+        editFormData={editFormData}
+        setEditFormData={setEditFormData}
+        onUpdate={handleUpdateCoupon}
+        selectedCoupon={selectedCoupon}
+        buttonLoading={buttonLoading}
+      />
+      {/* </LocalizationProvider> */}
     </>
   );
 };

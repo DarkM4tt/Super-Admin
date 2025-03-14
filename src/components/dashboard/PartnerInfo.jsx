@@ -470,7 +470,7 @@ const PartnerInfo = ({
           <StatusDropdown
             allStatus={allOrgStatus}
             currentStatus={partnerDetails?.status}
-            onOrgStatusChange={handleOrgStatusChange}
+            onEntityStatusChange={handleOrgStatusChange}
           />
         </div>
       </div>

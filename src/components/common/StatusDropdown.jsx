@@ -8,7 +8,7 @@ const StatusDropdown = ({
   currentStatus,
   documentId,
   onDocStatusChange,
-  onOrgStatusChange,
+  onEntityStatusChange,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState(currentStatus);
@@ -89,7 +89,7 @@ const StatusDropdown = ({
               onClick={() => {
                 documentId
                   ? onDocStatusChange(status?.label, documentId)
-                  : onOrgStatusChange(status?.label);
+                  : onEntityStatusChange(status?.label);
               }}
               sx={{
                 display: "flex",

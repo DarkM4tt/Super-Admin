@@ -10,32 +10,139 @@ import SearchIcon from "@mui/icons-material/Search";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import TickIcon from "../../assets/tick.svg";
 import StatusDropdown from "../common/StatusDropdown";
-import EmailIcon from "@mui/icons-material/Email";
-import CallIcon from "@mui/icons-material/Call";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import partycar from "../../assets/partycar.png";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import QuickConnect from "../common/QuickConnect";
 import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import CustomerCard from "../common/CustomerCard";
+import LoadingAnimation from "../common/LoadingAnimation";
+import { allDocumentStatus, allVehicleStatus } from "../../utils/enums";
 
 const VehicleInfo = ({
+  selectedVehicleId,
   setSelectedVehicleId,
   setActiveComponent,
-  // setSelectedOrgId,
 }) => {
   const [services, setServices] = useState({
-    packages: false,
-    intercity: false,
-    petFriendly: false,
-    assist: false,
-    cabs: false,
-    jumpstart: false,
-    rentals: false,
-    sos: false,
-    ev: false,
-    luxury: false,
+    is_pet_friendly: false,
+    is_assist: false,
+    is_jumpstart: false,
+    is_listing: false,
+    is_bold_miles: false,
+    is_rentals: false,
+    is_sos: false,
+    is_xl: false,
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [vehicleData, setVehicleData] = useState(null);
+  const [vehicleDocuments, setVehicleDocuments] = useState([]);
+
+  const fetchVehicleDetails = useCallback(async () => {
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_URL
+        }/organizations/super-admin/get-vehicle-details/${selectedVehicleId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setVehicleData(result?.data?.vehicle);
+        setVehicleDocuments(result?.data?.documents);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedVehicleId]);
+
+  const handleVehicleStatusChange = useCallback(
+    async (status) => {
+      setError("");
+      setLoading(true);
+
+      try {
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/organizations/vehicle-listings/update-listing-status/${selectedVehicleId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status,
+            }),
+            credentials: "include",
+          }
+        );
+        const result = await res?.json();
+        if (result?.success) {
+          fetchVehicleDetails();
+        } else {
+          throw new Error(result?.message);
+        }
+      } catch (error) {
+        alert(error.message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchVehicleDetails, selectedVehicleId]
+  );
+
+  const handleDocStatusChange = useCallback(
+    async (status, documentId) => {
+      setError("");
+      setLoading(true);
+
+      try {
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_URL
+          }/organizations/super-admin/update-vehicle-document-status/${documentId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status,
+            }),
+            credentials: "include",
+          }
+        );
+        const result = await res?.json();
+        if (result?.success) {
+          fetchVehicleDetails();
+        } else {
+          throw new Error(result?.message);
+        }
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchVehicleDetails]
+  );
+
+  useEffect(() => {
+    fetchVehicleDetails();
+  }, [fetchVehicleDetails]);
 
   const handleChange = (event) => {
     setServices({
@@ -47,6 +154,18 @@ const VehicleInfo = ({
   const handleSave = () => {
     console.log("Selected services:", services);
   };
+
+  if (error) {
+    return (
+      <p className="text-lg text-red-400 font-bold">
+        {error.message || "Error"}
+      </p>
+    );
+  }
+
+  if (loading) {
+    return <LoadingAnimation height={500} width={500} />;
+  }
 
   return (
     <>
@@ -79,39 +198,35 @@ const VehicleInfo = ({
           <div className="py-2 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359] cursor-pointer">
             Generate report
           </div>
-          <StatusDropdown />
+          <StatusDropdown
+            allStatus={allVehicleStatus}
+            currentStatus={vehicleData?.status}
+            onEntityStatusChange={handleVehicleStatusChange}
+          />
         </div>
       </div>
 
       {/* Info Card */}
       <div className=" p-6 rounded-lg bg-white mt-8">
         <div className="flex justify-between pb-11 border-b border-[#DDDDDD] ">
-          <div className="">
-            <div className="flex gap-4">
-              <div className="">
-                <img src={partycar} alt="any" className="w-200 rounded-full" />
-              </div>
-              <div className="">
-                <p className="font-sans text-2xl font-semibold flex items-center">
-                  Ford Endevour{" "}
-                  <span className=" pl-4 text-base text-[#777777] underline font-sans">
-                    ABC Company Ltd &gt;&gt;
-                  </span>
+          <div className="flex gap-4">
+            <div className="">
+              <img src={partycar} alt="any" className="w-200 rounded-full" />
+            </div>
+            <div className="">
+              <p className="font-sans text-2xl font-semibold flex items-center">
+                {vehicleData?.brand_name} {vehicleData?.vehicle_model}
+                <span className=" pl-4 text-base text-[#777777] underline font-sans">
+                  ABC Company Ltd &gt;&gt;
+                </span>
+              </p>
+              <div className="mt-2 flex gap-2 items-center">
+                <span>
+                  <DirectionsCarIcon fontSize="small" />
+                </span>
+                <p className="font-sans text-base text-[#777777]">
+                  {vehicleData?.vin}
                 </p>
-                <div className="pt-2 flex gap-4">
-                  <p className="font-sans text-base text-[#777777] flex gap-2 items-center">
-                    <span>
-                      <EmailIcon fontSize="small" />
-                    </span>
-                    annbaptista16@gmail.com
-                  </p>
-                  <p className="font-sans text-base text-[#777777] flex gap-2 items-center underline">
-                    <span>
-                      <CallIcon fontSize="small" />
-                    </span>
-                    +91-9440192122
-                  </p>
-                </div>
               </div>
             </div>
           </div>
@@ -154,7 +269,7 @@ const VehicleInfo = ({
               </p>
               <Button
                 variant="contained"
-                style={{
+                sx={{
                   backgroundColor: "black",
                   color: "white",
                   textTransform: "none",
@@ -162,6 +277,7 @@ const VehicleInfo = ({
                   borderRadius: "8px",
                 }}
                 onClick={handleSave}
+                disabled={true}
               >
                 Save changes
               </Button>
@@ -172,7 +288,24 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={services.jumpstart}
+                    checked={vehicleData?.is_pet_friendly}
+                    onChange={handleChange}
+                    name="is_pet_friendly"
+                    sx={{
+                      color: "#777777",
+                      "&.Mui-checked": {
+                        color: "#18C4B8",
+                      },
+                    }}
+                  />
+                }
+                label="Pet friendly"
+                className="text-gray-800 text-sm"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={vehicleData?.is_jumpstart}
                     onChange={handleChange}
                     name="jumpstart"
                     sx={{
@@ -189,9 +322,66 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={services.rentals}
+                    checked={vehicleData?.is_listing}
                     onChange={handleChange}
-                    name="rentals"
+                    name="is_listing"
+                    sx={{
+                      color: "#777777",
+                      "&.Mui-checked": {
+                        color: "#18C4B8",
+                      },
+                    }}
+                  />
+                }
+                label="Listing"
+                className="text-gray-800 text-sm"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={services?.is_bold_miles}
+                    onChange={handleChange}
+                    name="is_bold_miles"
+                    sx={{
+                      color: "#777777",
+                      "&.Mui-checked": {
+                        color: "#18C4B8",
+                      },
+                    }}
+                  />
+                }
+                label="BOLD Miles"
+                className="text-gray-800 text-sm"
+              />
+            </div>
+
+            <p className="font-semibold font-redhat text-2xl mt-8">
+              Covering sectors
+            </p>
+            <div className="flex justify-between mt-8">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={vehicleData?.is_assist}
+                    onChange={handleChange}
+                    name="is_assist"
+                    sx={{
+                      color: "#777777",
+                      "&.Mui-checked": {
+                        color: "#18C4B8",
+                      },
+                    }}
+                  />
+                }
+                label="Assist"
+                className="text-gray-800 text-sm"
+              />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={vehicleData?.is_rentals}
+                    onChange={handleChange}
+                    name="is_rentals"
                     sx={{
                       color: "#777777",
                       "&.Mui-checked": {
@@ -203,52 +393,12 @@ const VehicleInfo = ({
                 label="Rentals"
                 className="text-gray-800 text-sm"
               />
-
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={services.packages}
+                    checked={vehicleData?.is_sos}
                     onChange={handleChange}
-                    name="packages"
-                    sx={{
-                      color: "#777777",
-                      "&.Mui-checked": {
-                        color: "#18C4B8",
-                      },
-                    }}
-                  />
-                }
-                label="Packages"
-                className="text-gray-800 text-sm"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={services.intercity}
-                    onChange={handleChange}
-                    name="intercity"
-                    sx={{
-                      color: "#777777",
-                      "&.Mui-checked": {
-                        color: "#18C4B8",
-                      },
-                    }}
-                  />
-                }
-                label="Intercity"
-                className="text-gray-800 text-sm"
-              />
-            </div>
-            <p className="font-semibold font-redhat text-2xl mt-4">
-              Covering sectors
-            </p>
-            <div className="flex justify-between pt-2">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={services.sos}
-                    onChange={handleChange}
-                    name="sos"
+                    name="is_sos"
                     sx={{
                       color: "#777777",
                       "&.Mui-checked": {
@@ -263,9 +413,9 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={services.cabs}
+                    checked={vehicleData?.is_xl}
                     onChange={handleChange}
-                    name="cabs"
+                    name="is_xl"
                     sx={{
                       color: "#777777",
                       "&.Mui-checked": {
@@ -274,80 +424,12 @@ const VehicleInfo = ({
                     }}
                   />
                 }
-                label="Regular cabs"
-                className="text-gray-800 text-sm"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={services.petFriendly}
-                    onChange={handleChange}
-                    name="petFriendly"
-                    sx={{
-                      color: "#777777",
-                      "&.Mui-checked": {
-                        color: "#18C4B8",
-                      },
-                    }}
-                  />
-                }
-                label="Pet friendly"
-                className="text-gray-800 text-sm"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={services.assist}
-                    onChange={handleChange}
-                    name="assist"
-                    sx={{
-                      color: "#777777",
-                      "&.Mui-checked": {
-                        color: "#18C4B8",
-                      },
-                    }}
-                  />
-                }
-                label="BOLD Assist"
-                className="text-gray-800 text-sm"
-              />
-
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={services.ev}
-                    onChange={handleChange}
-                    name="ev"
-                    sx={{
-                      color: "#777777",
-                      "&.Mui-checked": {
-                        color: "#18C4B8",
-                      },
-                    }}
-                  />
-                }
-                label="EV"
-                className="text-gray-800 text-sm"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={services.luxury}
-                    onChange={handleChange}
-                    name="luxury"
-                    sx={{
-                      color: "#777777",
-                      "&.Mui-checked": {
-                        color: "#18C4B8",
-                      },
-                    }}
-                  />
-                }
-                label="Luxury"
+                label="XL"
                 className="text-gray-800 text-sm"
               />
             </div>
           </div>
+
           <div className="bg-white w-full h-fit p-4 rounded-[8px] flex flex-col gap-2">
             <CustomerCard />
             <TextField
@@ -371,7 +453,11 @@ const VehicleInfo = ({
 
         {/* Right Cards */}
         <div className="w-[30%] flex flex-col gap-8">
-          <SubmittedDocumentsCard />
+          <SubmittedDocumentsCard
+            orgDocuments={vehicleDocuments}
+            status={allDocumentStatus}
+            onDocStatusChange={handleDocStatusChange}
+          />
           <QuickConnect />
         </div>
       </div>

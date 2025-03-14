@@ -135,7 +135,7 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
                 {allVehicles.map((vehicle) => (
                   <TableRow
                     key={vehicle?._id}
-                    onClick={() => onVehicleClick(vehicle?.id)}
+                    onClick={() => onVehicleClick(vehicle?._id)}
                     sx={{
                       cursor: "pointer",
                     }}

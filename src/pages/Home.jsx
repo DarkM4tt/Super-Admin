@@ -57,6 +57,7 @@ import ZoneCharges from "../components/dashboard/Zones/ZoneCharges";
 import AddPrices from "../components/dashboard/Location/AddPrices";
 import UpdatePolygon from "../components/dashboard/Location/UpdatePolygon";
 import UpdatePrices from "../components/dashboard/Location/UpdateRideTypePrices";
+import AcceptNewRequest from "../components/dashboard/AcceptNewRequest";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -65,6 +66,7 @@ const Home = () => {
   const [selectedDriverId, setSelectedDriverId] = useState(null);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState(null);
   const [selectedFuelStationId, setSelectedFuelStationId] = useState(null);
+  const [entity, setEntity] = useState("");
   const [entityId, setEntityId] = useState(null);
   const [areaDetails, setAreaDetails] = useState(null);
   const [isZone, setIsZone] = useState(false);
@@ -83,7 +85,7 @@ const Home = () => {
   const [selectedSosId, setSelectedSosId] = useState(null);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [selectedTripId, setSelectedTripId] = useState(null);
-  const { checkAuth, authLoading } = useAuth();
+  const { authLoading } = useAuth();
 
   const handleMenuItemClick = (itemName) => {
     setActiveComponent(itemName);
@@ -171,6 +173,12 @@ const Home = () => {
     setActiveComponent("UpdatePrices");
   };
 
+  const handleAcceptClick = (entityId, entity) => {
+    setEntityId(entityId);
+    setEntity(entity);
+    setActiveComponent("AcceptNewRequest");
+  };
+
   const renderActiveComponent = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
@@ -236,6 +244,15 @@ const Home = () => {
         />
       );
     }
+    if (entityId && entity && activeComponent === "AcceptNewRequest") {
+      return (
+        <AcceptNewRequest
+          entityId={entityId}
+          entity={entity}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
 
     switch (activeComponent) {
       case "Dashboard":
@@ -246,7 +263,12 @@ const Home = () => {
           />
         );
       case "Partners":
-        return <Partners onPartnerClick={handleOrgClick} />;
+        return (
+          <Partners
+            onPartnerClick={handleOrgClick}
+            handleAcceptClick={handleAcceptClick}
+          />
+        );
       case "Zones":
         return (
           <AllZones

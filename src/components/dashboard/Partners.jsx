@@ -10,6 +10,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Button,
 } from "@mui/material";
 import { formatCreatedAt } from "../../utils/dates";
 import SearchIcon from "@mui/icons-material/Search";
@@ -17,8 +18,9 @@ import PartnerIcon from "../../assets/partnerImage.png";
 import LoadingAnimation from "../common/LoadingAnimation";
 import wrongIcon from "../../assets/wrongIcon.svg";
 import infoYellow from "../../assets/infoYellow.svg";
+import OrgBig from "../../assets/orgBig.svg";
 
-const Partners = ({ onPartnerClick }) => {
+const Partners = ({ onPartnerClick, handleAcceptClick }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -237,6 +239,69 @@ const Partners = ({ onPartnerClick }) => {
     );
   };
 
+  const NewOrgRequestCard = ({ partnerDetails }) => {
+    return (
+      <div className="bg-white mt-4 rounded-md py-4 pr-6 pl-10 mb-4 relative border-b-[1px] border-[#344BFD]">
+        {/* Company Details */}
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4 items-center">
+            <img src={OrgBig} alt="OrgBig" />
+            <div>
+              <p className="text-lg font-redhat font-bold">Organisation</p>
+              <p className="text-base font-redhat font-medium text-gray">
+                {partnerDetails?.full_name || "No name"}
+              </p>
+            </div>
+          </div>
+
+          {/* Location */}
+          <div className="flex flex-col w-32">
+            <p className="text-lg font-redhat font-bold">Location</p>
+            <p className="text-base font-redhat font-medium text-gray">
+              {partnerDetails?.city && partnerDetails?.city + ","}{" "}
+              {partnerDetails?.country}
+              {!partnerDetails?.city && !partnerDetails?.country && (
+                <p className="text-red-400">Unknown</p>
+              )}
+            </p>
+          </div>
+
+          {/* Signed Up On */}
+          <div className="flex flex-col">
+            <p className="text-lg font-redhat font-bold">Signed up on</p>
+            <p className="text-base font-redhat font-medium text-gray">
+              {(partnerDetails?.createdAt &&
+                formatCreatedAt(partnerDetails?.createdAt)) || (
+                <p className="text-red-400">Unknown</p>
+              )}
+            </p>
+            <p className="text-sm text-gray-600">{partnerDetails?.time}</p>
+          </div>
+
+          {/* Action Button */}
+          <Button
+            variant="outlined"
+            sx={{
+              textTransform: "none",
+              fontWeight: "600",
+              borderColor: "#000",
+              color: "#000",
+              borderRadius: "10px",
+              paddingInline: "30px",
+              "&:hover": {
+                borderColor: "#000",
+                backgroundColor: "rgba(0,0,0,0.05)",
+              },
+            }}
+            onClick={() => handleAcceptClick(partnerDetails?._id, "partner")}
+          >
+            Accept and review
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   if (error) {
     return (
       <p className="text-lg text-red-400 font-bold">
@@ -282,7 +347,7 @@ const Partners = ({ onPartnerClick }) => {
         <Tab label="Pending organisations" />
         <Tab label="New requests" />
         <Tab label="Rejected" />
-        <Tab label="Incomplete" />
+        <Tab label="Incomplete signup" />
       </Tabs>
 
       {loading ? (
@@ -293,7 +358,21 @@ const Partners = ({ onPartnerClick }) => {
 
           {activeTab === 1 && <PartnersTable status="pending" />}
 
-          {activeTab === 2 && <PartnersTable status="new" />}
+          {activeTab === 2 && (
+            <>
+              {allPartners?.length === 0 && (
+                <p className="text-lg text-red-400 font-bold">
+                  No new organisations!
+                </p>
+              )}
+              {allPartners?.map((partner) => (
+                <NewOrgRequestCard
+                  key={partner?._id}
+                  partnerDetails={partner}
+                />
+              ))}
+            </>
+          )}
 
           {activeTab === 3 && <PartnersTable status="rejected" />}
 

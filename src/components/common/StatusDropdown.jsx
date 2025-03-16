@@ -4,6 +4,7 @@ import { Menu, MenuItem, Button } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const StatusDropdown = ({
+  isNew,
   allStatus,
   currentStatus,
   documentId,
@@ -49,15 +50,18 @@ const StatusDropdown = ({
           justifyContent: "space-between",
           alignItems: "center",
           textTransform: "none",
-          backgroundColor: "#fff",
-          borderRadius: "50px",
+          backgroundColor: isNew ? "#F3F3F3" : "#fff",
+          "&:hover": {
+            backgroundColor: isNew ? "#F3F3F3" : "#fff",
+          },
+          borderRadius: isNew ? "10px" : "50px",
           padding: "8px 16px",
         }}
       >
         <span className="flex items-center">
-          <p className="text-gray-600">Status :</p>
+          {!isNew && <p className="text-gray-600">Status :</p>}
           <span
-            className={`w-3 h-3 rounded-full ${selectedStatusData?.color} ml-2`}
+            className={`w-2 h-2 rounded-full ${selectedStatusData?.color} ml-2`}
           ></span>
           <span className={`ml-1 ${selectedStatusData?.text}`}>
             {selectedStatus}
@@ -101,7 +105,7 @@ const StatusDropdown = ({
               }}
             >
               <span className="text-gray-600">Status :</span>
-              <span className={`w-3 h-3 rounded-full ${status.color}`}></span>
+              <span className={`w-2 h-2 rounded-full ${status.color}`}></span>
               <span className={status?.text}>{status.label}</span>
             </MenuItem>
           ))}

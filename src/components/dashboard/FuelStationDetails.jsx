@@ -1,7 +1,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import StatusDropdown from "../common/StatusDropdown";
-import { Box, Button, Typography, Divider } from "@mui/material";
+import { Box, Button, Divider } from "@mui/material";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { CheckCircleOutline } from "@mui/icons-material";
 import stationIcon from "../../assets/station.png";

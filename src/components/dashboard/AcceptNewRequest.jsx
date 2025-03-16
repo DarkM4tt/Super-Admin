@@ -27,6 +27,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState({});
   const [open, setOpen] = useState(false);
+  const [remarks, setRemarks] = useState("");
 
   const getDetailsUrl = useCallback(() => {
     if (entity === "partner")
@@ -97,6 +98,44 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
     },
     [entityId, setActiveComponent]
   );
+
+  const handleAddRemarks = async () => {
+    setError("");
+    setButtonLoading(true);
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_URL
+        }/organizations/super-admin/add-organization-document-remark/${
+          selectedDocument?._id
+        }`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            remarks,
+          }),
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setSelectedDocument(null);
+        setOpen(false);
+        fetchEntityDetails();
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setButtonLoading(false);
+      setRemarks("");
+    }
+  };
 
   const handleDocStatusChange = useCallback(
     async (status, documentId) => {
@@ -306,7 +345,10 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
                   },
                   textDecoration: "underline",
                 }}
-                onClick={() => setOpen(true)}
+                onClick={() => {
+                  setSelectedDocument(doc);
+                  setOpen(true);
+                }}
               >
                 Remarks
               </Button>
@@ -368,12 +410,27 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
 
       <DocumentModal
         open={openDocumentModal}
-        onClose={() => setOpenDocumentModal(false)}
-        documentUrl={selectedDocument.url}
-        documentName={selectedDocument.name}
+        onClose={() => {
+          setSelectedDocument(null);
+          setOpenDocumentModal(false);
+        }}
+        documentUrl={selectedDocument?.url}
+        documentName={selectedDocument?.name}
       />
 
-      <RemarksModal open={open} handleClose={() => setOpen(false)} />
+      <RemarksModal
+        selectedDocument={selectedDocument}
+        remarks={remarks}
+        setRemarks={setRemarks}
+        buttonLoading={buttonLoading}
+        error={error}
+        open={open}
+        handleClose={() => {
+          setSelectedDocument(null);
+          setOpen(false);
+        }}
+        handleAddRemarks={handleAddRemarks}
+      />
     </>
   );
 };

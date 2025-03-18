@@ -238,6 +238,11 @@ const PartnerInfo = ({
     }
   }, []);
 
+  const handleRemarksClick = (document) => {
+    setSelectedDocument(document);
+    setOpenRemarksModal(true);
+  };
+
   const data = {
     labels: ["May", "Jun", "Jul", "Aug", "Sep"],
     datasets: [
@@ -665,6 +670,7 @@ const PartnerInfo = ({
         {/* Right Cards */}
         <div className="w-[30%] flex flex-col gap-4">
           <SubmittedDocumentsCard
+            handleRemarksClick={handleRemarksClick}
             orgDocuments={partnerDetails?.organizationDocuments}
             status={allDocumentStatus}
             onDocStatusChange={handleDocStatusChange}

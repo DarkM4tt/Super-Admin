@@ -403,25 +403,27 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
               >
                 View
               </Button>
-              <Button
-                variant="text"
-                sx={{
-                  color: "black",
-                  textTransform: "none",
-                  fontWeight: "600",
-                  "&:hover": {
-                    backgroundColor: "#ffffff",
+              {!(doc?.status === "APPROVED") && (
+                <Button
+                  variant="text"
+                  sx={{
+                    color: "black",
+                    textTransform: "none",
+                    fontWeight: "600",
+                    "&:hover": {
+                      backgroundColor: "#ffffff",
+                      textDecoration: "underline",
+                    },
                     textDecoration: "underline",
-                  },
-                  textDecoration: "underline",
-                }}
-                onClick={() => {
-                  setSelectedDocument(doc);
-                  setOpen(true);
-                }}
-              >
-                Remarks
-              </Button>
+                  }}
+                  onClick={() => {
+                    setSelectedDocument(doc);
+                    setOpen(true);
+                  }}
+                >
+                  Remarks
+                </Button>
+              )}
               <StatusDropdown
                 isNew={true}
                 allStatus={allDocumentStatus}

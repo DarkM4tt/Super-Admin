@@ -207,6 +207,11 @@ const VehicleInfo = ({
     console.log("Selected services:", services);
   };
 
+  const handleRemarksClick = (document) => {
+    setSelectedDocument(document);
+    setOpenRemarksModal(true);
+  };
+
   if (error) {
     return (
       <p className="text-lg text-red-400 font-bold">
@@ -532,6 +537,7 @@ const VehicleInfo = ({
         {/* Right Cards */}
         <div className="w-[30%] flex flex-col gap-8">
           <SubmittedDocumentsCard
+            handleRemarksClick={handleRemarksClick}
             orgDocuments={vehicleDocuments}
             status={allDocumentStatus}
             onDocStatusChange={handleDocStatusChange}

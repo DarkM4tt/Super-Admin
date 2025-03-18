@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { allDocumentStatus } from "../../utils/enums";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import StatusDropdown from "./StatusDropdown";
 
 const DocumentModal = ({ open, onClose, documentUrl, documentName }) => {
@@ -62,7 +61,11 @@ const DocumentModal = ({ open, onClose, documentUrl, documentName }) => {
   );
 };
 
-const SubmittedDocumentsCard = ({ orgDocuments, onDocStatusChange }) => {
+const SubmittedDocumentsCard = ({
+  orgDocuments,
+  onDocStatusChange,
+  handleRemarksClick,
+}) => {
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState({});
 
@@ -82,9 +85,6 @@ const SubmittedDocumentsCard = ({ orgDocuments, onDocStatusChange }) => {
           <p className="font-redhat font-semibold text-base">
             Submitted documents
           </p>
-          <IconButton aria-label="options">
-            <MoreHorizIcon />
-          </IconButton>
         </div>
         {orgDocuments?.length === 0 && (
           <p className="text-red-400 font-bold text-lg">
@@ -94,21 +94,37 @@ const SubmittedDocumentsCard = ({ orgDocuments, onDocStatusChange }) => {
         {orgDocuments?.length > 0 && (
           <div className="mt-4 space-y-3 font-redhat text-base max-h-72 overflow-y-auto overflow-x-hidden flex flex-col gap-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100">
             {orgDocuments?.map((document, index) => (
-              <div key={index} className="max-w-[90%]">
-                <p
-                  className="font-bold underline cursor-pointer break-words"
-                  onClick={() =>
-                    handleOpenDocumentModal(document?.document, document?.name)
-                  }
-                >
-                  {document?.name}
-                </p>
-                <StatusDropdown
-                  allStatus={allDocumentStatus}
-                  currentStatus={document?.status}
-                  documentId={document?._id}
-                  onDocStatusChange={onDocStatusChange}
-                />
+              <div
+                key={index}
+                className="flex justify-between items-center pr-4"
+              >
+                <div className="max-w-[80%]">
+                  <p
+                    className="font-bold underline cursor-pointer break-words"
+                    onClick={() =>
+                      handleOpenDocumentModal(
+                        document?.document,
+                        document?.name
+                      )
+                    }
+                  >
+                    {document?.name}
+                  </p>
+                  <StatusDropdown
+                    allStatus={allDocumentStatus}
+                    currentStatus={document?.status}
+                    documentId={document?._id}
+                    onDocStatusChange={onDocStatusChange}
+                  />
+                </div>
+                {!(document?.status === "APPROVED") && (
+                  <p
+                    className="font-redhat font-semibold text-sm underline cursor-pointer"
+                    onClick={() => handleRemarksClick(document)}
+                  >
+                    Remarks
+                  </p>
+                )}
               </div>
             ))}
           </div>

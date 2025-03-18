@@ -11,7 +11,6 @@ import BackArrow from "../../assets/leftArrowBlack.svg";
 import TickIcon from "../../assets/tick.svg";
 import StatusDropdown from "../common/StatusDropdown";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import partycar from "../../assets/partycar.png";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useCallback, useEffect, useState } from "react";
 import QuickConnect from "../common/QuickConnect";
@@ -19,6 +18,7 @@ import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import CustomerCard from "../common/CustomerCard";
 import LoadingAnimation from "../common/LoadingAnimation";
 import { allDocumentStatus, allVehicleStatus } from "../../utils/enums";
+import RemarksModal from "../common/RemarkModal";
 
 const VehicleInfo = ({
   selectedVehicleId,
@@ -39,6 +39,10 @@ const VehicleInfo = ({
   const [error, setError] = useState("");
   const [vehicleData, setVehicleData] = useState(null);
   const [vehicleDocuments, setVehicleDocuments] = useState([]);
+  const [selectedDocument, setSelectedDocument] = useState({});
+  const [openRemarksModal, setOpenRemarksModal] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [remarks, setRemarks] = useState("");
 
   const fetchVehicleDetails = useCallback(async () => {
     setError("");
@@ -56,7 +60,7 @@ const VehicleInfo = ({
       );
       const result = await res?.json();
       if (result?.success) {
-        setVehicleData(result?.data?.vehicle);
+        setVehicleData(result?.data);
         setVehicleDocuments(result?.data?.documents);
       } else {
         throw new Error(result?.message);
@@ -77,7 +81,7 @@ const VehicleInfo = ({
         const res = await fetch(
           `${
             import.meta.env.VITE_API_URL
-          }/organizations/vehicle-listings/update-listing-status/${selectedVehicleId}`,
+          }/organizations/super-admin/update-vehicle-status/${selectedVehicleId}`,
           {
             method: "PUT",
             headers: {
@@ -106,6 +110,15 @@ const VehicleInfo = ({
 
   const handleDocStatusChange = useCallback(
     async (status, documentId) => {
+      if (status !== "APPROVED") {
+        const document = vehicleData?.documents?.find(
+          (doc) => doc._id === documentId
+        );
+        document.status = status;
+        setSelectedDocument(document);
+        setOpenRemarksModal(true);
+        return;
+      }
       setError("");
       setLoading(true);
 
@@ -113,7 +126,7 @@ const VehicleInfo = ({
         const res = await fetch(
           `${
             import.meta.env.VITE_API_URL
-          }/organizations/super-admin/update-vehicle-document-status/${documentId}`,
+          }/organizations/super-admin/update-vehicle-doc-status/${documentId}`,
           {
             method: "PUT",
             headers: {
@@ -137,8 +150,47 @@ const VehicleInfo = ({
         setLoading(false);
       }
     },
-    [fetchVehicleDetails]
+    [fetchVehicleDetails, vehicleData?.documents]
   );
+
+  const handleAddRemarks = async () => {
+    setError("");
+    setButtonLoading(true);
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_URL
+        }/organizations/super-admin/update-vehicle-doc-status/${
+          selectedDocument?._id
+        }`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: selectedDocument?.status,
+            remarks,
+          }),
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setSelectedDocument(null);
+        setOpenRemarksModal(false);
+        fetchVehicleDetails();
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setButtonLoading(false);
+      setRemarks("");
+    }
+  };
 
   useEffect(() => {
     fetchVehicleDetails();
@@ -209,9 +261,13 @@ const VehicleInfo = ({
       {/* Info Card */}
       <div className=" p-6 rounded-lg bg-white mt-8">
         <div className="flex justify-between pb-11 border-b border-[#DDDDDD] ">
-          <div className="flex gap-4">
+          <div className="flex gap-8">
             <div className="">
-              <img src={partycar} alt="any" className="w-200 rounded-full" />
+              <img
+                src={vehicleData?.vehicle_image}
+                alt="car-icon"
+                className="w-32"
+              />
             </div>
             <div className="">
               <p className="font-sans text-2xl font-semibold flex items-center">
@@ -224,8 +280,13 @@ const VehicleInfo = ({
                 <span>
                   <DirectionsCarIcon fontSize="small" />
                 </span>
+
                 <p className="font-sans text-base text-[#777777]">
-                  {vehicleData?.vin}
+                  {vehicleData?.vin || (
+                    <p className="text-red-400 text-sm font-bold">
+                      VIN not known
+                    </p>
+                  )}
                 </p>
               </div>
             </div>
@@ -339,7 +400,7 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={services?.is_bold_miles}
+                    checked={vehicleData?.is_bold_miles}
                     onChange={handleChange}
                     name="is_bold_miles"
                     sx={{
@@ -431,23 +492,40 @@ const VehicleInfo = ({
           </div>
 
           <div className="bg-white w-full h-fit p-4 rounded-[8px] flex flex-col gap-2">
-            <CustomerCard />
-            <TextField
-              id="fuel-card-name"
-              placeholder="Assign another driver"
-              variant="outlined"
-              size="small"
-              // value={formData.cardName}
-              // onChange={(e) => handleChange("cardName", e.target.value)}
-              fullWidth
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <ExpandMoreIcon sx={{ color: "black" }} />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            {vehicleData?.driver ? (
+              <>
+                <p className="font-redHat font-semibold text-2xl">
+                  Current driver
+                </p>
+                <CustomerCard
+                  image={vehicleData?.driver?.profile_pic}
+                  name={vehicleData?.driver?.full_name}
+                  email={vehicleData?.driver?.email}
+                  contact={vehicleData?.driver?.phone}
+                  rating={4}
+                />
+                <TextField
+                  id="fuel-card-name"
+                  placeholder="Assign another driver"
+                  variant="outlined"
+                  size="small"
+                  // value={formData.cardName}
+                  // onChange={(e) => handleChange("cardName", e.target.value)}
+                  fullWidth
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <ExpandMoreIcon sx={{ color: "black" }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </>
+            ) : (
+              <p className="text-lg font-bold text-red-400">
+                No driver assigned yet!
+              </p>
+            )}
           </div>
         </div>
 
@@ -461,6 +539,21 @@ const VehicleInfo = ({
           <QuickConnect />
         </div>
       </div>
+
+      <RemarksModal
+        selectedDocument={selectedDocument}
+        remarks={remarks}
+        setRemarks={setRemarks}
+        buttonLoading={buttonLoading}
+        error={error}
+        open={openRemarksModal}
+        handleClose={() => {
+          setSelectedDocument(null);
+          setOpenRemarksModal(false);
+          fetchVehicleDetails();
+        }}
+        handleAddRemarks={handleAddRemarks}
+      />
     </>
   );
 };

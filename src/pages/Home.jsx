@@ -381,6 +381,7 @@ const Home = () => {
           <Vehicles
             selectedOrgId={selectedOrgId}
             onVehicleClick={handleVehicleClick}
+            handleAcceptClick={handleAcceptClick}
             setActiveComponent={setActiveComponent}
           />
         );

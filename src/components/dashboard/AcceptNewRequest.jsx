@@ -9,6 +9,7 @@ import {
   IconButton,
   Modal,
 } from "@mui/material";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import OrgBig from "../../assets/orgBig.svg";
 import pdfIcon from "../../assets/pdf.png";
@@ -18,6 +19,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { allDocumentStatus } from "../../utils/enums";
 import StatusDropdown from "../common/StatusDropdown";
 import RemarksModal from "../common/RemarkModal";
+import TickIcon from "../../assets/tick.svg";
 
 const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
   const [loading, setLoading] = useState(false);
@@ -34,7 +36,45 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
       return `${
         import.meta.env.VITE_API_URL
       }/organizations/super-admin/get-organization-details/${entityId}`;
+    if (entity === "vehicle")
+      return `${
+        import.meta.env.VITE_API_URL
+      }/organizations/super-admin/get-vehicle-details/${entityId}`;
+    return `${
+      import.meta.env.VITE_API_AUTH_URL
+    }/organizations/super-admin/get-driver-details/${entityId}`;
   }, [entity, entityId]);
+
+  const getStatusUpdateUrl = useCallback(() => {
+    if (entity === "partner")
+      return `${
+        import.meta.env.VITE_API_URL
+      }/organizations/super-admin/update-organization-status/${entityId}`;
+    if (entity === "vehicle")
+      return `${
+        import.meta.env.VITE_API_URL
+      }/organizations/super-admin/update-vehicle-status/${entityId}`;
+    return `${
+      import.meta.env.VITE_API_AUTH_URL
+    }/organizations/super-admin/update-driver-status/${entityId}`;
+  }, [entity, entityId]);
+
+  const getDocStatusUpdateUrl = useCallback(
+    (docId) => {
+      if (entity === "partner")
+        return `${
+          import.meta.env.VITE_API_URL
+        }/organizations/super-admin/update-org-doc-status/${docId}`;
+      if (entity === "vehicle")
+        return `${
+          import.meta.env.VITE_API_URL
+        }/organizations/super-admin/update-vehicle-doc-status/${docId}`;
+      return `${
+        import.meta.env.VITE_API_AUTH_URL
+      }/organizations/super-admin/update-driver-doc-status/${docId}`;
+    },
+    [entity]
+  );
 
   const fetchEntityDetails = useCallback(async () => {
     setError("");
@@ -58,35 +98,38 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
     }
   }, [getDetailsUrl]);
 
+  const entityDocuments = useCallback(() => {
+    if (entity === "partner") return entityDetails?.organizationDocuments;
+    if (entity === "vehicle") return entityDetails?.documents;
+    return [];
+  }, [entity, entityDetails?.documents, entityDetails?.organizationDocuments]);
+
   const handleOpenDocumentModal = (documentUrl, name) => {
     setSelectedDocument({ url: documentUrl, name });
     setOpenDocumentModal(true);
   };
 
-  const handleOrgStatusChange = useCallback(
+  const handleEntityStatusChange = useCallback(
     async (status) => {
       setError("");
       setButtonLoading(true);
 
       try {
-        const res = await fetch(
-          `${
-            import.meta.env.VITE_API_URL
-          }/organizations/super-admin/change-organization-status/${entityId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              status,
-            }),
-            credentials: "include",
-          }
-        );
+        const res = await fetch(getStatusUpdateUrl(), {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status,
+          }),
+          credentials: "include",
+        });
         const result = await res?.json();
         if (result?.success) {
-          setActiveComponent("Partners");
+          entity === "partner"
+            ? setActiveComponent("Partners")
+            : setActiveComponent("Vehicles");
         } else {
           throw new Error(result?.message);
         }
@@ -96,7 +139,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         setButtonLoading(false);
       }
     },
-    [entityId, setActiveComponent]
+    [entity, getStatusUpdateUrl, setActiveComponent]
   );
 
   const handleAddRemarks = async () => {
@@ -104,23 +147,17 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
     setButtonLoading(true);
 
     try {
-      const res = await fetch(
-        `${
-          import.meta.env.VITE_API_URL
-        }/organizations/super-admin/add-organization-document-remark/${
-          selectedDocument?._id
-        }`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            remarks,
-          }),
-          credentials: "include",
-        }
-      );
+      const res = await fetch(getDocStatusUpdateUrl(selectedDocument?._id), {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          status: selectedDocument?.status,
+          remarks,
+        }),
+        credentials: "include",
+      });
       const result = await res?.json();
       if (result?.success) {
         setSelectedDocument(null);
@@ -134,30 +171,35 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
     } finally {
       setButtonLoading(false);
       setRemarks("");
+      setOpen(false);
     }
   };
 
   const handleDocStatusChange = useCallback(
     async (status, documentId) => {
+      if (status !== "APPROVED") {
+        const document = entityDocuments()?.find(
+          (doc) => doc._id === documentId
+        );
+        document.status = status;
+        setSelectedDocument(document);
+        setOpen(true);
+        return;
+      }
+
       setError("");
       setLoading(true);
-
       try {
-        const res = await fetch(
-          `${
-            import.meta.env.VITE_API_URL
-          }/organizations/super-admin/update-org-document-status/${documentId}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              status,
-            }),
-            credentials: "include",
-          }
-        );
+        const res = await fetch(getDocStatusUpdateUrl(documentId), {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status,
+          }),
+          credentials: "include",
+        });
         const result = await res?.json();
         if (result?.success) {
           fetchEntityDetails();
@@ -170,7 +212,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         setLoading(false);
       }
     },
-    [fetchEntityDetails]
+    [entityDocuments, fetchEntityDetails, getDocStatusUpdateUrl]
   );
 
   useEffect(() => {
@@ -226,20 +268,48 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
     );
   };
 
-  const PartnerInfoCard = () => (
+  const EntityInfoCard = () => (
     <div className="px-4 py-8 bg-white rounded-lg mb-4">
-      <div className="flex items-center gap-4 border-b-[1px] border-[#e0e0e0] pb-6">
-        <img src={OrgBig} alt="Fuel Station Icon" className="w-30 mx-4" />
+      <div className="flex items-center gap-8 border-b-[1px] border-[#e0e0e0] pb-6">
+        {entity === "partner" ? (
+          <img src={OrgBig} alt="Fuel Station Icon" className="w-30 mx-4" />
+        ) : (
+          <img
+            src={entityDetails?.vehicle_image}
+            alt="Fuel Station Icon"
+            className="w-32 mx-4"
+          />
+        )}
         <div className="flex flex-col gap-2">
-          <p className="font-semibold text-2xl">
-            {entityDetails?.full_name || "No name"}
-          </p>
-          <div className="flex items-center text-gray gap-1">
-            <LocationOnIcon fontSize="small" />
-            <p className="font-normal text-base text-gray">
-              {entityDetails?.organizationAddress?.complete_address ||
-                "Address not provided yet!"}
+          {entity === "partner" ? (
+            <p className="font-semibold text-2xl">
+              {entityDetails?.full_name || "No name"}
             </p>
+          ) : (
+            <p className="font-semibold text-2xl">
+              {entityDetails?.brand_name} {entityDetails?.vehicle_model}
+            </p>
+          )}
+          <div className="flex items-center text-gray gap-1">
+            {entity === "partner" ? (
+              <LocationOnIcon fontSize="small" />
+            ) : (
+              <DirectionsCarIcon fontSize="small" />
+            )}
+            <p className="font-normal text-base text-gray">
+              {entity === "partner"
+                ? entityDetails?.organizationAddress?.complete_address ||
+                  "Address not provided yet!"
+                : entityDetails?.vin}
+            </p>
+          </div>
+        </div>
+        <div className="flex flex-col ml-auto">
+          <p className="font-semibold text-2xl">TVDE Applicable</p>
+          <div className="flex gap-2 items-center mt-4">
+            <img src={TickIcon} alt="TickIcon" />
+            <p className="font-semibold text-2xl">Yes</p>
+            <p className="font-normal text-sm ml-4">Validity : 2025</p>
           </div>
         </div>
       </div>
@@ -261,7 +331,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
                 backgroundColor: "rgba(26, 198, 205, 0.1)",
               },
             }}
-            onClick={() => handleOrgStatusChange("APPROVED")}
+            onClick={() => handleEntityStatusChange("APPROVED")}
           >
             {buttonLoading ? (
               <LoadingAnimation width={30} height={30} />
@@ -284,7 +354,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
                 backgroundColor: "rgba(240, 0, 0, 0.1)",
               },
             }}
-            onClick={() => handleOrgStatusChange("REJECTED")}
+            onClick={() => handleEntityStatusChange("REJECTED")}
           >
             {buttonLoading ? (
               <LoadingAnimation width={30} height={30} />
@@ -300,12 +370,12 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
   const SubmittedDocumentsCard = () => (
     <div className="py-8 px-6 bg-white rounded-lg">
       <p className="font-bold font-redhat text-lg mb-4">Uploaded documents</p>
-      {entityDetails?.organizationDocuments?.length === 0 && (
+      {entityDocuments()?.length === 0 && (
         <p className="text-lg text-red-400 font-bold">
           No documents uploaded yet!
         </p>
       )}
-      {entityDetails?.organizationDocuments?.map((doc, index) => (
+      {entityDocuments()?.map((doc, index) => (
         <Box key={index}>
           <div className="flex justify-between items-center mb-4 pt-4 pb-2">
             <div className="flex items-center">
@@ -361,9 +431,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
               />
             </div>
           </div>
-          {index < entityDetails?.organizationDocuments?.length - 1 && (
-            <Divider />
-          )}
+          {index < entityDocuments()?.length - 1 && <Divider />}
         </Box>
       ))}
     </div>
@@ -398,13 +466,15 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         src={BackArrow}
         alt="BackArrow"
         className="mb-4 mt-12 cursor-pointer"
-        onClick={() => {
-          setActiveComponent("Partners");
-        }}
+        onClick={() =>
+          entity === "partner"
+            ? setActiveComponent("Partners")
+            : setActiveComponent("Vehicles")
+        }
       />
 
       <Box className="flex flex-col gap-6 mt-8">
-        <PartnerInfoCard />
+        <EntityInfoCard />
         <SubmittedDocumentsCard />
       </Box>
 

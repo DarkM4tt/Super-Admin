@@ -10,13 +10,19 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Button,
 } from "@mui/material";
 import { MoreHoriz } from "@mui/icons-material";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import SearchIcon from "@mui/icons-material/Search";
 import LoadingAnimation from "../common/LoadingAnimation";
 
-const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
+const Vehicles = ({
+  selectedOrgId,
+  onVehicleClick,
+  handleAcceptClick,
+  setActiveComponent,
+}) => {
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -174,6 +180,66 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
     );
   };
 
+  const NewVehicleRequestCard = ({ vehicleDetails }) => {
+    return (
+      <div className="bg-white mt-4 rounded-md py-4 pr-6 pl-10 mb-4 relative border-b-[1px] border-[#344BFD]">
+        {/* Vehicle Details */}
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4 items-center">
+            <img src={vehicleDetails?.vehicle_image} alt="OrgBig" width={70} />
+            <div>
+              <p className="text-lg font-redhat font-bold">Vehicle Name</p>
+              <p className="text-base font-redhat font-medium text-gray">
+                {vehicleDetails?.brand_name} {vehicleDetails?.vehicle_model}
+              </p>
+            </div>
+          </div>
+
+          {/* TVDE */}
+          <div className="flex flex-col">
+            <p className="text-lg font-redhat font-bold">TVDE Applicable</p>
+            <p className="text-base font-redhat font-bold">
+              Yes : <span className="text-gray font-semibold">Until</span> : 22
+              - 01 - 2027
+            </p>
+          </div>
+
+          {/* Signed Up On */}
+          <div className="flex flex-col">
+            <p className="text-lg font-redhat font-bold">Organisation</p>
+            <p className="text-base font-redhat font-medium text-gray">
+              ABC Company Ltd
+            </p>
+            <p className="text-base font-redhat font-medium text-gray">
+              Status:{" "}
+              <span className="text-boldCyan font-semibold">Approved</span>
+            </p>
+          </div>
+
+          {/* Action Button */}
+          <Button
+            variant="outlined"
+            sx={{
+              textTransform: "none",
+              fontWeight: "600",
+              borderColor: "#000",
+              color: "#000",
+              borderRadius: "10px",
+              paddingInline: "30px",
+              "&:hover": {
+                borderColor: "#000",
+                backgroundColor: "rgba(0,0,0,0.05)",
+              },
+            }}
+            onClick={() => handleAcceptClick(vehicleDetails?._id, "vehicle")}
+          >
+            Accept and review
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   if (error) {
     return (
       <p className="text-lg text-red-400 font-bold">
@@ -240,7 +306,21 @@ const Vehicles = ({ selectedOrgId, onVehicleClick, setActiveComponent }) => {
 
           {activeTab === 1 && <VehiclesTable status="pending" />}
 
-          {activeTab === 2 && <VehiclesTable status="new" />}
+          {activeTab === 2 && (
+            <>
+              {allVehicles?.length === 0 && (
+                <p className="text-lg text-red-400 font-bold">
+                  No new organisations!
+                </p>
+              )}
+              {allVehicles?.map((vehicle) => (
+                <NewVehicleRequestCard
+                  key={vehicle?._id}
+                  vehicleDetails={vehicle}
+                />
+              ))}
+            </>
+          )}
 
           {activeTab === 3 && <VehiclesTable status="assigned" />}
 

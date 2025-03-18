@@ -92,11 +92,11 @@ const SubmittedDocumentsCard = ({ orgDocuments, onDocStatusChange }) => {
           </p>
         )}
         {orgDocuments?.length > 0 && (
-          <div className="mt-4 space-y-3 font-redhat text-base max-h-72 overflow-y-auto flex flex-col gap-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100">
+          <div className="mt-4 space-y-3 font-redhat text-base max-h-72 overflow-y-auto overflow-x-hidden flex flex-col gap-4 scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-100">
             {orgDocuments?.map((document, index) => (
-              <div key={index}>
+              <div key={index} className="max-w-[90%]">
                 <p
-                  className="font-bold underline cursor-pointer"
+                  className="font-bold underline cursor-pointer break-words"
                   onClick={() =>
                     handleOpenDocumentModal(document?.document, document?.name)
                   }

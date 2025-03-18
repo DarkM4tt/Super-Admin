@@ -12,6 +12,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import PictureAsPdfIcon from "../../assets/pdf.png";
 import LoadingAnimation from "./LoadingAnimation";
+import { formatDate } from "../../utils/dates";
 
 const RemarksModal = ({
   selectedDocument,
@@ -81,9 +82,16 @@ const RemarksModal = ({
         </label>
         <div className="mb-8 bg-[#F3F3F3] rounded-lg mx-3 p-4">
           {selectedDocument?.remarks && (
-            <p className="text-sm text-gray-700 max-w-[70%]">
-              {selectedDocument?.remarks}
-            </p>
+            <>
+              <p className="text-lg font-semibold text-gray-700 max-w-[70%]">
+                {selectedDocument?.remarks}
+              </p>
+              <p className="text-sm text-gray-700 max-w-[70%]">
+                {selectedDocument?.updatedAt
+                  ? formatDate(selectedDocument?.updatedAt)
+                  : formatDate(selectedDocument?.createdAt)}
+              </p>
+            </>
           )}
           <div className="flex flex-row-reverse items-center gap-2 mt-2">
             <span className="text-sm cursor-pointer">

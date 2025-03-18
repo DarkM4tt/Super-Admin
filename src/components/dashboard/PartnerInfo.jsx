@@ -37,6 +37,7 @@ import CustomDropdown from "./../common/CustomDropdown";
 import Locationmapcard from "./../common/locationmapcard";
 import LoadingAnimation from "../common/LoadingAnimation";
 import { allDocumentStatus, allOrgStatus } from "../../utils/enums";
+import RemarksModal from "../common/RemarkModal";
 
 ChartJS.register(
   CategoryScale,
@@ -59,6 +60,10 @@ const PartnerInfo = ({
   const [partnerDetails, setPartnerDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [selectedDocument, setSelectedDocument] = useState({});
+  const [openRemarksModal, setOpenRemarksModal] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [remarks, setRemarks] = useState("");
 
   const fetchPartnerDetails = useCallback(async () => {
     setError("");
@@ -89,6 +94,16 @@ const PartnerInfo = ({
 
   const handleDocStatusChange = useCallback(
     async (status, documentId) => {
+      if (status !== "APPROVED") {
+        const document = partnerDetails?.organizationDocuments?.find(
+          (doc) => doc._id === documentId
+        );
+        document.status = status;
+        setSelectedDocument(document);
+        setOpenRemarksModal(true);
+        return;
+      }
+
       setError("");
       setLoading(true);
 
@@ -96,7 +111,7 @@ const PartnerInfo = ({
         const res = await fetch(
           `${
             import.meta.env.VITE_API_URL
-          }/organizations/super-admin/update-org-document-status/${documentId}`,
+          }/organizations/super-admin/update-org-doc-status/${documentId}`,
           {
             method: "PUT",
             headers: {
@@ -120,8 +135,47 @@ const PartnerInfo = ({
         setLoading(false);
       }
     },
-    [fetchPartnerDetails]
+    [fetchPartnerDetails, partnerDetails?.organizationDocuments]
   );
+
+  const handleAddRemarks = async () => {
+    setError("");
+    setButtonLoading(true);
+
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_URL
+        }/organizations/super-admin/update-org-doc-status/${
+          selectedDocument?._id
+        }`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: selectedDocument?.status,
+            remarks,
+          }),
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setSelectedDocument(null);
+        setOpenRemarksModal(false);
+        fetchPartnerDetails();
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      alert(error.message);
+    } finally {
+      setButtonLoading(false);
+      setRemarks("");
+    }
+  };
 
   const handleOrgStatusChange = useCallback(
     async (status) => {
@@ -132,7 +186,7 @@ const PartnerInfo = ({
         const res = await fetch(
           `${
             import.meta.env.VITE_API_URL
-          }/organizations/super-admin/change-organization-status/${selectedOrgId}`,
+          }/organizations/super-admin/update-organization-status/${selectedOrgId}`,
           {
             method: "PUT",
             headers: {
@@ -623,6 +677,21 @@ const PartnerInfo = ({
           />
         </div>
       </div>
+
+      <RemarksModal
+        selectedDocument={selectedDocument}
+        remarks={remarks}
+        setRemarks={setRemarks}
+        buttonLoading={buttonLoading}
+        error={error}
+        open={openRemarksModal}
+        handleClose={() => {
+          setSelectedDocument(null);
+          setOpenRemarksModal(false);
+          fetchPartnerDetails();
+        }}
+        handleAddRemarks={handleAddRemarks}
+      />
     </>
   );
 };

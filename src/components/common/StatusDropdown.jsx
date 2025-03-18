@@ -94,6 +94,7 @@ const StatusDropdown = ({
                 documentId
                   ? onDocStatusChange(status?.label, documentId)
                   : onEntityStatusChange(status?.label);
+                handleClose();
               }}
               sx={{
                 display: "flex",

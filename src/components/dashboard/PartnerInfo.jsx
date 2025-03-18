@@ -35,9 +35,9 @@ import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import StatusDropdown from "../common/StatusDropdown";
 import CustomDropdown from "./../common/CustomDropdown";
 import Locationmapcard from "./../common/locationmapcard";
-import LoadingAnimation from "../common/LoadingAnimation";
 import { allDocumentStatus, allOrgStatus } from "../../utils/enums";
 import RemarksModal from "../common/RemarkModal";
+import { useSnackbar } from "../../context/snackbarContext";
 
 ChartJS.register(
   CategoryScale,
@@ -58,17 +58,13 @@ const PartnerInfo = ({
   const chartRef = useRef(null);
   const [gradient, setGradient] = useState(null);
   const [partnerDetails, setPartnerDetails] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [selectedDocument, setSelectedDocument] = useState({});
   const [openRemarksModal, setOpenRemarksModal] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [remarks, setRemarks] = useState("");
+  const showSnackbar = useSnackbar();
 
   const fetchPartnerDetails = useCallback(async () => {
-    setError("");
-    setLoading(true);
-
     try {
       const res = await fetch(
         `${
@@ -86,9 +82,7 @@ const PartnerInfo = ({
         throw new Error(result?.message);
       }
     } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
+      showSnackbar(error.message, "error");
     }
   }, [selectedOrgId]);
 
@@ -103,9 +97,6 @@ const PartnerInfo = ({
         setOpenRemarksModal(true);
         return;
       }
-
-      setError("");
-      setLoading(true);
 
       try {
         const res = await fetch(
@@ -125,21 +116,19 @@ const PartnerInfo = ({
         );
         const result = await res?.json();
         if (result?.success) {
+          showSnackbar(result?.message, "success");
           fetchPartnerDetails();
         } else {
           throw new Error(result?.message);
         }
       } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
+        showSnackbar(error.message, "error");
       }
     },
     [fetchPartnerDetails, partnerDetails?.organizationDocuments]
   );
 
   const handleAddRemarks = async () => {
-    setError("");
     setButtonLoading(true);
 
     try {
@@ -163,6 +152,7 @@ const PartnerInfo = ({
       );
       const result = await res?.json();
       if (result?.success) {
+        showSnackbar(result?.message, "success");
         setSelectedDocument(null);
         setOpenRemarksModal(false);
         fetchPartnerDetails();
@@ -170,7 +160,7 @@ const PartnerInfo = ({
         throw new Error(result?.message);
       }
     } catch (error) {
-      alert(error.message);
+      showSnackbar(error.message, "error");
     } finally {
       setButtonLoading(false);
       setRemarks("");
@@ -179,9 +169,6 @@ const PartnerInfo = ({
 
   const handleOrgStatusChange = useCallback(
     async (status) => {
-      setError("");
-      setLoading(true);
-
       try {
         const res = await fetch(
           `${
@@ -200,14 +187,13 @@ const PartnerInfo = ({
         );
         const result = await res?.json();
         if (result?.success) {
+          showSnackbar(result?.message, "success");
           fetchPartnerDetails();
         } else {
           throw new Error(result?.message);
         }
       } catch (error) {
-        alert(error.message);
-      } finally {
-        setLoading(false);
+        showSnackbar(error.message, "error");
       }
     },
     [fetchPartnerDetails, selectedOrgId]
@@ -436,18 +422,6 @@ const PartnerInfo = ({
       </Box>
     );
   };
-
-  if (loading) {
-    return <LoadingAnimation width={500} height={500} />;
-  }
-
-  if (error) {
-    return (
-      <p className="text-lg text-red-400 font-bold">
-        {error.message || "Error"}
-      </p>
-    );
-  }
 
   return (
     <>
@@ -689,7 +663,6 @@ const PartnerInfo = ({
         remarks={remarks}
         setRemarks={setRemarks}
         buttonLoading={buttonLoading}
-        error={error}
         open={openRemarksModal}
         handleClose={() => {
           setSelectedDocument(null);

@@ -20,16 +20,16 @@ import { allDocumentStatus } from "../../utils/enums";
 import StatusDropdown from "../common/StatusDropdown";
 import RemarksModal from "../common/RemarkModal";
 import TickIcon from "../../assets/tick.svg";
+import { useSnackbar } from "../../context/snackbarContext";
 
 const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
-  const [loading, setLoading] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
-  const [error, setError] = useState("");
   const [entityDetails, setEntityDetails] = useState(null);
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState({});
   const [open, setOpen] = useState(false);
   const [remarks, setRemarks] = useState("");
+  const showSnackbar = useSnackbar();
 
   const getDetailsUrl = useCallback(() => {
     if (entity === "partner")
@@ -77,9 +77,6 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
   );
 
   const fetchEntityDetails = useCallback(async () => {
-    setError("");
-    setLoading(true);
-
     try {
       const res = await fetch(getDetailsUrl(), {
         method: "GET",
@@ -92,9 +89,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         throw new Error(result?.message);
       }
     } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
+      console.log(error.message);
     }
   }, [getDetailsUrl]);
 
@@ -111,7 +106,6 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
 
   const handleEntityStatusChange = useCallback(
     async (status) => {
-      setError("");
       setButtonLoading(true);
 
       try {
@@ -127,6 +121,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         });
         const result = await res?.json();
         if (result?.success) {
+          showSnackbar(result?.message, "success");
           entity === "partner"
             ? setActiveComponent("Partners")
             : setActiveComponent("Vehicles");
@@ -134,7 +129,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
           throw new Error(result?.message);
         }
       } catch (error) {
-        alert(error.message);
+        showSnackbar(error.message, "error");
       } finally {
         setButtonLoading(false);
       }
@@ -143,7 +138,6 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
   );
 
   const handleAddRemarks = async () => {
-    setError("");
     setButtonLoading(true);
 
     try {
@@ -160,6 +154,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
       });
       const result = await res?.json();
       if (result?.success) {
+        showSnackbar(result?.message, "success");
         setSelectedDocument(null);
         setOpen(false);
         fetchEntityDetails();
@@ -167,7 +162,7 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         throw new Error(result?.message);
       }
     } catch (error) {
-      alert(error.message);
+      showSnackbar(error.message, "error");
     } finally {
       setButtonLoading(false);
       setRemarks("");
@@ -187,8 +182,6 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         return;
       }
 
-      setError("");
-      setLoading(true);
       try {
         const res = await fetch(getDocStatusUpdateUrl(documentId), {
           method: "PUT",
@@ -202,14 +195,13 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         });
         const result = await res?.json();
         if (result?.success) {
+          showSnackbar(result?.message, "success");
           fetchEntityDetails();
         } else {
           throw new Error(result?.message);
         }
       } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
+        showSnackbar(error.message, "error");
       }
     },
     [entityDocuments, fetchEntityDetails, getDocStatusUpdateUrl]
@@ -439,18 +431,6 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
     </div>
   );
 
-  if (loading) {
-    return <LoadingAnimation width={500} height={500} />;
-  }
-
-  if (error) {
-    return (
-      <p className="text-lg text-red-400 font-bold">
-        {error.message || "Error"}
-      </p>
-    );
-  }
-
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -495,7 +475,6 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         remarks={remarks}
         setRemarks={setRemarks}
         buttonLoading={buttonLoading}
-        error={error}
         open={open}
         handleClose={() => {
           setSelectedDocument(null);

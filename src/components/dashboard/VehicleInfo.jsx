@@ -16,9 +16,9 @@ import { useCallback, useEffect, useState } from "react";
 import QuickConnect from "../common/QuickConnect";
 import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import CustomerCard from "../common/CustomerCard";
-import LoadingAnimation from "../common/LoadingAnimation";
 import { allDocumentStatus, allVehicleStatus } from "../../utils/enums";
 import RemarksModal from "../common/RemarkModal";
+import { useSnackbar } from "../../context/snackbarContext";
 
 const VehicleInfo = ({
   selectedVehicleId,
@@ -35,19 +35,15 @@ const VehicleInfo = ({
     is_sos: false,
     is_xl: false,
   });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [vehicleData, setVehicleData] = useState(null);
   const [vehicleDocuments, setVehicleDocuments] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState({});
   const [openRemarksModal, setOpenRemarksModal] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [remarks, setRemarks] = useState("");
+  const showSnackbar = useSnackbar();
 
   const fetchVehicleDetails = useCallback(async () => {
-    setError("");
-    setLoading(true);
-
     try {
       const res = await fetch(
         `${
@@ -66,17 +62,12 @@ const VehicleInfo = ({
         throw new Error(result?.message);
       }
     } catch (error) {
-      setError(error);
-    } finally {
-      setLoading(false);
+      showSnackbar(error.message, "error");
     }
   }, [selectedVehicleId]);
 
   const handleVehicleStatusChange = useCallback(
     async (status) => {
-      setError("");
-      setLoading(true);
-
       try {
         const res = await fetch(
           `${
@@ -95,14 +86,13 @@ const VehicleInfo = ({
         );
         const result = await res?.json();
         if (result?.success) {
+          showSnackbar(result?.message, "success");
           fetchVehicleDetails();
         } else {
           throw new Error(result?.message);
         }
       } catch (error) {
-        alert(error.message);
-      } finally {
-        setLoading(false);
+        showSnackbar(error.message, "error");
       }
     },
     [fetchVehicleDetails, selectedVehicleId]
@@ -119,8 +109,6 @@ const VehicleInfo = ({
         setOpenRemarksModal(true);
         return;
       }
-      setError("");
-      setLoading(true);
 
       try {
         const res = await fetch(
@@ -140,21 +128,19 @@ const VehicleInfo = ({
         );
         const result = await res?.json();
         if (result?.success) {
+          showSnackbar(result?.message, "success");
           fetchVehicleDetails();
         } else {
           throw new Error(result?.message);
         }
       } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
+        showSnackbar(error.message, "error");
       }
     },
     [fetchVehicleDetails, vehicleData?.documents]
   );
 
   const handleAddRemarks = async () => {
-    setError("");
     setButtonLoading(true);
 
     try {
@@ -178,6 +164,7 @@ const VehicleInfo = ({
       );
       const result = await res?.json();
       if (result?.success) {
+        showSnackbar(result?.message, "success");
         setSelectedDocument(null);
         setOpenRemarksModal(false);
         fetchVehicleDetails();
@@ -185,7 +172,7 @@ const VehicleInfo = ({
         throw new Error(result?.message);
       }
     } catch (error) {
-      alert(error.message);
+      showSnackbar(error.message, "error");
     } finally {
       setButtonLoading(false);
       setRemarks("");
@@ -211,18 +198,6 @@ const VehicleInfo = ({
     setSelectedDocument(document);
     setOpenRemarksModal(true);
   };
-
-  if (error) {
-    return (
-      <p className="text-lg text-red-400 font-bold">
-        {error.message || "Error"}
-      </p>
-    );
-  }
-
-  if (loading) {
-    return <LoadingAnimation height={500} width={500} />;
-  }
 
   return (
     <>
@@ -551,7 +526,6 @@ const VehicleInfo = ({
         remarks={remarks}
         setRemarks={setRemarks}
         buttonLoading={buttonLoading}
-        error={error}
         open={openRemarksModal}
         handleClose={() => {
           setSelectedDocument(null);

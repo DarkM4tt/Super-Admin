@@ -19,19 +19,10 @@ const RemarksModal = ({
   remarks,
   setRemarks,
   buttonLoading,
-  error,
   open,
   handleClose,
   handleAddRemarks,
 }) => {
-  if (error) {
-    return (
-      <p className="text-lg text-red-400 font-bold">
-        {error.message || "Error"}
-      </p>
-    );
-  }
-
   return (
     <Dialog
       open={open}

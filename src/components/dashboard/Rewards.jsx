@@ -20,6 +20,7 @@ import {
 } from "@mui/material";
 import CreateNewRewardModal from "./CreateNewRewardModal";
 import UpdateCouponModal from "./UpdateCouponModal";
+import { useSnackbar } from "../../context/snackbarContext";
 
 const Rewards = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -57,6 +58,7 @@ const Rewards = () => {
   const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [buttonLoading, setButtonLoading] = useState(false);
+  const showSnackbar = useSnackbar();
 
   useEffect(() => {
     if (selectedCoupon) {
@@ -102,12 +104,13 @@ const Rewards = () => {
       );
       const result = await res.json();
       if (result?.success) {
+        showSnackbar(result?.message, "success");
         fetchAllCoupons();
       } else {
         throw new Error(result?.message);
       }
     } catch (error) {
-      console.error("Update failed:", error);
+      showSnackbar(error.message, "error");
     } finally {
       handleEditModalClose();
       setButtonLoading(false);
@@ -128,13 +131,14 @@ const Rewards = () => {
       });
       const result = await res?.json();
       if (result?.success) {
+        showSnackbar(result?.message, "success");
         fetchAllCoupons();
         handleMenuClose();
       } else {
         throw new Error(result?.message);
       }
     } catch (error) {
-      console.log(error);
+      showSnackbar(error.message, "error");
     }
   };
 
@@ -167,7 +171,7 @@ const Rewards = () => {
         throw new Error(result?.message);
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.message);
     }
   }, []);
 
@@ -189,7 +193,9 @@ const Rewards = () => {
         credentials: "include",
       });
       const result = await res?.json();
-      if (!result?.success) {
+      if (result?.success) {
+        showSnackbar(result?.message, "success");
+      } else {
         throw new Error(result?.message);
       }
     } catch (error) {
@@ -200,7 +206,7 @@ const Rewards = () => {
             : coupon
         )
       );
-      console.log(error);
+      showSnackbar(error.message, "error");
     }
   };
 
@@ -237,13 +243,13 @@ const Rewards = () => {
       );
       const result = await res?.json();
       if (result?.success) {
-        console.log(result?.message);
+        showSnackbar(result?.message, "success");
         fetchAllCoupons();
       } else {
         throw new Error(result?.message);
       }
     } catch (error) {
-      console.log(error);
+      showSnackbar(error, "error");
     } finally {
       setButtonLoading(false);
       setFormData({

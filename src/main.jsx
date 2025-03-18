@@ -10,6 +10,7 @@ import { Provider } from "react-redux";
 import ProtectedRoute from "./components/auth-flow/ProtectedRoute.jsx";
 import PublicRoute from "./components/auth-flow/PublicRoute.jsx";
 import { AuthProvider } from "./context/authContext.jsx";
+import { SnackbarProvider } from "./context/snackbarContext.jsx";
 import "./index.css";
 
 const router = createBrowserRouter([
@@ -34,11 +35,13 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-      <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </Provider>
+      <SnackbarProvider>
+        <Provider store={store}>
+          <ThemeProvider theme={theme}>
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </Provider>
+      </SnackbarProvider>
     </AuthProvider>
   </React.StrictMode>
 );

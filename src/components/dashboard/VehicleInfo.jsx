@@ -183,6 +183,21 @@ const VehicleInfo = ({
     fetchVehicleDetails();
   }, [fetchVehicleDetails]);
 
+  useEffect(() => {
+    if (vehicleData) {
+      setServices({
+        is_pet_friendly: vehicleData.is_pet_friendly || false,
+        is_assist: vehicleData.is_assist || false,
+        is_jumpstart: vehicleData.is_jumpstart || false,
+        is_listing: vehicleData.is_listing || false,
+        is_bold_miles: vehicleData.is_bold_miles || false,
+        is_rentals: vehicleData.is_rentals || false,
+        is_sos: vehicleData.is_sos || false,
+        is_xl: vehicleData.is_xl || false,
+      });
+    }
+  }, [vehicleData]);
+
   const handleChange = (event) => {
     setServices({
       ...services,
@@ -198,6 +213,9 @@ const VehicleInfo = ({
     setSelectedDocument(document);
     setOpenRemarksModal(true);
   };
+
+  console.log(vehicleData?.is_pet_friendly);
+  console.log(vehicleData?.is_assist);
 
   return (
     <>
@@ -329,7 +347,7 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={vehicleData?.is_pet_friendly}
+                    checked={services?.is_pet_friendly}
                     onChange={handleChange}
                     name="is_pet_friendly"
                     sx={{
@@ -346,7 +364,7 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={vehicleData?.is_jumpstart}
+                    checked={services?.is_jumpstart}
                     onChange={handleChange}
                     name="jumpstart"
                     sx={{
@@ -363,7 +381,7 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={vehicleData?.is_listing}
+                    checked={services?.is_listing}
                     onChange={handleChange}
                     name="is_listing"
                     sx={{
@@ -380,7 +398,7 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={vehicleData?.is_bold_miles}
+                    checked={services?.is_bold_miles}
                     onChange={handleChange}
                     name="is_bold_miles"
                     sx={{
@@ -403,7 +421,7 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={vehicleData?.is_assist}
+                    checked={services?.is_assist}
                     onChange={handleChange}
                     name="is_assist"
                     sx={{
@@ -420,7 +438,7 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={vehicleData?.is_rentals}
+                    checked={services?.is_rentals}
                     onChange={handleChange}
                     name="is_rentals"
                     sx={{
@@ -437,7 +455,7 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={vehicleData?.is_sos}
+                    checked={services?.is_sos}
                     onChange={handleChange}
                     name="is_sos"
                     sx={{
@@ -454,7 +472,7 @@ const VehicleInfo = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={vehicleData?.is_xl}
+                    checked={services?.is_xl}
                     onChange={handleChange}
                     name="is_xl"
                     sx={{

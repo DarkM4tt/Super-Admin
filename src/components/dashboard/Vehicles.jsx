@@ -12,10 +12,12 @@ import {
   TableRow,
   Button,
 } from "@mui/material";
-import { MoreHoriz } from "@mui/icons-material";
+import wrongIcon from "../../assets/wrongIcon.svg";
+import infoYellow from "../../assets/infoYellow.svg";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import SearchIcon from "@mui/icons-material/Search";
 import LoadingAnimation from "../common/LoadingAnimation";
+import { formatCreatedAt } from "../../utils/dates";
 
 const Vehicles = ({
   selectedOrgId,
@@ -82,6 +84,16 @@ const Vehicles = ({
     fetchVehicles();
   }, [fetchVehicles, activeTab]);
 
+  const getVerificationStatus = (partner) => {
+    const totalDocs = 6;
+    const notUploadedCount =
+      totalDocs - (partner?.verifiedDocuments + partner?.unverifiedDocuments);
+    const pendingCount = partner?.unverifiedDocuments;
+    const approvedCount = partner?.verifiedDocuments;
+    const isAllApproved = approvedCount === totalDocs;
+    return { notUploadedCount, pendingCount, isAllApproved };
+  };
+
   const VehiclesTable = ({ status }) => {
     return (
       <Box
@@ -117,12 +129,12 @@ const Vehicles = ({
               >
                 <TableRow>
                   {[
-                    "Vehicle brand",
-                    "Colour",
-                    "Vehicle number",
-                    "Status",
+                    "Vehicle model",
+                    "Brand",
+                    "Plate number",
+                    "Added on",
                     "Seats",
-                    "Options",
+                    status ? "Documents Status" : "Color",
                   ].map((header) => (
                     <TableCell key={header}>{header}</TableCell>
                   ))}
@@ -138,32 +150,78 @@ const Vehicles = ({
                   },
                 }}
               >
-                {allVehicles.map((vehicle) => (
-                  <TableRow
-                    key={vehicle?._id}
-                    onClick={() => onVehicleClick(vehicle?._id)}
-                    sx={{
-                      cursor: "pointer",
-                    }}
-                  >
-                    <TableCell>
-                      {vehicle?.brand_name} {vehicle?.vehicle_model}
-                    </TableCell>
-                    <TableCell>{vehicle?.color || "Null"}</TableCell>
-                    <TableCell>{vehicle?.vin || "Null"}</TableCell>
-                    <TableCell>
-                      {vehicle?.is_active ? (
-                        <p className="text-green-400">Active</p>
+                {allVehicles.map((vehicle) => {
+                  const { notUploadedCount, pendingCount, isAllApproved } =
+                    getVerificationStatus(vehicle);
+                  return (
+                    <TableRow
+                      key={vehicle?._id}
+                      onClick={() => onVehicleClick(vehicle?._id)}
+                      sx={{
+                        cursor: "pointer",
+                      }}
+                    >
+                      <TableCell>
+                        {vehicle?.vehicle_model || "Not provided!"}
+                      </TableCell>
+                      <TableCell>
+                        {vehicle?.brand_name || "Not provided!"}
+                      </TableCell>
+                      <TableCell>{vehicle?.vin || "Null"}</TableCell>
+                      <TableCell>
+                        {formatCreatedAt(vehicle?.createdAt) || "Not provided!"}
+                      </TableCell>
+                      <TableCell>{vehicle?.seats || "Not provided!"}</TableCell>
+                      {status ? (
+                        <TableCell>
+                          <div className="flex w-full justify-center items-center">
+                            {notUploadedCount > 0 && (
+                              <span
+                                className={`bg-[#f9ecea] pl-4 pr-2 py-2 ${
+                                  pendingCount > 0
+                                    ? "rounded-l-2xl"
+                                    : "rounded-2xl"
+                                } text-[#D40038] flex items-center`}
+                              >
+                                <img
+                                  src={wrongIcon}
+                                  alt="wrongIcon"
+                                  className="mr-1"
+                                />
+                                <p>{notUploadedCount}</p>
+                              </span>
+                            )}
+                            {pendingCount > 0 && (
+                              <span
+                                className={`bg-[#f9ecea] pl-2 pr-4 py-2 ${
+                                  notUploadedCount > 0
+                                    ? "rounded-r-2xl"
+                                    : "rounded-2xl"
+                                } text-[#C07000] flex items-center`}
+                              >
+                                <img
+                                  src={infoYellow}
+                                  alt="infoYellow"
+                                  className="mr-1"
+                                />
+                                <p>{pendingCount}</p>
+                              </span>
+                            )}
+                            {isAllApproved && (
+                              <p className="text-green-400 font-bold mr-20">
+                                Approved
+                              </p>
+                            )}
+                          </div>
+                        </TableCell>
                       ) : (
-                        <p className="text-red-400">Inactive</p>
+                        <TableCell>
+                          {vehicle?.color || "Not provided!"}
+                        </TableCell>
                       )}
-                    </TableCell>
-                    <TableCell>{vehicle?.seats}</TableCell>
-                    <TableCell>
-                      <MoreHoriz />
-                    </TableCell>
-                  </TableRow>
-                ))}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>

@@ -361,18 +361,20 @@ const UpdateRideTypePrices = ({
         );
       })}
       <div className="flex justify-between">
-        <Button
-          startIcon={<AddCircleOutlineIcon />}
-          sx={{
-            color: "black",
-            textTransform: "none",
-            fontWeight: 400,
-            fontSize: "14px",
-          }}
-          onClick={handleAddRow}
-        >
-          Click to add row
-        </Button>
+        {rideTypePrices?.length !== rideTypes?.length && (
+          <Button
+            startIcon={<AddCircleOutlineIcon />}
+            sx={{
+              color: "black",
+              textTransform: "none",
+              fontWeight: 400,
+              fontSize: "14px",
+            }}
+            onClick={handleAddRow}
+          >
+            Click to add row
+          </Button>
+        )}
         {newRows.length > 0 && (
           <div className="flex gap-4">
             <Button variant="outlined" onClick={handleClearNewRows}>

@@ -21,6 +21,7 @@ import RemarksModal from "../common/RemarkModal";
 import { useSnackbar } from "../../context/snackbarContext";
 
 const VehicleInfo = ({
+  selectedOrgId,
   selectedVehicleId,
   setSelectedVehicleId,
   setActiveComponent,
@@ -214,9 +215,6 @@ const VehicleInfo = ({
     setOpenRemarksModal(true);
   };
 
-  console.log(vehicleData?.is_pet_friendly);
-  console.log(vehicleData?.is_assist);
-
   return (
     <>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -240,7 +238,9 @@ const VehicleInfo = ({
             className="mb-4 cursor-pointer"
             onClick={() => {
               setSelectedVehicleId(null);
-              setActiveComponent("Vehicles");
+              selectedOrgId
+                ? setActiveComponent("Vehicles")
+                : setActiveComponent("AllVehicles");
             }}
           />
         </div>

@@ -21,6 +21,7 @@ import BusinessIcon from "@mui/icons-material/Business";
 import Acceptancechart from "./Dashboardcharts/Acceptancechart";
 import Bookinggraph from "./Dashboardcharts/Bookinggraph";
 import Saletypechart from "./Dashboardcharts/Saletypechart";
+import GroupIcon from "@mui/icons-material/Group";
 
 // Register required chart.js components
 // Chart.register(ArcElement, Tooltip, Legend);
@@ -35,7 +36,7 @@ ChartJS.register(
   Filler
 );
 
-const Dashboard = ({ onMenuItemClick }) => {
+const Dashboard = ({ onMenuItemClick, setSelectedOrgId }) => {
   const chartRef = useRef(null);
   const [gradient, setGradient] = useState(null);
 
@@ -207,7 +208,13 @@ const Dashboard = ({ onMenuItemClick }) => {
                     18 k+ currently{" "}
                     <span className="text-[#18C4B8]">active</span>
                   </p>
-                  <button className="pt-3 font-redhat text-sm font-light underline">
+                  <button
+                    className="pt-3 font-redhat text-sm font-light border-b-[2px]"
+                    onClick={() => {
+                      setSelectedOrgId(null);
+                      onMenuItemClick("AllVehicles");
+                    }}
+                  >
                     View list
                   </button>
                 </div>
@@ -217,7 +224,7 @@ const Dashboard = ({ onMenuItemClick }) => {
                 style={{ boxShadow: "4px 4px 33px 0px #0000000A" }}
               >
                 <div className="p-2 rounded-lg bg-[#006AFF21] h-fit">
-                  <BusinessIcon fontSize="medium" className="text-[#006AFF]" />
+                  <GroupIcon fontSize="medium" className="text-[#006AFF]" />
                 </div>
                 <div className="">
                   <p className="font-redhat font-semibold text-base">
@@ -262,7 +269,7 @@ const Dashboard = ({ onMenuItemClick }) => {
                     18 k+ currently ongoing
                   </p>
                   <button
-                    className="pt-3 font-redhat text-sm font-light underline"
+                    className="pt-3 font-redhat text-sm font-light border-b-[2px]"
                     onClick={() => onMenuItemClick("Trips")}
                   >
                     View list
@@ -299,7 +306,7 @@ const Dashboard = ({ onMenuItemClick }) => {
             >
               <div className="flex justify-between items-center  ">
                 <p className="font-redhat font-semibold text-base">
-                  Total revenue
+                  Total profit made
                 </p>
                 <button>
                   <MoreHorizIcon className="text-[#777777]" />

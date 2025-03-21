@@ -19,8 +19,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LoadingAnimation from "../common/LoadingAnimation";
 import { formatCreatedAt } from "../../utils/dates";
 
-const Vehicles = ({
-  selectedOrgId,
+const AllVehicles = ({
   onVehicleClick,
   handleAcceptClick,
   setActiveComponent,
@@ -34,25 +33,25 @@ const Vehicles = ({
     if (activeTab === 0) {
       return `${
         import.meta.env.VITE_API_URL
-      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=APPROVED&organization_id=${selectedOrgId}`;
+      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=APPROVED`;
     } else if (activeTab === 1) {
       return `${
         import.meta.env.VITE_API_URL
-      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=PENDING&organization_id=${selectedOrgId}`;
+      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=PENDING`;
     } else if (activeTab === 2) {
       return `${
         import.meta.env.VITE_API_URL
-      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=NEW-REQUEST&organization_id=${selectedOrgId}`;
+      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=NEW-REQUEST`;
     } else if (activeTab === 3) {
       return `${
         import.meta.env.VITE_API_URL
-      }/organizations/super-admin/get-all-vehicle-assignments?page=1&limit=100&organization_id=${selectedOrgId}`;
+      }/organizations/super-admin/get-all-vehicle-assignments?page=1&limit=100&is_active=true`;
     } else {
       return `${
         import.meta.env.VITE_API_URL
-      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=REJECTED&organization_id=${selectedOrgId}`;
+      }/organizations/super-admin/all-vehicles?page=1&limit=100&status=REJECTED`;
     }
-  }, [activeTab, selectedOrgId]);
+  }, [activeTab]);
 
   const fetchVehicles = useCallback(async () => {
     setError("");
@@ -135,8 +134,10 @@ const Vehicles = ({
                     "Brand",
                     "Plate number",
                     "Added on",
-                    "Seats",
-                    status ? "Documents Status" : "Color",
+                    status === "assigned" ? "Assigned Driver" : "Seats",
+                    status && status !== "assigned"
+                      ? "Documents Status"
+                      : "Color",
                   ].map((header) => (
                     <TableCell key={header}>{header}</TableCell>
                   ))}
@@ -247,6 +248,48 @@ const Vehicles = ({
     );
   };
 
+  const AssignedVehiclesTableBody = () => {
+    return (
+      <TableBody
+        sx={{
+          "& .MuiTableCell-root": {
+            fontWeight: "600",
+            fontSize: "16px",
+          },
+        }}
+      >
+        {allVehicles.map((vehicle) => (
+          <TableRow
+            key={vehicle?._id}
+            onClick={() => onVehicleClick(vehicle?.vehicle_id?._id)}
+            sx={{
+              cursor: "pointer",
+            }}
+          >
+            <TableCell>
+              {vehicle?.vehicle_id?.vehicle_model || "Not provided!"}
+            </TableCell>
+            <TableCell>
+              {vehicle?.vehicle_id?.brand_name || "Not provided!"}
+            </TableCell>
+            <TableCell>{vehicle?.vehicle_id?.vin || "Null"}</TableCell>
+            <TableCell>
+              {vehicle?.vehicle_id?.createdAt
+                ? formatCreatedAt(vehicle?.vehicle_id?.createdAt)
+                : "Not provided!"}
+            </TableCell>
+            <TableCell>
+              {vehicle?.driver?.full_name || "Not assigned yet!"}
+            </TableCell>
+            <TableCell>
+              {vehicle?.vehicle_id?.color || "Not provided!"}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    );
+  };
+
   const NewVehicleRequestCard = ({ vehicleDetails }) => {
     return (
       <div className="bg-white mt-4 rounded-md py-4 pr-6 pl-10 mb-4 relative border-b-[1px] border-[#344BFD]">
@@ -307,48 +350,6 @@ const Vehicles = ({
     );
   };
 
-  const AssignedVehiclesTableBody = () => {
-    return (
-      <TableBody
-        sx={{
-          "& .MuiTableCell-root": {
-            fontWeight: "600",
-            fontSize: "16px",
-          },
-        }}
-      >
-        {allVehicles.map((vehicle) => (
-          <TableRow
-            key={vehicle?._id}
-            onClick={() => onVehicleClick(vehicle?.vehicle_id?._id)}
-            sx={{
-              cursor: "pointer",
-            }}
-          >
-            <TableCell>
-              {vehicle?.vehicle_id?.vehicle_model || "Not provided!"}
-            </TableCell>
-            <TableCell>
-              {vehicle?.vehicle_id?.brand_name || "Not provided!"}
-            </TableCell>
-            <TableCell>{vehicle?.vehicle_id?.vin || "Null"}</TableCell>
-            <TableCell>
-              {vehicle?.vehicle_id?.createdAt
-                ? formatCreatedAt(vehicle?.vehicle_id?.createdAt)
-                : "Not provided!"}
-            </TableCell>
-            <TableCell>
-              {vehicle?.driver?.full_name || "Not assigned yet!"}
-            </TableCell>
-            <TableCell>
-              {vehicle?.vehicle_id?.color || "Not provided!"}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    );
-  };
-
   if (error) {
     return (
       <p className="text-lg text-red-400 font-bold">
@@ -359,9 +360,9 @@ const Vehicles = ({
 
   return (
     <>
-      {/* Vehicles Heading */}
+      {/* AllVehicles Heading */}
       <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
-        {"> Partners"}
+        {"> Dashboard > Vehicles"}
         <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
           <SearchIcon />
           <input
@@ -376,7 +377,7 @@ const Vehicles = ({
         src={BackArrow}
         alt="BackArrow"
         className="mb-4 cursor-pointer"
-        onClick={() => setActiveComponent("PartnerInfo")}
+        onClick={() => setActiveComponent("Dashboard")}
       />
 
       {/* Manage Heading */}
@@ -440,4 +441,4 @@ const Vehicles = ({
   );
 };
 
-export default Vehicles;
+export default AllVehicles;

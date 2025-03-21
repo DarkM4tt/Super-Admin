@@ -58,6 +58,7 @@ import AddPrices from "../components/dashboard/Location/AddPrices";
 import UpdatePolygon from "../components/dashboard/Location/UpdatePolygon";
 import UpdatePrices from "../components/dashboard/Location/UpdateRideTypePrices";
 import AcceptNewRequest from "../components/dashboard/AcceptNewRequest";
+import AllVehicles from "../components/dashboard/AllVehicles";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -194,6 +195,7 @@ const Home = () => {
     if (selectedVehicleId && activeComponent === "VehicleInfo") {
       return (
         <VehicleInfo
+          selectedOrgId={selectedOrgId}
           selectedVehicleId={selectedVehicleId}
           setSelectedVehicleId={setSelectedVehicleId}
           setActiveComponent={setActiveComponent}
@@ -249,6 +251,7 @@ const Home = () => {
         <AcceptNewRequest
           entityId={entityId}
           entity={entity}
+          selectedOrgId={selectedOrgId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -258,8 +261,17 @@ const Home = () => {
       case "Dashboard":
         return (
           <Dashboard
+            setSelectedOrgId={setSelectedOrgId}
             onMenuItemClick={handleMenuItemClick}
             activeItem={activeComponent}
+          />
+        );
+      case "AllVehicles":
+        return (
+          <AllVehicles
+            onVehicleClick={handleVehicleClick}
+            handleAcceptClick={handleAcceptClick}
+            setActiveComponent={setActiveComponent}
           />
         );
       case "Partners":

@@ -22,7 +22,12 @@ import RemarksModal from "../common/RemarkModal";
 import TickIcon from "../../assets/tick.svg";
 import { useSnackbar } from "../../context/snackbarContext";
 
-const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
+const AcceptNewRequest = ({
+  entityId,
+  entity,
+  selectedOrgId,
+  setActiveComponent,
+}) => {
   const [buttonLoading, setButtonLoading] = useState(false);
   const [entityDetails, setEntityDetails] = useState(null);
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
@@ -451,7 +456,9 @@ const AcceptNewRequest = ({ entityId, entity, setActiveComponent }) => {
         onClick={() =>
           entity === "partner"
             ? setActiveComponent("Partners")
-            : setActiveComponent("Vehicles")
+            : selectedOrgId
+            ? setActiveComponent("Vehicles")
+            : setActiveComponent("AllVehicles")
         }
       />
 

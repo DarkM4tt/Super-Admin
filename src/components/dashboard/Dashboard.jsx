@@ -17,11 +17,11 @@ import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArro
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import DirectionsCarFilledIcon from "@mui/icons-material/DirectionsCarFilled";
-import BusinessIcon from "@mui/icons-material/Business";
 import Acceptancechart from "./Dashboardcharts/Acceptancechart";
 import Bookinggraph from "./Dashboardcharts/Bookinggraph";
 import Saletypechart from "./Dashboardcharts/Saletypechart";
 import GroupIcon from "@mui/icons-material/Group";
+import DriverIcon from "../../assets/driver.svg";
 
 // Register required chart.js components
 // Chart.register(ArcElement, Tooltip, Legend);
@@ -235,8 +235,8 @@ const Dashboard = ({ onMenuItemClick, setSelectedOrgId }) => {
                     including 320 rental org.
                   </p>
                   <button
-                    className="pt-3 font-redhat text-sm font-light underline"
-                    onClick={() => onMenuItemClick("Customer")}
+                    className="pt-3 font-redhat text-sm font-light border-b-[2px]"
+                    onClick={() => onMenuItemClick("AllCustomers")}
                   >
                     View list
                   </button>
@@ -270,7 +270,7 @@ const Dashboard = ({ onMenuItemClick, setSelectedOrgId }) => {
                   </p>
                   <button
                     className="pt-3 font-redhat text-sm font-light border-b-[2px]"
-                    onClick={() => onMenuItemClick("Trips")}
+                    onClick={() => onMenuItemClick("AllRides")}
                   >
                     View list
                   </button>
@@ -280,18 +280,24 @@ const Dashboard = ({ onMenuItemClick, setSelectedOrgId }) => {
                 className="w-[30%] p-6 flex gap-6 bg-white items-center rounded-lg border-b border-[#1860C4]"
                 style={{ boxShadow: "4px 4px 33px 0px #0000000A" }}
               >
-                <div className="p-2 rounded-lg bg-[#006AFF21] h-fit">
-                  <BusinessIcon fontSize="medium" className="text-[#006AFF]" />
+                <div className="p-2 rounded-lg bg-[#F50AFE21] h-fit">
+                  <img src={DriverIcon} alt="DriverIcon" />
                 </div>
                 <div className="">
                   <p className="font-redhat font-semibold text-base">
-                    Total employees
+                    Total drivers
                   </p>
                   <p className="pt-2 font-redhat font-bold text-2xl">2210</p>
                   <p className="pt-2 text-sm text-[#777777]">
                     including 320 rental org.
                   </p>
-                  <button className="pt-3 font-redhat text-sm font-light underline">
+                  <button
+                    className="pt-3 font-redhat text-sm font-light border-b-[2px]"
+                    onClick={() => {
+                      setSelectedOrgId(null);
+                      onMenuItemClick("AllDrivers");
+                    }}
+                  >
                     View list
                   </button>
                 </div>

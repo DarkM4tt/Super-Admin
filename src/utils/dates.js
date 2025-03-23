@@ -35,3 +35,8 @@ export const formatDate = (dateString) => {
 
   return `${formattedTime} | ${dayLabel}`;
 };
+
+export const formatToTime = (isoString) => {
+  const date = new Date(isoString);
+  return format(date, "h:mma");
+};

@@ -59,6 +59,11 @@ import UpdatePolygon from "../components/dashboard/Location/UpdatePolygon";
 import UpdatePrices from "../components/dashboard/Location/UpdateRideTypePrices";
 import AcceptNewRequest from "../components/dashboard/AcceptNewRequest";
 import AllVehicles from "../components/dashboard/AllVehicles";
+import AllDrivers from "../components/dashboard/AllDrivers";
+import AllCustomers from "../components/dashboard/Customer/AllCustomers";
+import AllRides from "../components/dashboard/Rides/AllRides";
+import CustomerDetails from "../components/dashboard/Customer/CustomerDetails";
+import RideInfo from "../components/dashboard/Rides/RideInfo";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -85,7 +90,7 @@ const Home = () => {
   const [selectedThirdpartyId, setSelectedThirdpartyId] = useState(null);
   const [selectedSosId, setSelectedSosId] = useState(null);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
-  const [selectedTripId, setSelectedTripId] = useState(null);
+  const [selectedRideId, setSelectedRideId] = useState(null);
   const { authLoading } = useAuth();
 
   const handleMenuItemClick = (itemName) => {
@@ -142,9 +147,9 @@ const Home = () => {
     setActiveComponent("DriverInfo");
   };
 
-  const handleTripClick = (tripId) => {
-    setSelectedTripId(tripId);
-    setActiveComponent("TripInfo");
+  const handleRideClick = (rideId) => {
+    setSelectedRideId(rideId);
+    setActiveComponent("RideInfo");
   };
 
   const handleCustomerClick = (customerId) => {
@@ -205,7 +210,27 @@ const Home = () => {
     if (selectedDriverId && activeComponent === "DriverInfo") {
       return (
         <DriverInfo
+          selectedOrgId={selectedOrgId}
+          selectedDriverId={selectedDriverId}
           setSelectedDriverId={setSelectedDriverId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
+    if (selectedCustomerId && activeComponent === "CustomerInfo") {
+      return (
+        <CustomerDetails
+          selectedCustomerId={selectedCustomerId}
+          setSelectedCustomerId={setSelectedCustomerId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
+    if (selectedRideId && activeComponent === "RideInfo") {
+      return (
+        <RideInfo
+          selectedRideId={selectedRideId}
+          setSelectedRideId={setSelectedRideId}
           setActiveComponent={setActiveComponent}
         />
       );
@@ -274,6 +299,28 @@ const Home = () => {
             setActiveComponent={setActiveComponent}
           />
         );
+      case "AllDrivers":
+        return (
+          <AllDrivers
+            onDriverClick={handleDriverClick}
+            handleAcceptClick={handleAcceptClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
+      case "AllCustomers":
+        return (
+          <AllCustomers
+            onCustomerClick={handleCustomerClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
+      case "AllRides":
+        return (
+          <AllRides
+            onRideClick={handleRideClick}
+            setActiveComponent={setActiveComponent}
+          />
+        );
       case "Partners":
         return (
           <Partners
@@ -336,8 +383,6 @@ const Home = () => {
         return <Customer handleCustomerClick={handleCustomerClick} />;
       case "CustomerInfo":
         return <Customerinfo />;
-      case "Trips":
-        return <Trips handleTripClick={handleTripClick} />;
       case "TripInfo":
         return <Tripinfo />;
       case "Internalteam":

@@ -1,9 +1,8 @@
-import React from "react";
 import Rentalpartner from "../../../assets/Rentalpartner.png";
 import { GoogleMap } from "@react-google-maps/api";
 import useGoogleMapsLoader from "../../../useGoogleMapsLoader";
-import SearchIcon from '@mui/icons-material/Search';
-import KeyboardDoubleArrowRightIcon from '@mui/icons-material/KeyboardDoubleArrowRight';
+import SearchIcon from "@mui/icons-material/Search";
+import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 
 const Customerinfo = () => {
   const { isLoaded, loadError } = useGoogleMapsLoader();
@@ -17,24 +16,46 @@ const Customerinfo = () => {
   }
   return (
     <div className="flex flex-col gap-6">
-         <div className="flex justify-between items-center font-redhat text-base font-semibold ">
-         <p className="font-redhat font-semibold text-base flex items-center">
-            <span className="text-[#777777] pr-2">Services</span>
-            {"> SoS"}
-          </p>
-      <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
-<SearchIcon/>
-<input type='text' placeholder='Search anything...' className='bg-transparent outline-none'></input>
+      <div className="flex justify-between items-center font-redhat text-base font-semibold ">
+        <p className="font-redhat font-semibold text-base flex items-center">
+          <span className="text-[#777777] pr-2">Services</span>
+          {"> SoS"}
+        </p>
+        <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
+          <SearchIcon />
+          <input
+            type="text"
+            placeholder="Search anything..."
+            className="bg-transparent outline-none"
+          ></input>
+        </div>
       </div>
-    </div>
-    <p className="font-redhat font-semibold text-2xl pt-8">Overview</p>
-    <div className="flex justify-between items-center">
-      <div className="flex items-center gap-4 pt-6">
-        <div className="py-3 px-4 text-sm font-redhat bg-white rounded-[40px]">Visit 3rd Party partner profile <span className='pl-2'> <KeyboardDoubleArrowRightIcon/></span> </div>
-        <div className="py-3 px-4 text-sm font-redhat bg-white rounded-[40px]">Visit customer profile <span className='pl-2'> <KeyboardDoubleArrowRightIcon/></span> </div>
-        <div className="py-3 px-4 text-sm font-redhat bg-white rounded-[40px]">View vehicle details  <span className='pl-2'> <KeyboardDoubleArrowRightIcon/></span>  </div>
+      <p className="font-redhat font-semibold text-2xl pt-8">Overview</p>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-4 pt-6">
+          <div className="py-3 px-4 text-sm font-redhat bg-white rounded-[40px]">
+            Visit 3rd Party partner profile{" "}
+            <span className="pl-2">
+              {" "}
+              <KeyboardDoubleArrowRightIcon />
+            </span>{" "}
+          </div>
+          <div className="py-3 px-4 text-sm font-redhat bg-white rounded-[40px]">
+            Visit customer profile{" "}
+            <span className="pl-2">
+              {" "}
+              <KeyboardDoubleArrowRightIcon />
+            </span>{" "}
+          </div>
+          <div className="py-3 px-4 text-sm font-redhat bg-white rounded-[40px]">
+            View vehicle details{" "}
+            <span className="pl-2">
+              {" "}
+              <KeyboardDoubleArrowRightIcon />
+            </span>{" "}
+          </div>
+        </div>
       </div>
-    </div>
       <div className="rounded-lg  flex flex-col bg-white py-6 px-4 gap-11">
         <div className="flex gap-10 flex-wrap">
           <div className="flex flex-col gap-6">

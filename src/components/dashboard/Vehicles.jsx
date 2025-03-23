@@ -86,12 +86,12 @@ const Vehicles = ({
     fetchVehicles();
   }, [fetchVehicles, activeTab]);
 
-  const getVerificationStatus = (partner) => {
-    const totalDocs = 6;
+  const getVerificationStatus = (vehicle) => {
+    const totalDocs = 4;
     const notUploadedCount =
-      totalDocs - (partner?.verifiedDocuments + partner?.unverifiedDocuments);
-    const pendingCount = partner?.unverifiedDocuments;
-    const approvedCount = partner?.verifiedDocuments;
+      totalDocs - (vehicle?.verifiedDocuments + vehicle?.unverifiedDocuments);
+    const pendingCount = vehicle?.unverifiedDocuments;
+    const approvedCount = vehicle?.verifiedDocuments;
     const isAllApproved = approvedCount === totalDocs;
     return { notUploadedCount, pendingCount, isAllApproved };
   };

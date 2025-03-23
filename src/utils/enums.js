@@ -18,6 +18,7 @@ export const allDriverStatus = [
   { label: "PENDING", color: "bg-yellow-500", text: "text-yellow-500" },
   { label: "REJECTED", color: "bg-red-500", text: "text-red-500" },
   { label: "APPROVED", color: "bg-green-500", text: "text-green-500" },
+  // { label: "NEW-REQUEST", color: "bg-blue-500", text: "text-blue-500" },
 ];
 
 export const allVehicleStatus = [
@@ -25,6 +26,4 @@ export const allVehicleStatus = [
   { label: "REJECTED", color: "bg-red-500", text: "text-red-500" },
   { label: "APPROVED", color: "bg-green-500", text: "text-green-500" },
   { label: "NEW-REQUEST", color: "bg-blue-500", text: "text-blue-500" },
-  { label: "ASSIGNED", color: "bg-violet-500", text: "text-violet-500" },
-  { label: "AVAILABLE", color: "bg-orange-500", text: "text-orange-500" },
 ];

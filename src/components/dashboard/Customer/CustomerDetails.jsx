@@ -1,11 +1,10 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import SearchIcon from "@mui/icons-material/Search";
-import StatusDropdown from "../../common/StatusDropdown";
+import BackArrow from "../../../assets/leftArrowBlack.svg";
 import CallIcon from "@mui/icons-material/Call";
 import EmailIcon from "@mui/icons-material/Email";
-import Rentalpartner from "../../../assets/Rentalpartner.png";
+import Avatar from "@mui/material/Avatar";
 import StarIcon from "@mui/icons-material/Star";
-import PlaceIcon from "@mui/icons-material/Place";
 import Incoming from "../../../assets/Incoming.svg";
 import Outgoing from "../../../assets/Outgoing.svg";
 import Unanswered from "../../../assets/Unanswered.svg";
@@ -21,113 +20,149 @@ import {
   TableRow,
 } from "@mui/material";
 import { MoreHoriz } from "@mui/icons-material";
+import { useSnackbar } from "../../../context/snackbarContext";
+import { useCallback, useEffect, useState } from "react";
 
-const Customer = ({ handleCustomerClick }) => {
-  const ridesData = [
-    {
-      id: 1,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Success",
-      totalSpends: 221.1,
-    },
-    {
-      id: 2,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Success",
-      totalSpends: 221.1,
-    },
-    {
-      id: 3,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Cancelled",
-      totalSpends: 221.1,
-    },
-    {
-      id: 4,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Success",
-      totalSpends: 221.1,
-    },
-    {
-      id: 5,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Success",
-      totalSpends: 221.1,
-    },
-    {
-      id: 6,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Cancelled",
-      totalSpends: 221.1,
-    },
-    {
-      id: 7,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Success",
-      totalSpends: 221.1,
-    },
-    {
-      id: 8,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Success",
-      totalSpends: 221.1,
-    },
-    {
-      id: 9,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Cancelled",
-      totalSpends: 221.1,
-    },
-    {
-      id: 10,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Success",
-      totalSpends: 221.1,
-    },
-    {
-      id: 11,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Success",
-      totalSpends: 221.1,
-    },
-    {
-      id: 12,
-      vehicle: "JHA011092",
-      rideType: "Package",
-      bookedOn: "12 Jan, 2024 | 4PM",
-      status: "Cancelled",
-      totalSpends: 221.1,
-    },
-  ];
+const ridesData = [
+  {
+    id: 1,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Success",
+    totalSpends: 221.1,
+  },
+  {
+    id: 2,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Success",
+    totalSpends: 221.1,
+  },
+  {
+    id: 3,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Cancelled",
+    totalSpends: 221.1,
+  },
+  {
+    id: 4,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Success",
+    totalSpends: 221.1,
+  },
+  {
+    id: 5,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Success",
+    totalSpends: 221.1,
+  },
+  {
+    id: 6,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Cancelled",
+    totalSpends: 221.1,
+  },
+  {
+    id: 7,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Success",
+    totalSpends: 221.1,
+  },
+  {
+    id: 8,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Success",
+    totalSpends: 221.1,
+  },
+  {
+    id: 9,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Cancelled",
+    totalSpends: 221.1,
+  },
+  {
+    id: 10,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Success",
+    totalSpends: 221.1,
+  },
+  {
+    id: 11,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Success",
+    totalSpends: 221.1,
+  },
+  {
+    id: 12,
+    vehicle: "JHA011092",
+    rideType: "Package",
+    bookedOn: "12 Jan, 2024 | 4PM",
+    status: "Cancelled",
+    totalSpends: 221.1,
+  },
+];
+
+const CustomerDetails = ({
+  selectedCustomerId,
+  setSelectedCustomerId,
+  setActiveComponent,
+  handleRideClick,
+}) => {
+  const [customerData, setCustomerData] = useState(null);
+  const showSnackbar = useSnackbar();
+
+  const fetchCustomerDetails = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_AUTH_URL
+        }/super-admin/customer-details/${selectedCustomerId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setCustomerData(result?.data);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      showSnackbar(error.message, "error");
+    }
+  }, [selectedCustomerId]);
+
+  useEffect(() => {
+    fetchCustomerDetails();
+  }, [fetchCustomerDetails]);
 
   return (
     <div>
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
         <p className="font-redhat font-semibold text-base flex items-center">
-          <span className="text-[#777777] pr-2">Dashboard</span>
-          {"> Ann Baptista"}
+          <span className="text-[#777777] pr-1">{"Dashboard > All users"}</span>
+          {`> ${customerData?.full_name}`}
         </p>
         <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
           <SearchIcon />
@@ -138,63 +173,57 @@ const Customer = ({ handleCustomerClick }) => {
           ></input>
         </div>
       </div>
-      <div className="flex items-center justify-end gap-6 pt-8 ">
-        <div className="py-3 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359] cursor-pointer">
+
+      <div className="flex items-center justify-between mt-8">
+        <img
+          src={BackArrow}
+          alt="BackArrow"
+          className="mb-4 cursor-pointer"
+          onClick={() => {
+            setSelectedCustomerId(null);
+            setActiveComponent("AllCustomers");
+          }}
+        />
+        <div className="py-1 px-4 text-base font-redhat bg-[#FF935914] rounded-[56px] text-[#FF9359] border border-[#FF9359] cursor-pointer">
           Generate report
         </div>
-        <StatusDropdown />
       </div>
+
       <div className="flex justify-between rounded-lg pb-11 mt-6 bg-white p-6 ">
-        <div className="">
-          <div className="flex gap-4">
+        <div className="flex gap-4">
+          {customerData?.profile_pic ? (
+            <img
+              src={customerData?.profile_pic}
+              alt="any"
+              className="w-20 h-20 rounded-full"
+            />
+          ) : (
+            <Avatar sx={{ width: "5rem", height: "5rem", borderRadius: "50%" }}>
+              {customerData?.full_name?.charAt(0)}
+            </Avatar>
+          )}
+          <div className="flex items-center gap-16">
             <div className="">
-              <img
-                src={Rentalpartner}
-                alt="any"
-                className="w-20 h-20 rounded-full"
-              />
-            </div>
-            <div className="flex items-center gap-16">
-              <div className="">
-                <p className="font-sans text-2xl font-semibold flex items-center">
-                  Ann Baptista{" "}
-                  <span className=" pl-4 text-base text-[#777777] underline font-sans">
-                    ABC Company Ltd &gt;&gt;
-                  </span>
-                </p>
-                <div className="pt-2 flex gap-4">
-                  <p className="font-sans text-base text-[#777777] flex gap-2 items-center">
-                    <span>
-                      <EmailIcon fontSize="small" />
-                    </span>
-                    annbaptista16@gmail.com
-                  </p>
-                  <p className="font-sans text-base text-[#777777] flex gap-2 items-center underline">
-                    <span>
-                      <CallIcon fontSize="small" />
-                    </span>
-                    +91-9440192122
-                  </p>
-                </div>
-                <p className="font-sans pt-2 text-base text-[#777777] flex gap-2 items-center">
-                  <span>
-                    <PlaceIcon fontSize="small" />
-                  </span>
-                  House number 622, Mall Road, Aveiro, Portugal
-                </p>
-              </div>
-              <div className="">
+              <p className="font-sans text-2xl font-semibold flex items-center">
+                {customerData?.full_name}{" "}
+              </p>
+              <div className="pt-2 flex gap-4">
                 <p className="font-sans text-base text-[#777777] flex gap-2 items-center">
-                  User ID : @annbaptista98_1
-                </p>
-                <p className="font-sans text-base text-[#777777] flex gap-2 items-center">
-                  Password : ******
                   <span>
-                    {" "}
                     <EmailIcon fontSize="small" />
                   </span>
+                  {customerData?.email}
+                </p>
+                <p className="font-sans text-base text-[#777777] flex gap-2 items-center underline">
+                  <span>
+                    <CallIcon fontSize="small" />
+                  </span>
+                  {customerData?.phone}
                 </p>
               </div>
+              <p className="font-sans pt-2 text-base text-[#777777] flex gap-2 items-center">
+                User ID: {customerData?.username}
+              </p>
             </div>
           </div>
         </div>
@@ -204,11 +233,12 @@ const Customer = ({ handleCustomerClick }) => {
             <span className="text-[#FBDB0B] pr-2">
               <StarIcon />
             </span>
-            4.5/5
+            {customerData?.rating ? customerData?.rating + "/5" : "0/5"}
           </p>
         </div>
       </div>
 
+      {/* Cards */}
       <div className="flex gap-8 mt-8">
         <div
           className="w-[30%] p-6 flex gap-6 bg-white items-center rounded-lg border-b border-[#1860C4]"
@@ -218,10 +248,10 @@ const Customer = ({ handleCustomerClick }) => {
             <img src={Incoming} alt="Incoming" />
           </div>
           <div className="">
-            <p className="font-redhat font-semibold text-base">
-              Total call received
+            <p className="font-redhat font-semibold text-base">Total spends</p>
+            <p className="pt-2 font-redhat font-bold text-2xl">
+              {customerData?.total_spends || 0}
             </p>
-            <p className="pt-2 font-redhat font-bold text-2xl">2210</p>
             <p className="pt-2 text-sm text-[#777777]">
               Last updated 2 min ago
             </p>
@@ -237,9 +267,11 @@ const Customer = ({ handleCustomerClick }) => {
           </div>
           <div className="">
             <p className="font-redhat font-semibold text-base">
-              Answered Queries
+              Total cabs booked
             </p>
-            <p className="pt-2 font-redhat font-bold text-2xl">221</p>
+            <p className="pt-2 font-redhat font-bold text-2xl">
+              {customerData?.total_rides_booked || 0}
+            </p>
             <p className="pt-2 text-sm text-[#777777]">
               Last updated 5 min ago
             </p>
@@ -254,14 +286,11 @@ const Customer = ({ handleCustomerClick }) => {
             <img src={Unanswered} alt="Unanswered" />
           </div>
           <div className="">
-            <p className="font-redhat font-semibold text-base">
-              Unanswered Queries
+            <p className="font-redhat font-semibold text-base">Issue raised</p>
+            <p className="pt-2 font-redhat font-bold text-2xl">
+              {customerData?.issue_raised || 0}
             </p>
-            <p className="pt-2 font-redhat font-bold text-2xl">2210</p>
-            <p className="pt-2 text-sm text-[#777777]">
-              Last updated 13 min ago
-            </p>
-            <p className="pt-2 text-sm text-[#777777]">vs 150 prev 17 days</p>
+            <p className="pt-2 text-sm text-[#777777]">for all queries</p>
           </div>
         </div>
         <div
@@ -281,7 +310,7 @@ const Customer = ({ handleCustomerClick }) => {
                     className="text-[#EEEEEE]"
                   />
                 </span>
-                Total calls
+                Booked rides
               </p>
               <p className="font-redhat text-xs">
                 <span className="pr-2">
@@ -290,12 +319,12 @@ const Customer = ({ handleCustomerClick }) => {
                     className="text-[#15D356]"
                   />
                 </span>
-                Responded calls
+                Completed rides
               </p>
             </div>
           </div>
           <CircularProgress
-            value={82}
+            value={customerData?.booked_rate || 80}
             primaryColor="#15D356"
             secondaryColor="#EEEEEE"
           />
@@ -358,7 +387,7 @@ const Customer = ({ handleCustomerClick }) => {
               {ridesData.map((ride) => (
                 <TableRow
                   key={ride.id}
-                  onClick={() => handleCustomerClick(ride?.id)}
+                  onClick={() => handleRideClick(ride?.id)}
                 >
                   <TableCell>{ride.vehicle}</TableCell>
                   <TableCell>{ride.rideType}</TableCell>
@@ -380,4 +409,4 @@ const Customer = ({ handleCustomerClick }) => {
   );
 };
 
-export default Customer;
+export default CustomerDetails;

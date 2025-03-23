@@ -277,8 +277,11 @@ const DriverInfo = ({
 
   useEffect(() => {
     fetchDriverDetails();
+  }, [fetchDriverDetails]);
+
+  useEffect(() => {
     driverData && fetchRideHistory();
-  }, [driverData, fetchDriverDetails, fetchRideHistory]);
+  }, [driverData, fetchRideHistory]);
 
   return (
     <>

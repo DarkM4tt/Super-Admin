@@ -28,8 +28,6 @@ import Thirdparty from "../components/dashboard/Seprateservices/Boldthirdparty/T
 import Thirdpartyinfo from "../components/dashboard/Seprateservices/Boldthirdparty/Thirdpartyinfo";
 import Sos from "../components/dashboard/Seprateservices/Sos/Sos";
 import Sosinfo from "../components/dashboard/Seprateservices/Sos/Sosinfo";
-import Customer from "../components/dashboard/Customer/Customer";
-import Customerinfo from "../components/dashboard/Customer/Customerinfo";
 import Trips from "../components/dashboard/Trips/Trips";
 import Tripinfo from "../components/dashboard/Trips/Tripinfo";
 import Internalteam from "../components/dashboard/Internalteam";
@@ -212,6 +210,7 @@ const Home = () => {
         <DriverInfo
           selectedOrgId={selectedOrgId}
           selectedDriverId={selectedDriverId}
+          onRideClick={handleRideClick}
           setSelectedDriverId={setSelectedDriverId}
           setActiveComponent={setActiveComponent}
         />
@@ -223,6 +222,7 @@ const Home = () => {
           selectedCustomerId={selectedCustomerId}
           setSelectedCustomerId={setSelectedCustomerId}
           setActiveComponent={setActiveComponent}
+          onRideClick={handleRideClick}
         />
       );
     }
@@ -379,10 +379,6 @@ const Home = () => {
         return <BoldMiles handleServiceClick={handleServiceClick} />;
       case "ServiceInfo":
         return <CommonServiceInfo />;
-      case "Customer":
-        return <Customer handleCustomerClick={handleCustomerClick} />;
-      case "CustomerInfo":
-        return <Customerinfo />;
       case "TripInfo":
         return <Tripinfo />;
       case "Internalteam":

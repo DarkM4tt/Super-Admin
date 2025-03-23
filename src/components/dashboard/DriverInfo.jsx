@@ -9,7 +9,6 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import SubmittedDocumentsCard from "../common/SubmittedDocuments";
 import StatusDropdown from "../common/StatusDropdown";
@@ -22,17 +21,98 @@ import { useSnackbar } from "../../context/snackbarContext";
 import { allDocumentStatus, allDriverStatus } from "../../utils/enums";
 import RemarksModal from "../common/RemarkModal";
 
+const EntityTable = ({ rideHistory, onRideClick }) => {
+  return (
+    <Box
+      sx={{
+        paddingInline: "15px",
+        paddingBlock: "30px",
+        backgroundColor: "#fff",
+        display: "flex",
+        flexDirection: "column",
+        gap: "30px",
+        borderRadius: "8px",
+      }}
+    >
+      <p className="font-redhat font-semibold text-2xl">Ride history</p>
+      <TableContainer sx={{ maxHeight: "550px", overflowY: "auto" }}>
+        <Table stickyHeader>
+          <TableHead
+            sx={{
+              "& .MuiTableCell-root": {
+                backgroundColor: "#EEEEEE",
+                fontWeight: "400",
+                fontSize: "16px",
+                borderBottom: "none",
+              },
+              "& .MuiTableCell-root:first-of-type": {
+                borderTopLeftRadius: "10px",
+                borderBottomLeftRadius: "10px",
+              },
+              "& .MuiTableCell-root:last-of-type": {
+                borderTopRightRadius: "10px",
+                borderBottomRightRadius: "10px",
+              },
+            }}
+          >
+            <TableRow>
+              {["User", "Vehicle", "Status", "Service type"].map((header) => (
+                <TableCell key={header}>{header}</TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+
+          <TableBody>
+            {rideHistory?.length > 0 ? (
+              rideHistory.map((ride) => (
+                <TableRow
+                  key={ride._id}
+                  sx={{
+                    cursor: "pointer",
+                    fontWeight: "600",
+                    fontSize: "16px",
+                  }}
+                  onClick={() => onRideClick(ride?._id)}
+                >
+                  <TableCell>
+                    {ride?.customer_info?.full_name || "No name"}
+                  </TableCell>
+                  <TableCell>
+                    {ride?.vehicle_info?.vin || "Not known!"}
+                  </TableCell>
+                  <TableCell>{ride?.status || "Not known!"}</TableCell>
+                  <TableCell>{ride?.ride_service || "Not known!"}</TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={4} align="center">
+                  <p className="text-red-400 text-lg font-bold mt-8">
+                    No rides yet!
+                  </p>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
+  );
+};
+
 const DriverInfo = ({
   selectedOrgId,
   selectedDriverId,
   setSelectedDriverId,
   setActiveComponent,
+  onRideClick,
 }) => {
   const [driverData, setDriverData] = useState(null);
   const [openRemarksModal, setOpenRemarksModal] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [remarks, setRemarks] = useState("");
   const [selectedDocument, setSelectedDocument] = useState({});
+  const [rideHistory, setRideHistory] = useState([]);
   const showSnackbar = useSnackbar();
 
   const fetchDriverDetails = useCallback(async () => {
@@ -49,6 +129,28 @@ const DriverInfo = ({
       const result = await res?.json();
       if (result?.success) {
         setDriverData(result?.data);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      showSnackbar(error.message, "error");
+    }
+  }, [selectedDriverId]);
+
+  const fetchRideHistory = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/ride/super-admin/history?page=1&limit=100&driver_id=${selectedDriverId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setRideHistory(result?.data?.rides?.results || []);
       } else {
         throw new Error(result?.message);
       }
@@ -175,143 +277,8 @@ const DriverInfo = ({
 
   useEffect(() => {
     fetchDriverDetails();
-  }, [fetchDriverDetails]);
-
-  const EntityTable = () => {
-    const driversData = [
-      {
-        id: 1,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 2,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 3,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 4,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 5,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 6,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 7,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 8,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-      {
-        id: 9,
-        name: "Omar Botosh",
-        assignedVehicle: "MX 019MMA9",
-        totalRides: 789,
-      },
-    ];
-
-    return (
-      <Box
-        sx={{
-          paddingInline: "15px",
-          paddingBlock: "30px",
-          backgroundColor: "#fff",
-          display: "flex",
-          flexDirection: "column",
-          gap: "30px",
-          borderRadius: "8px",
-        }}
-      >
-        <p className="font-redhat font-semibold text-2xl">Ride history</p>
-        <TableContainer>
-          <Table>
-            {/* Table Header */}
-            <TableHead
-              sx={{
-                "& .MuiTableCell-root": {
-                  backgroundColor: "#EEEEEE",
-                  fontWeight: "400",
-                  fontSize: "16px",
-                  borderBottom: "none",
-                },
-                "& .MuiTableCell-root:first-of-type": {
-                  borderTopLeftRadius: "10px",
-                  borderBottomLeftRadius: "10px",
-                },
-                "& .MuiTableCell-root:last-of-type": {
-                  borderTopRightRadius: "10px",
-                  borderBottomRightRadius: "10px",
-                },
-              }}
-            >
-              <TableRow
-                sx={{
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: "10px",
-                  fontWeight: "400",
-                  fontSize: "16px",
-                }}
-              >
-                {["Name", "Assigned vehicle", "Total rides", "Options"].map(
-                  (header) => (
-                    <TableCell key={header}>{header}</TableCell>
-                  )
-                )}
-              </TableRow>
-            </TableHead>
-
-            {/* Table Body */}
-            <TableBody>
-              {driversData.map((org) => (
-                <TableRow
-                  key={org.id}
-                  sx={{
-                    cursor: "pointer",
-                    fontWeight: "600",
-                    fontSize: "16px",
-                  }}
-                >
-                  <TableCell>{org.name}</TableCell>
-                  <TableCell>{org.assignedVehicle}</TableCell>
-                  <TableCell>{org.totalRides}</TableCell>
-                  <TableCell>
-                    <button>
-                      <MoreHorizIcon className="text-[#777777]" />
-                    </button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Box>
-    );
-  };
+    driverData && fetchRideHistory();
+  }, [driverData, fetchDriverDetails, fetchRideHistory]);
 
   return (
     <>
@@ -441,7 +408,7 @@ const DriverInfo = ({
       {/* Cards */}
       <div className="flex justify-between pt-8">
         <div className="w-4/6">
-          <EntityTable />
+          <EntityTable rideHistory={rideHistory} onRideClick={onRideClick} />
         </div>
 
         {/* Right Cards */}

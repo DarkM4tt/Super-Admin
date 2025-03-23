@@ -19,116 +19,18 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { MoreHoriz } from "@mui/icons-material";
 import { useSnackbar } from "../../../context/snackbarContext";
 import { useCallback, useEffect, useState } from "react";
-
-const ridesData = [
-  {
-    id: 1,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Success",
-    totalSpends: 221.1,
-  },
-  {
-    id: 2,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Success",
-    totalSpends: 221.1,
-  },
-  {
-    id: 3,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Cancelled",
-    totalSpends: 221.1,
-  },
-  {
-    id: 4,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Success",
-    totalSpends: 221.1,
-  },
-  {
-    id: 5,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Success",
-    totalSpends: 221.1,
-  },
-  {
-    id: 6,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Cancelled",
-    totalSpends: 221.1,
-  },
-  {
-    id: 7,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Success",
-    totalSpends: 221.1,
-  },
-  {
-    id: 8,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Success",
-    totalSpends: 221.1,
-  },
-  {
-    id: 9,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Cancelled",
-    totalSpends: 221.1,
-  },
-  {
-    id: 10,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Success",
-    totalSpends: 221.1,
-  },
-  {
-    id: 11,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Success",
-    totalSpends: 221.1,
-  },
-  {
-    id: 12,
-    vehicle: "JHA011092",
-    rideType: "Package",
-    bookedOn: "12 Jan, 2024 | 4PM",
-    status: "Cancelled",
-    totalSpends: 221.1,
-  },
-];
+import { formatCreatedAt } from "../../../utils/dates";
 
 const CustomerDetails = ({
   selectedCustomerId,
   setSelectedCustomerId,
   setActiveComponent,
-  handleRideClick,
+  onRideClick,
 }) => {
   const [customerData, setCustomerData] = useState(null);
+  const [rideHistory, setRideHistory] = useState([]);
   const showSnackbar = useSnackbar();
 
   const fetchCustomerDetails = useCallback(async () => {
@@ -153,9 +55,35 @@ const CustomerDetails = ({
     }
   }, [selectedCustomerId]);
 
+  const fetchRideHistory = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/ride/super-admin/history?page=1&limit=100&customer_id=${selectedCustomerId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setRideHistory(result?.data?.rides?.results || []);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      showSnackbar(error.message, "error");
+    }
+  }, [selectedCustomerId]);
+
   useEffect(() => {
     fetchCustomerDetails();
   }, [fetchCustomerDetails]);
+
+  useEffect(() => {
+    customerData && fetchRideHistory();
+  }, [fetchRideHistory, customerData]);
 
   return (
     <div>
@@ -363,12 +291,12 @@ const CustomerDetails = ({
             >
               <TableRow>
                 {[
+                  "Driver",
                   "Vehicle",
                   "Ride type",
                   "Booked on",
                   "Status",
                   "Total spends",
-                  "Options",
                 ].map((header) => (
                   <TableCell key={header}>{header}</TableCell>
                 ))}
@@ -384,23 +312,33 @@ const CustomerDetails = ({
                 },
               }}
             >
-              {ridesData.map((ride) => (
-                <TableRow
-                  key={ride.id}
-                  onClick={() => handleRideClick(ride?.id)}
-                >
-                  <TableCell>{ride.vehicle}</TableCell>
-                  <TableCell>{ride.rideType}</TableCell>
-                  <TableCell>{ride.bookedOn}</TableCell>
-                  <TableCell>{ride.status}</TableCell>
-                  <TableCell>€ {ride.totalSpends}</TableCell>
-                  <TableCell>
-                    <div>
-                      <MoreHoriz />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
+              {rideHistory?.length > 0 ? (
+                rideHistory.map((ride) => (
+                  <TableRow
+                    key={ride._id}
+                    onClick={() => onRideClick(ride?._id)}
+                  >
+                    <TableCell>
+                      {ride?.driver_info?.full_name || "No name"}
+                    </TableCell>
+                    <TableCell>
+                      {ride?.vehicle_info?.full_name || "Not known!"}
+                    </TableCell>
+                    <TableCell>{ride?.ride_service}</TableCell>
+                    <TableCell>
+                      {ride?.createdAt
+                        ? formatCreatedAt(ride?.createdAt)
+                        : "Not known!"}
+                    </TableCell>
+                    <TableCell>{ride?.status}</TableCell>
+                    <TableCell>€ {ride?.captured_amount}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <p className="text-red-400 text-lg font-bold mt-8">
+                  No rides yet!
+                </p>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

@@ -116,6 +116,8 @@ const RideInfo = ({
     return null;
   };
 
+  console.log(path);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center font-redhat text-base font-semibold ">
@@ -318,9 +320,9 @@ const RideInfo = ({
               <Polyline
                 path={path}
                 options={{
-                  strokeColor: "#0000FF",
+                  strokeColor: "#000000",
                   strokeOpacity: 0.8,
-                  strokeWeight: 4,
+                  strokeWeight: 8,
                 }}
               />
             )}

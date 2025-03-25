@@ -57,7 +57,8 @@ const RideInfo = ({
   const { ride_request, driver_polyline, status } = rideData || {};
   const pickup = ride_request?.pickup_location?.coordinates || [];
   const dropoff = ride_request?.dropoff_location?.coordinates || [];
-  const polylinePath = driver_polyline || ride_request?.initial_polyline;
+  const driverPolylinePath = driver_polyline;
+  const initialPolylinePath = ride_request?.initial_polyline;
 
   // Decode polyline function
   const decodePolyline = (encoded) => {
@@ -71,25 +72,14 @@ const RideInfo = ({
   };
 
   // Convert polyline to array of lat/lng objects
-  const path = polylinePath ? decodePolyline(polylinePath) : [];
+  const driverPath = driverPolylinePath
+    ? decodePolyline(driverPolylinePath)
+    : [];
+  const initialPath = initialPolylinePath
+    ? decodePolyline(initialPolylinePath)
+    : [];
 
   let vehiclePosition = null;
-  //   if (
-  //     [
-  //       "CREATED",
-  //       "BOOKED",
-  //       "ACCEPTED",
-  //       "ARRIVED",
-  //       "REQUESTING",
-  //       "VALIDATED",
-  //     ].includes(status)
-  //   ) {
-  //     vehiclePosition = { lat: pickup[1], lng: pickup[0] };
-  //   } else if (status === "ONROUTE" || status === "ONGOING") {
-  //     vehiclePosition = path[Math.floor(path.length / 2)];
-  //   } else if (status === "COMPLETED") {
-  //     vehiclePosition = { lat: dropoff[1], lng: dropoff[0] };
-  //   }
   if (status === "COMPLETED")
     vehiclePosition = { lat: dropoff[1], lng: dropoff[0] };
   else vehiclePosition = { lat: pickup[1], lng: pickup[0] };
@@ -116,7 +106,10 @@ const RideInfo = ({
     return null;
   };
 
-  console.log(path);
+  console.log("Driver: ", driverPolylinePath);
+  console.log("Initial: ", initialPolylinePath);
+  console.log("Driver Path: ", driverPath);
+  console.log("Initial Path: ", initialPath);
 
   return (
     <div className="flex flex-col gap-6">
@@ -316,11 +309,23 @@ const RideInfo = ({
             )}
 
             {/* Route Polyline */}
-            {path?.length > 0 && (
+            {initialPath?.length > 0 && (
               <Polyline
-                path={path}
+                path={initialPath}
                 options={{
                   strokeColor: "#000000",
+                  strokeOpacity: 0.8,
+                  strokeWeight: 8,
+                }}
+              />
+            )}
+
+            {/* Route Polyline */}
+            {driverPath?.length > 0 && (
+              <Polyline
+                path={driverPath}
+                options={{
+                  strokeColor: "#0000FF",
                   strokeOpacity: 0.8,
                   strokeWeight: 8,
                 }}

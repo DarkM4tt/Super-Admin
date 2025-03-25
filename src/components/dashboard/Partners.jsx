@@ -361,7 +361,7 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
           {activeTab === 2 && (
             <>
               {allPartners?.length === 0 && (
-                <p className="text-lg text-red-400 font-bold">
+                <p className="text-lg text-red-400 font-bold mt-8 bg-white p-2">
                   No new organisations!
                 </p>
               )}

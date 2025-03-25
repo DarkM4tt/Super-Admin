@@ -317,12 +317,13 @@ const CustomerDetails = ({
                   <TableRow
                     key={ride._id}
                     onClick={() => onRideClick(ride?._id)}
+                    sx={{ cursor: "pointer" }}
                   >
                     <TableCell>
                       {ride?.driver_info?.full_name || "No name"}
                     </TableCell>
                     <TableCell>
-                      {ride?.vehicle_info?.full_name || "Not known!"}
+                      {ride?.vehicle_info?.vin || "Not known!"}
                     </TableCell>
                     <TableCell>{ride?.ride_service}</TableCell>
                     <TableCell>

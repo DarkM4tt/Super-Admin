@@ -135,8 +135,10 @@ const Vehicles = ({
                     "Brand",
                     "Plate number",
                     "Added on",
-                    "Seats",
-                    status ? "Documents Status" : "Color",
+                    status === "assigned" ? "Assigned Driver" : "Seats",
+                    status && status !== "assigned"
+                      ? "Documents Status"
+                      : "Color",
                   ].map((header) => (
                     <TableCell key={header}>{header}</TableCell>
                   ))}
@@ -418,8 +420,8 @@ const Vehicles = ({
           {activeTab === 2 && (
             <>
               {allVehicles?.length === 0 && (
-                <p className="text-lg text-red-400 font-bold">
-                  No new organisations!
+                <p className="text-lg text-red-400 font-bold mt-8 bg-white p-2">
+                  No new vehicles!
                 </p>
               )}
               {allVehicles?.map((vehicle) => (

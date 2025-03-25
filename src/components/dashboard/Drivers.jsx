@@ -10,16 +10,22 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Button,
+  Avatar,
 } from "@mui/material";
-import { MoreHoriz } from "@mui/icons-material";
 import BackArrow from "../../assets/leftArrowBlack.svg";
-import PartnerIcon from "../../assets/partnerImage.png";
 import SearchIcon from "@mui/icons-material/Search";
-// import { formatCreatedAt } from "../../utils/dates";
 import LoadingAnimation from "../common/LoadingAnimation";
+import wrongIcon from "../../assets/wrongIcon.svg";
+import infoYellow from "../../assets/infoYellow.svg";
 import { formatCreatedAt } from "../../utils/dates";
 
-const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
+const Drivers = ({
+  selectedOrgId,
+  onDriverClick,
+  setActiveComponent,
+  handleDriverAcceptClick,
+}) => {
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -79,6 +85,66 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
     fetchDrivers();
   }, [fetchDrivers, activeTab]);
 
+  const NewDriverRequestCard = ({ driverDetails }) => {
+    return (
+      <div className="bg-white mt-4 rounded-md py-4 pr-6 pl-10 mb-4 relative border-b-[1px] border-[#344BFD]">
+        {/* Vehicle Details */}
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4 items-center">
+            {driverDetails?.profile_pic ? (
+              <img src={driverDetails?.profile_pic} alt="OrgBig" width={70} />
+            ) : (
+              <Avatar
+                sx={{ width: "5rem", height: "5rem", borderRadius: "50%" }}
+              >
+                {driverDetails?.full_name?.charAt(0)}
+              </Avatar>
+            )}
+            <div>
+              <p className="text-lg font-redhat font-bold">
+                {driverDetails?.full_name || "No name"}
+              </p>
+              <p className="text-base font-redhat font-medium text-gray">
+                {driverDetails?.username}
+              </p>
+            </div>
+          </div>
+
+          {/* Signed Up On */}
+          <div className="flex flex-col">
+            <p className="text-lg font-redhat font-bold">Contact info:</p>
+            <p className="text-base font-redhat font-medium text-gray">
+              Mobile: {driverDetails?.phone || "Not provided!"}
+            </p>
+            <p className="text-base font-redhat font-medium text-gray">
+              Email: {driverDetails?.email}
+            </p>
+          </div>
+
+          {/* Action Button */}
+          <Button
+            variant="outlined"
+            sx={{
+              textTransform: "none",
+              fontWeight: "600",
+              borderColor: "#000",
+              color: "#000",
+              borderRadius: "10px",
+              paddingInline: "30px",
+              "&:hover": {
+                borderColor: "#000",
+                backgroundColor: "rgba(0,0,0,0.05)",
+              },
+            }}
+            onClick={() => handleDriverAcceptClick(driverDetails?._id)}
+          >
+            Accept and review
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   const DriversTable = ({ status }) => {
     return (
       <Box
@@ -116,9 +182,9 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
                   {[
                     "Name",
                     "Joined on",
-                    "Total drivers",
-                    "Total vehicles",
-                    "Listing drivers",
+                    "Assigned vehicle",
+                    "Total trips",
+                    "Customer rating",
                     status ? "Documents Status" : "Issues/queries",
                   ].map((header) => (
                     <TableCell key={header}>{header}</TableCell>
@@ -146,7 +212,13 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
                     >
                       <TableCell>
                         <div className="flex items-center gap-2">
-                          <img src={PartnerIcon} alt="AppleIcon" />
+                          {driver?.profile_pic && (
+                            <img
+                              src={driver?.profile_pic}
+                              className="w-8 h-8 rounded-full"
+                              alt="driver-image"
+                            />
+                          )}
                           {driver?.full_name || (
                             <p className="text-red-500">No name</p>
                           )}
@@ -157,14 +229,66 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
                           <p className="text-red-200">Unknown</p>
                         )}
                       </TableCell>
-                      <TableCell>{driver?.email}</TableCell>
                       <TableCell>
-                        {formatCreatedAt(driver?.last_login)}
+                        {driver?.vehicle || (
+                          <p className="text-red-400">Not assigned yet!</p>
+                        )}
                       </TableCell>
-                      <TableCell>420</TableCell>
+                      <TableCell>{driver?.total_rides || 0}</TableCell>
                       <TableCell>
-                        <MoreHoriz />
+                        {driver?.rating ? driver?.rating + "/5" : 0}
                       </TableCell>
+                      {status ? (
+                        <TableCell>
+                          <div className="flex w-full justify-center items-center">
+                            {driver?.rejected_documents > 0 && (
+                              <span
+                                className={`bg-[#f9ecea] pl-4 pr-2 py-2 ${
+                                  driver?.pending_documents > 0
+                                    ? "rounded-l-2xl"
+                                    : "rounded-2xl"
+                                } text-[#D40038] flex items-center`}
+                              >
+                                <img
+                                  src={wrongIcon}
+                                  alt="wrongIcon"
+                                  className="mr-1"
+                                />
+                                <p>{driver?.rejected_documents}</p>
+                              </span>
+                            )}
+                            {driver?.pending_documents > 0 && (
+                              <span
+                                className={`bg-[#f9ecea] pl-2 pr-4 py-2 ${
+                                  driver?.rejected_documents > 0
+                                    ? "rounded-r-2xl"
+                                    : "rounded-2xl"
+                                } text-[#C07000] flex items-center`}
+                              >
+                                <img
+                                  src={infoYellow}
+                                  alt="infoYellow"
+                                  className="mr-1"
+                                />
+                                <p>{driver?.pending_documents}</p>
+                              </span>
+                            )}
+                            {driver?.total_documents === 9 &&
+                              driver?.verified_documents === 9 && (
+                                <p className="text-green-400 font-bold mr-20">
+                                  Approved
+                                </p>
+                              )}
+                            {driver?.total_documents === 0 && (
+                              <p className="text-red-400 font-bold">
+                                Not Uploaded!
+                              </p>
+                            )}
+                          </div>
+                        </TableCell>
+                      ) : (
+                        <TableCell>{driver?.issue_raised || 0}</TableCell>
+                      )}
                     </TableRow>
                   );
                 })}
@@ -194,7 +318,7 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
     <>
       {/* Partners Heading */}
       <div className="flex justify-between items-center font-redhat text-base font-semibold mb-8">
-        {"> Partners"}
+        {"> Partners > Drivers"}
         <div className="py-3 px-4 bg-[#EEEEEE] flex items-center gap-3 rounded-lg">
           <SearchIcon />
           <input
@@ -235,7 +359,9 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
       >
         <Tab label="All drivers" />
         <Tab label="Pending drivers" />
-        <Tab label="New requests (11)" />
+        <Tab label="New requests" />
+        <Tab label="Assigned" />
+        <Tab label="Rejected" />
       </Tabs>
 
       {loading ? (
@@ -246,7 +372,21 @@ const Drivers = ({ selectedOrgId, onDriverClick, setActiveComponent }) => {
 
           {activeTab === 1 && <DriversTable status="pending" />}
 
-          {activeTab === 2 && <DriversTable status="new" />}
+          {activeTab === 2 && (
+            <>
+              {allDrivers?.length === 0 && (
+                <p className="text-lg text-red-400 font-bold mt-8 bg-white p-2">
+                  No new drivers!
+                </p>
+              )}
+              {allDrivers?.map((driver) => (
+                <NewDriverRequestCard
+                  key={driver?._id}
+                  driverDetails={driver}
+                />
+              ))}
+            </>
+          )}
 
           {activeTab === 3 && <DriversTable status="assigned" />}
 

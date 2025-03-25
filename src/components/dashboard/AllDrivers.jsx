@@ -10,6 +10,8 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Button,
+  Avatar,
 } from "@mui/material";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import SearchIcon from "@mui/icons-material/Search";
@@ -18,7 +20,11 @@ import wrongIcon from "../../assets/wrongIcon.svg";
 import infoYellow from "../../assets/infoYellow.svg";
 import { formatCreatedAt } from "../../utils/dates";
 
-const AllDrivers = ({ onDriverClick, setActiveComponent }) => {
+const AllDrivers = ({
+  onDriverClick,
+  setActiveComponent,
+  handleDriverAcceptClick,
+}) => {
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -77,6 +83,66 @@ const AllDrivers = ({ onDriverClick, setActiveComponent }) => {
   useEffect(() => {
     fetchDrivers();
   }, [fetchDrivers, activeTab]);
+
+  const NewDriverRequestCard = ({ driverDetails }) => {
+    return (
+      <div className="bg-white mt-4 rounded-md py-4 pr-6 pl-10 mb-4 relative border-b-[1px] border-[#344BFD]">
+        {/* Vehicle Details */}
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4 items-center">
+            {driverDetails?.profile_pic ? (
+              <img src={driverDetails?.profile_pic} alt="OrgBig" width={70} />
+            ) : (
+              <Avatar
+                sx={{ width: "5rem", height: "5rem", borderRadius: "50%" }}
+              >
+                {driverDetails?.full_name?.charAt(0)}
+              </Avatar>
+            )}
+            <div>
+              <p className="text-lg font-redhat font-bold">
+                {driverDetails?.full_name || "No name"}
+              </p>
+              <p className="text-base font-redhat font-medium text-gray">
+                {driverDetails?.username}
+              </p>
+            </div>
+          </div>
+
+          {/* Signed Up On */}
+          <div className="flex flex-col">
+            <p className="text-lg font-redhat font-bold">Contact info:</p>
+            <p className="text-base font-redhat font-medium text-gray">
+              Mobile: {driverDetails?.phone || "Not provided!"}
+            </p>
+            <p className="text-base font-redhat font-medium text-gray">
+              Email: {driverDetails?.email}
+            </p>
+          </div>
+
+          {/* Action Button */}
+          <Button
+            variant="outlined"
+            sx={{
+              textTransform: "none",
+              fontWeight: "600",
+              borderColor: "#000",
+              color: "#000",
+              borderRadius: "10px",
+              paddingInline: "30px",
+              "&:hover": {
+                borderColor: "#000",
+                backgroundColor: "rgba(0,0,0,0.05)",
+              },
+            }}
+            onClick={() => handleDriverAcceptClick(driverDetails?._id)}
+          >
+            Accept and review
+          </Button>
+        </div>
+      </div>
+    );
+  };
 
   const DriversTable = ({ status }) => {
     return (
@@ -305,7 +371,21 @@ const AllDrivers = ({ onDriverClick, setActiveComponent }) => {
 
           {activeTab === 1 && <DriversTable status="pending" />}
 
-          {activeTab === 2 && <DriversTable status="new" />}
+          {activeTab === 2 && (
+            <>
+              {allDrivers?.length === 0 && (
+                <p className="text-lg text-red-400 font-bold mt-8 bg-white p-2">
+                  No new drivers!
+                </p>
+              )}
+              {allDrivers?.map((driver) => (
+                <NewDriverRequestCard
+                  key={driver?._id}
+                  driverDetails={driver}
+                />
+              ))}
+            </>
+          )}
 
           {activeTab === 3 && <DriversTable status="assigned" />}
 

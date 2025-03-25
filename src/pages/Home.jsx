@@ -62,6 +62,7 @@ import AllCustomers from "../components/dashboard/Customer/AllCustomers";
 import AllRides from "../components/dashboard/Rides/AllRides";
 import CustomerDetails from "../components/dashboard/Customer/CustomerDetails";
 import RideInfo from "../components/dashboard/Rides/RideInfo";
+import AcceptNewDriverRequest from "../components/dashboard/AcceptNewDriverRequest";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -183,6 +184,11 @@ const Home = () => {
     setActiveComponent("AcceptNewRequest");
   };
 
+  const handleDriverAcceptClick = (driverId) => {
+    setEntityId(driverId);
+    setActiveComponent("AcceptNewDriverRequest");
+  };
+
   const renderActiveComponent = () => {
     if (selectedOrgId && activeComponent === "PartnerInfo") {
       return (
@@ -281,6 +287,15 @@ const Home = () => {
         />
       );
     }
+    if (entityId && activeComponent === "AcceptNewDriverRequest") {
+      return (
+        <AcceptNewDriverRequest
+          entityId={entityId}
+          selectedOrgId={selectedOrgId}
+          setActiveComponent={setActiveComponent}
+        />
+      );
+    }
 
     switch (activeComponent) {
       case "Dashboard":
@@ -305,6 +320,7 @@ const Home = () => {
             onDriverClick={handleDriverClick}
             handleAcceptClick={handleAcceptClick}
             setActiveComponent={setActiveComponent}
+            handleDriverAcceptClick={handleDriverAcceptClick}
           />
         );
       case "AllCustomers":
@@ -444,6 +460,7 @@ const Home = () => {
             selectedOrgId={selectedOrgId}
             onDriverClick={handleDriverClick}
             setActiveComponent={setActiveComponent}
+            handleDriverAcceptClick={handleDriverAcceptClick}
           />
         );
       case "Fuel Card":

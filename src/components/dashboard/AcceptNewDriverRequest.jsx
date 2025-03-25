@@ -2,6 +2,7 @@
 import SearchIcon from "@mui/icons-material/Search";
 import BackArrow from "../../assets/leftArrowBlack.svg";
 import {
+  Avatar,
   Box,
   Button,
   CircularProgress,
@@ -9,9 +10,6 @@ import {
   IconButton,
   Modal,
 } from "@mui/material";
-import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import OrgBig from "../../assets/orgBig.svg";
 import pdfIcon from "../../assets/pdf.png";
 import { useCallback, useEffect, useState } from "react";
 import LoadingAnimation from "../common/LoadingAnimation";
@@ -19,12 +17,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import { allDocumentStatus } from "../../utils/enums";
 import StatusDropdown from "../common/StatusDropdown";
 import RemarksModal from "../common/RemarkModal";
-import TickIcon from "../../assets/tick.svg";
 import { useSnackbar } from "../../context/snackbarContext";
 
-const AcceptNewRequest = ({
+const AcceptNewDriverRequest = ({
   entityId,
-  entity,
   selectedOrgId,
   setActiveComponent,
 }) => {
@@ -36,57 +32,17 @@ const AcceptNewRequest = ({
   const [remarks, setRemarks] = useState("");
   const showSnackbar = useSnackbar();
 
-  const getDetailsUrl = useCallback(() => {
-    if (entity === "partner")
-      return `${
-        import.meta.env.VITE_API_URL
-      }/organizations/super-admin/get-organization-details/${entityId}`;
-    if (entity === "vehicle")
-      return `${
-        import.meta.env.VITE_API_URL
-      }/organizations/super-admin/get-vehicle-details/${entityId}`;
-    return `${
-      import.meta.env.VITE_API_AUTH_URL
-    }/organizations/super-admin/get-driver-details/${entityId}`;
-  }, [entity, entityId]);
-
-  const getStatusUpdateUrl = useCallback(() => {
-    if (entity === "partner")
-      return `${
-        import.meta.env.VITE_API_URL
-      }/organizations/super-admin/update-organization-status/${entityId}`;
-    if (entity === "vehicle")
-      return `${
-        import.meta.env.VITE_API_URL
-      }/organizations/super-admin/update-vehicle-status/${entityId}`;
-    return `${
-      import.meta.env.VITE_API_AUTH_URL
-    }/organizations/super-admin/update-driver-status/${entityId}`;
-  }, [entity, entityId]);
-
-  const getDocStatusUpdateUrl = useCallback(
-    (docId) => {
-      if (entity === "partner")
-        return `${
-          import.meta.env.VITE_API_URL
-        }/organizations/super-admin/update-org-doc-status/${docId}`;
-      if (entity === "vehicle")
-        return `${
-          import.meta.env.VITE_API_URL
-        }/organizations/super-admin/update-vehicle-doc-status/${docId}`;
-      return `${
-        import.meta.env.VITE_API_AUTH_URL
-      }/organizations/super-admin/update-driver-doc-status/${docId}`;
-    },
-    [entity]
-  );
-
-  const fetchEntityDetails = useCallback(async () => {
+  const fetchDriverDetails = useCallback(async () => {
     try {
-      const res = await fetch(getDetailsUrl(), {
-        method: "GET",
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_AUTH_URL
+        }/super-admin/driver-details/${entityId}`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
       const result = await res?.json();
       if (result?.success) {
         setEntityDetails(result?.data);
@@ -94,15 +50,9 @@ const AcceptNewRequest = ({
         throw new Error(result?.message);
       }
     } catch (error) {
-      console.log(error.message);
+      showSnackbar(error.message, "error");
     }
-  }, [getDetailsUrl]);
-
-  const entityDocuments = useCallback(() => {
-    if (entity === "partner") return entityDetails?.organizationDocuments;
-    if (entity === "vehicle") return entityDetails?.documents;
-    return [];
-  }, [entity, entityDetails?.documents, entityDetails?.organizationDocuments]);
+  }, [entityId]);
 
   const handleOpenDocumentModal = (documentUrl, name) => {
     setSelectedDocument({ url: documentUrl, name });
@@ -114,24 +64,27 @@ const AcceptNewRequest = ({
       setButtonLoading(true);
 
       try {
-        const res = await fetch(getStatusUpdateUrl(), {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            status,
-          }),
-          credentials: "include",
-        });
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_AUTH_URL
+          }/super-admin/update-driver-status/${entityId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status,
+            }),
+            credentials: "include",
+          }
+        );
         const result = await res?.json();
         if (result?.success) {
           showSnackbar(result?.message, "success");
-          entity === "partner"
-            ? setActiveComponent("Partners")
-            : selectedOrgId
-            ? setActiveComponent("Vehicles")
-            : setActiveComponent("AllVehicles");
+          selectedOrgId
+            ? setActiveComponent("Drivers")
+            : setActiveComponent("AllDrivers");
         } else {
           throw new Error(result?.message);
         }
@@ -141,30 +94,35 @@ const AcceptNewRequest = ({
         setButtonLoading(false);
       }
     },
-    [entity, getStatusUpdateUrl, setActiveComponent, selectedOrgId]
+    [entityId, selectedOrgId, setActiveComponent]
   );
 
   const handleAddRemarks = async () => {
     setButtonLoading(true);
 
     try {
-      const res = await fetch(getDocStatusUpdateUrl(selectedDocument?._id), {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          status: selectedDocument?.status,
-          remarks,
-        }),
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_AUTH_URL
+        }/super-admin/update-driver-doc-status/${selectedDocument?._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            status: selectedDocument?.status,
+            remarks,
+          }),
+          credentials: "include",
+        }
+      );
       const result = await res?.json();
       if (result?.success) {
         showSnackbar(result?.message, "success");
         setSelectedDocument(null);
         setOpen(false);
-        fetchEntityDetails();
+        fetchDriverDetails();
       } else {
         throw new Error(result?.message);
       }
@@ -180,7 +138,7 @@ const AcceptNewRequest = ({
   const handleDocStatusChange = useCallback(
     async (status, documentId) => {
       if (status !== "APPROVED") {
-        const document = entityDocuments()?.find(
+        const document = entityDetails?.documents?.find(
           (doc) => doc._id === documentId
         );
         document.status = status;
@@ -190,20 +148,25 @@ const AcceptNewRequest = ({
       }
 
       try {
-        const res = await fetch(getDocStatusUpdateUrl(documentId), {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            status,
-          }),
-          credentials: "include",
-        });
+        const res = await fetch(
+          `${
+            import.meta.env.VITE_API_AUTH_URL
+          }/super-admin/update-driver-doc-status/${selectedDocument?._id}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status,
+            }),
+            credentials: "include",
+          }
+        );
         const result = await res?.json();
         if (result?.success) {
           showSnackbar(result?.message, "success");
-          fetchEntityDetails();
+          fetchDriverDetails();
         } else {
           throw new Error(result?.message);
         }
@@ -211,12 +174,12 @@ const AcceptNewRequest = ({
         showSnackbar(error.message, "error");
       }
     },
-    [entityDocuments, fetchEntityDetails, getDocStatusUpdateUrl]
+    [entityDetails?.documents, fetchDriverDetails, selectedDocument?._id]
   );
 
   useEffect(() => {
-    fetchEntityDetails();
-  }, [fetchEntityDetails]);
+    fetchDriverDetails();
+  }, [fetchDriverDetails]);
 
   const DocumentModal = ({ open, onClose, documentUrl, documentName }) => {
     const [loading, setLoading] = useState(true);
@@ -270,49 +233,23 @@ const AcceptNewRequest = ({
   const EntityInfoCard = () => (
     <div className="px-4 py-8 bg-white rounded-lg mb-4">
       <div className="flex items-center gap-8 border-b-[1px] border-[#e0e0e0] pb-6">
-        {entity === "partner" ? (
-          <img src={OrgBig} alt="Fuel Station Icon" className="w-30 mx-4" />
+        {entityDetails?.profile_pic ? (
+          <img src={entityDetails?.profile_pic} alt="OrgBig" width={70} />
         ) : (
-          <img
-            src={entityDetails?.vehicle_image}
-            alt="Fuel Station Icon"
-            className="w-32 mx-4"
-          />
+          <Avatar sx={{ width: "5rem", height: "5rem", borderRadius: "50%" }}>
+            {entityDetails?.full_name?.charAt(0)}
+          </Avatar>
         )}
         <div className="flex flex-col gap-2">
-          {entity === "partner" ? (
-            <p className="font-semibold text-2xl">
-              {entityDetails?.full_name || "No name"}
-            </p>
-          ) : (
-            <p className="font-semibold text-2xl">
-              {entityDetails?.brand_name} {entityDetails?.vehicle_model}
-            </p>
-          )}
+          <p className="font-semibold text-2xl">
+            {entityDetails?.full_name || "No name"}
+          </p>
           <div className="flex items-center text-gray gap-1">
-            {entity === "partner" ? (
-              <LocationOnIcon fontSize="small" />
-            ) : (
-              <DirectionsCarIcon fontSize="small" />
-            )}
             <p className="font-normal text-base text-gray">
-              {entity === "partner"
-                ? entityDetails?.organizationAddress?.complete_address ||
-                  "Address not provided yet!"
-                : entityDetails?.vin}
+              {entityDetails?.username}
             </p>
           </div>
         </div>
-        {entity === "vehicle" && (
-          <div className="flex flex-col ml-auto">
-            <p className="font-semibold text-2xl">TVDE Applicable</p>
-            <div className="flex gap-2 items-center mt-4">
-              <img src={TickIcon} alt="TickIcon" />
-              <p className="font-semibold text-2xl">Yes</p>
-              <p className="font-normal text-sm ml-4">Validity : 2025</p>
-            </div>
-          </div>
-        )}
       </div>
       <div className="flex items-center gap-14 mt-6 pl-6">
         <p className="font-redhat font-normal text-xl text-gray">Status</p>
@@ -371,12 +308,12 @@ const AcceptNewRequest = ({
   const SubmittedDocumentsCard = () => (
     <div className="py-8 px-6 bg-white rounded-lg">
       <p className="font-bold font-redhat text-lg mb-4">Uploaded documents</p>
-      {entityDocuments()?.length === 0 && (
+      {entityDetails?.documents?.length === 0 && (
         <p className="text-lg text-red-400 font-bold">
           No documents uploaded yet!
         </p>
       )}
-      {entityDocuments()?.map((doc, index) => (
+      {entityDetails?.documents?.map((doc, index) => (
         <Box key={index}>
           <div className="flex justify-between items-center mb-4 pt-4 pb-2">
             <div className="flex items-center">
@@ -434,7 +371,7 @@ const AcceptNewRequest = ({
               />
             </div>
           </div>
-          {index < entityDocuments()?.length - 1 && <Divider />}
+          {index < entityDetails?.documents?.length - 1 && <Divider />}
         </Box>
       ))}
     </div>
@@ -458,11 +395,9 @@ const AcceptNewRequest = ({
         alt="BackArrow"
         className="mb-4 mt-12 cursor-pointer"
         onClick={() =>
-          entity === "partner"
-            ? setActiveComponent("Partners")
-            : selectedOrgId
-            ? setActiveComponent("Vehicles")
-            : setActiveComponent("AllVehicles")
+          selectedOrgId
+            ? setActiveComponent("Drivers")
+            : setActiveComponent("AllDrivers")
         }
       />
 
@@ -497,4 +432,4 @@ const AcceptNewRequest = ({
   );
 };
 
-export default AcceptNewRequest;
+export default AcceptNewDriverRequest;

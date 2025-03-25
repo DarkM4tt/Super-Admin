@@ -403,7 +403,7 @@ const DriverInfo = ({
           </div>
         ) : (
           <p className="mt-2 text-red-400 text-lg font-semibold">
-            No driver assigned yet!
+            No vehicle assigned yet!
           </p>
         )}
       </div>

@@ -11,11 +11,10 @@ import DropoffIcon from "../../../assets/dropoff.svg";
 import { formatCreatedAt, formatToTime } from "../../../utils/dates";
 import { Avatar } from "@mui/material";
 
-const RideInfo = ({
+const CustomerRideInfo = ({
   selectedRideId,
   setSelectedRideId,
   setActiveComponent,
-  selectedDriverId,
 }) => {
   const [rideData, setRideData] = useState([]);
   const showSnackbar = useSnackbar();
@@ -132,9 +131,7 @@ const RideInfo = ({
             className="cursor-pointer"
             onClick={() => {
               setSelectedRideId(null);
-              selectedDriverId
-                ? setActiveComponent("DriverInfo")
-                : setActiveComponent("AllRides");
+              setActiveComponent("CustomerInfo");
             }}
           />
           <p>Overview</p>
@@ -336,4 +333,4 @@ const RideInfo = ({
   );
 };
 
-export default RideInfo;
+export default CustomerRideInfo;

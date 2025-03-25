@@ -63,6 +63,7 @@ import AllRides from "../components/dashboard/Rides/AllRides";
 import CustomerDetails from "../components/dashboard/Customer/CustomerDetails";
 import RideInfo from "../components/dashboard/Rides/RideInfo";
 import AcceptNewDriverRequest from "../components/dashboard/AcceptNewDriverRequest";
+import CustomerRideInfo from "../components/dashboard/Customer/CustomerRideInfo";
 
 const Home = () => {
   const [activeComponent, setActiveComponent] = useState("Dashboard");
@@ -151,6 +152,11 @@ const Home = () => {
     setActiveComponent("RideInfo");
   };
 
+  const handleCustomerRideClick = (rideId) => {
+    setSelectedRideId(rideId);
+    setActiveComponent("CustomerRideInfo");
+  };
+
   const handleCustomerClick = (customerId) => {
     setSelectedCustomerId(customerId);
     setActiveComponent("CustomerInfo");
@@ -228,7 +234,20 @@ const Home = () => {
           selectedCustomerId={selectedCustomerId}
           setSelectedCustomerId={setSelectedCustomerId}
           setActiveComponent={setActiveComponent}
-          onRideClick={handleRideClick}
+          onRideClick={handleCustomerRideClick}
+        />
+      );
+    }
+    if (
+      selectedCustomerId &&
+      selectedRideId &&
+      activeComponent === "CustomerRideInfo"
+    ) {
+      return (
+        <CustomerRideInfo
+          selectedRideId={selectedRideId}
+          setSelectedRideId={setSelectedRideId}
+          setActiveComponent={setActiveComponent}
         />
       );
     }
@@ -236,6 +255,7 @@ const Home = () => {
       return (
         <RideInfo
           selectedRideId={selectedRideId}
+          selectedDriverId={selectedDriverId}
           setSelectedRideId={setSelectedRideId}
           setActiveComponent={setActiveComponent}
         />
@@ -302,6 +322,7 @@ const Home = () => {
         return (
           <Dashboard
             setSelectedOrgId={setSelectedOrgId}
+            setSelectedDriverId={setSelectedDriverId}
             onMenuItemClick={handleMenuItemClick}
             activeItem={activeComponent}
           />

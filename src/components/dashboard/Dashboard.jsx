@@ -36,7 +36,11 @@ ChartJS.register(
   Filler
 );
 
-const Dashboard = ({ onMenuItemClick, setSelectedOrgId }) => {
+const Dashboard = ({
+  onMenuItemClick,
+  setSelectedOrgId,
+  setSelectedDriverId,
+}) => {
   const chartRef = useRef(null);
   const [gradient, setGradient] = useState(null);
 
@@ -270,7 +274,10 @@ const Dashboard = ({ onMenuItemClick, setSelectedOrgId }) => {
                   </p>
                   <button
                     className="pt-3 font-redhat text-sm font-light border-b-[2px]"
-                    onClick={() => onMenuItemClick("AllRides")}
+                    onClick={() => {
+                      setSelectedDriverId(null);
+                      onMenuItemClick("AllRides");
+                    }}
                   >
                     View list
                   </button>

@@ -360,17 +360,18 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
 
           {activeTab === 2 && (
             <>
-              {allPartners?.length === 0 && (
+              {allPartners?.length > 0 ? (
+                allPartners?.map((partner) => (
+                  <NewOrgRequestCard
+                    key={partner?._id}
+                    partnerDetails={partner}
+                  />
+                ))
+              ) : (
                 <p className="text-lg text-red-400 font-bold mt-8 bg-white p-2">
                   No new organisations!
                 </p>
               )}
-              {allPartners?.map((partner) => (
-                <NewOrgRequestCard
-                  key={partner?._id}
-                  partnerDetails={partner}
-                />
-              ))}
             </>
           )}
 

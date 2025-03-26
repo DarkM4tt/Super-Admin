@@ -374,17 +374,18 @@ const Drivers = ({
 
           {activeTab === 2 && (
             <>
-              {allDrivers?.length === 0 && (
+              {allDrivers?.length > 0 ? (
+                allDrivers?.map((driver) => (
+                  <NewDriverRequestCard
+                    key={driver?._id}
+                    driverDetails={driver}
+                  />
+                ))
+              ) : (
                 <p className="text-lg text-red-400 font-bold mt-8 bg-white p-2">
                   No new drivers!
                 </p>
               )}
-              {allDrivers?.map((driver) => (
-                <NewDriverRequestCard
-                  key={driver?._id}
-                  driverDetails={driver}
-                />
-              ))}
             </>
           )}
 

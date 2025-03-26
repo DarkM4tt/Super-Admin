@@ -419,17 +419,18 @@ const Vehicles = ({
 
           {activeTab === 2 && (
             <>
-              {allVehicles?.length === 0 && (
-                <p className="text-lg text-red-400 font-bold mt-8 bg-white p-2">
+              {allVehicles?.length > 0 ? (
+                allVehicles?.map((vehicle) => (
+                  <NewVehicleRequestCard
+                    key={vehicle?._id}
+                    vehicleDetails={vehicle}
+                  />
+                ))
+              ) : (
+                <p className="text-lg text-red-400 font-bold mt-4 bg-white p-2">
                   No new vehicles!
                 </p>
               )}
-              {allVehicles?.map((vehicle) => (
-                <NewVehicleRequestCard
-                  key={vehicle?._id}
-                  vehicleDetails={vehicle}
-                />
-              ))}
             </>
           )}
 

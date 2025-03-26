@@ -320,15 +320,17 @@ const AllVehicles = ({
             </p>
           </div>
 
-          {/* Signed Up On */}
+          {/* Organisation */}
           <div className="flex flex-col">
             <p className="text-lg font-redhat font-bold">Organisation</p>
-            <p className="text-base font-redhat font-medium text-gray">
-              ABC Company Ltd
+            <p className="text-base font-redhat font-semibold text-gray">
+              {vehicleDetails?.organization_id?.full_name || "Not added yet!"}
             </p>
             <p className="text-base font-redhat font-medium text-gray">
               Status:{" "}
-              <span className="text-boldCyan font-semibold">Approved</span>
+              <span className="font-semibold">
+                {vehicleDetails?.organization_id?.status || "Not known!"}
+              </span>
             </p>
           </div>
 

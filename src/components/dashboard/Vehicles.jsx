@@ -122,7 +122,7 @@ const Vehicles = ({
                 <TableRow>
                   {[
                     "Vehicle model",
-                    "Organization",
+                    "Vehicle type",
                     "Plate number",
                     "Added on",
                     status === "assigned" ? "Assigned Driver" : "Seats",
@@ -162,8 +162,7 @@ const Vehicles = ({
                             : "Not provided!"}
                         </TableCell>
                         <TableCell>
-                          {vehicle?.organization_id?.full_name ||
-                            "Not added yet!"}
+                          {vehicle?.ride_type?.type || "Not known!"}
                         </TableCell>
                         <TableCell>{vehicle?.vin || "Null"}</TableCell>
                         <TableCell>
@@ -336,8 +335,7 @@ const Vehicles = ({
                 : "Not provided!"}
             </TableCell>
             <TableCell>
-              {vehicle?.vehicle_id?.organization_id?.full_name ||
-                "Not added yet!"}
+              {vehicle?.vehicle_id?.ride_type?.type || "Not known!"}
             </TableCell>
             <TableCell>{vehicle?.vehicle_id?.vin || "Null"}</TableCell>
             <TableCell>

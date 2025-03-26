@@ -68,6 +68,11 @@ const RemarksModal = ({
           </div>
         )}
 
+        <p className="ml-2">
+          Set <span className="font-semibold">{selectedDocument?.name}</span>{" "}
+          status to{" "}
+          <span className="font-semibold">{selectedDocument?.status}!</span>
+        </p>
         <label className="mt-8 ml-3 block text-sm font-medium text-gray-700 mb-2">
           Please write the remarks
         </label>

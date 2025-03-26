@@ -18,6 +18,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import LoadingAnimation from "../common/LoadingAnimation";
 import wrongIcon from "../../assets/wrongIcon.svg";
 import infoYellow from "../../assets/infoYellow.svg";
+import { formatCreatedAt } from "../../utils/dates";
 
 const Drivers = ({
   selectedOrgId,
@@ -180,7 +181,7 @@ const Drivers = ({
                 <TableRow>
                   {[
                     "Name",
-                    "Organization",
+                    "Joined on",
                     "Assigned vehicle",
                     "Total trips",
                     "Customer rating",
@@ -226,7 +227,9 @@ const Drivers = ({
                         </div>
                       </TableCell>
                       <TableCell>
-                        {driver?.organization_name || (
+                        {driver?.createdAt ? (
+                          formatCreatedAt(driver?.createdAt)
+                        ) : (
                           <p className="text-red-400">Not added yet!</p>
                         )}
                       </TableCell>

@@ -86,16 +86,6 @@ const Vehicles = ({
     fetchVehicles();
   }, [fetchVehicles, activeTab]);
 
-  const getVerificationStatus = (vehicle) => {
-    const totalDocs = 4;
-    const notUploadedCount =
-      totalDocs - (vehicle?.verifiedDocuments + vehicle?.unverifiedDocuments);
-    const pendingCount = vehicle?.unverifiedDocuments;
-    const approvedCount = vehicle?.verifiedDocuments;
-    const isAllApproved = approvedCount === totalDocs;
-    return { notUploadedCount, pendingCount, isAllApproved };
-  };
-
   const VehiclesTable = ({ status }) => {
     return (
       <Box
@@ -132,7 +122,7 @@ const Vehicles = ({
                 <TableRow>
                   {[
                     "Vehicle model",
-                    "Brand",
+                    "Organization",
                     "Plate number",
                     "Added on",
                     status === "assigned" ? "Assigned Driver" : "Seats",
@@ -158,8 +148,6 @@ const Vehicles = ({
                   }}
                 >
                   {allVehicles.map((vehicle) => {
-                    const { notUploadedCount, pendingCount, isAllApproved } =
-                      getVerificationStatus(vehicle);
                     return (
                       <TableRow
                         key={vehicle?._id}
@@ -169,10 +157,13 @@ const Vehicles = ({
                         }}
                       >
                         <TableCell>
-                          {vehicle?.vehicle_model || "Not provided!"}
+                          {vehicle?.vehicle_model
+                            ? `${vehicle?.vehicle_model} ${vehicle?.brand_name}`
+                            : "Not provided!"}
                         </TableCell>
                         <TableCell>
-                          {vehicle?.brand_name || "Not provided!"}
+                          {vehicle?.organization_id?.full_name ||
+                            "Not added yet!"}
                         </TableCell>
                         <TableCell>{vehicle?.vin || "Null"}</TableCell>
                         <TableCell>
@@ -185,10 +176,10 @@ const Vehicles = ({
                         {status ? (
                           <TableCell>
                             <div className="flex w-full justify-center items-center">
-                              {notUploadedCount > 0 && (
+                              {vehicle?.rejected_documents > 0 && (
                                 <span
                                   className={`bg-[#f9ecea] pl-4 pr-2 py-2 ${
-                                    pendingCount > 0
+                                    vehicle?.pending_documents > 0
                                       ? "rounded-l-2xl"
                                       : "rounded-2xl"
                                   } text-[#D40038] flex items-center`}
@@ -198,13 +189,13 @@ const Vehicles = ({
                                     alt="wrongIcon"
                                     className="mr-1"
                                   />
-                                  <p>{notUploadedCount}</p>
+                                  <p>{vehicle?.rejected_documents}</p>
                                 </span>
                               )}
-                              {pendingCount > 0 && (
+                              {vehicle?.pending_documents > 0 && (
                                 <span
                                   className={`bg-[#f9ecea] pl-2 pr-4 py-2 ${
-                                    notUploadedCount > 0
+                                    vehicle?.rejected_documents > 0
                                       ? "rounded-r-2xl"
                                       : "rounded-2xl"
                                   } text-[#C07000] flex items-center`}
@@ -214,12 +205,24 @@ const Vehicles = ({
                                     alt="infoYellow"
                                     className="mr-1"
                                   />
-                                  <p>{pendingCount}</p>
+                                  <p>{vehicle?.pending_documents}</p>
                                 </span>
                               )}
-                              {isAllApproved && (
-                                <p className="text-green-400 font-bold mr-20">
-                                  Approved
+                              {vehicle?.total_documents === 4 &&
+                                vehicle?.verified_documents === 4 && (
+                                  <p className="text-green-400 font-bold">
+                                    Approved
+                                  </p>
+                                )}
+                              {vehicle?.total_documents < 4 &&
+                                vehicle?.total_documents > 0 && (
+                                  <p className="text-red-400 font-bold">
+                                    {4 - vehicle?.total_documents} not uploaded!
+                                  </p>
+                                )}
+                              {vehicle?.total_documents === 0 && (
+                                <p className="text-red-400 font-bold">
+                                  Not Uploaded!
                                 </p>
                               )}
                             </div>
@@ -328,10 +331,13 @@ const Vehicles = ({
             }}
           >
             <TableCell>
-              {vehicle?.vehicle_id?.vehicle_model || "Not provided!"}
+              {vehicle?.vehicle_id?.vehicle_model
+                ? `${vehicle?.vehicle_id?.vehicle_model} ${vehicle?.vehicle_id?.brand_name}`
+                : "Not provided!"}
             </TableCell>
             <TableCell>
-              {vehicle?.vehicle_id?.brand_name || "Not provided!"}
+              {vehicle?.vehicle_id?.organization_id?.full_name ||
+                "Not added yet!"}
             </TableCell>
             <TableCell>{vehicle?.vehicle_id?.vin || "Null"}</TableCell>
             <TableCell>

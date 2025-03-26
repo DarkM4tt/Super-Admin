@@ -274,7 +274,7 @@ const AcceptNewRequest = ({
           <img src={OrgBig} alt="Fuel Station Icon" className="w-30 mx-4" />
         ) : (
           <img
-            src={entityDetails?.vehicle_image}
+            src={entityDetails?.vehicle?.vehicle_image}
             alt="Fuel Station Icon"
             className="w-32 mx-4"
           />
@@ -286,7 +286,8 @@ const AcceptNewRequest = ({
             </p>
           ) : (
             <p className="font-semibold text-2xl">
-              {entityDetails?.brand_name} {entityDetails?.vehicle_model}
+              {entityDetails?.vehicle?.brand_name}{" "}
+              {entityDetails?.vehicle?.vehicle_model}
             </p>
           )}
           <div className="flex items-center text-gray gap-1">
@@ -299,7 +300,7 @@ const AcceptNewRequest = ({
               {entity === "partner"
                 ? entityDetails?.organizationAddress?.complete_address ||
                   "Address not provided yet!"
-                : entityDetails?.vin}
+                : entityDetails?.vehicle?.vin}
             </p>
           </div>
         </div>

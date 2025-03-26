@@ -18,7 +18,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import LoadingAnimation from "../common/LoadingAnimation";
 import wrongIcon from "../../assets/wrongIcon.svg";
 import infoYellow from "../../assets/infoYellow.svg";
-import { formatCreatedAt } from "../../utils/dates";
 
 const AllDrivers = ({
   onDriverClick,
@@ -46,7 +45,7 @@ const AllDrivers = ({
     } else if (activeTab === 3) {
       return `${
         import.meta.env.VITE_API_AUTH_URL
-      }/super-admin/all-drivers?page=1&limit=100&status=ASSIGNED`;
+      }/super-admin/all-drivers?page=1&limit=100&is_vehicle=true`;
     } else {
       return `${
         import.meta.env.VITE_API_AUTH_URL
@@ -180,11 +179,13 @@ const AllDrivers = ({
                 <TableRow>
                   {[
                     "Name",
-                    "Joined on",
+                    "Organization",
                     "Assigned vehicle",
                     "Total trips",
                     "Customer rating",
-                    status ? "Documents Status" : "Issues/queries",
+                    status && status !== "assigned"
+                      ? "Documents Status"
+                      : "Issues/queries",
                   ].map((header) => (
                     <TableCell key={header}>{header}</TableCell>
                   ))}
@@ -224,8 +225,8 @@ const AllDrivers = ({
                         </div>
                       </TableCell>
                       <TableCell>
-                        {formatCreatedAt(driver?.createdAt) || (
-                          <p className="text-red-200">Unknown</p>
+                        {driver?.organization_name || (
+                          <p className="text-red-400">Not added yet!</p>
                         )}
                       </TableCell>
                       <TableCell>
@@ -237,7 +238,7 @@ const AllDrivers = ({
                       <TableCell>
                         {driver?.rating ? driver?.rating + "/5" : 0}
                       </TableCell>
-                      {status ? (
+                      {status && status !== "assigned" ? (
                         <TableCell>
                           <div className="flex w-full justify-center items-center">
                             {driver?.rejected_documents > 0 && (
@@ -274,8 +275,14 @@ const AllDrivers = ({
                             )}
                             {driver?.total_documents === 9 &&
                               driver?.verified_documents === 9 && (
-                                <p className="text-green-400 font-bold mr-20">
+                                <p className="text-green-400 font-bold">
                                   Approved
+                                </p>
+                              )}
+                            {driver?.total_documents < 9 &&
+                              driver?.total_documents > 0 && (
+                                <p className="text-red-400 font-bold">
+                                  {9 - driver?.total_documents} not uploaded!
                                 </p>
                               )}
                             {driver?.total_documents === 0 && (

@@ -99,11 +99,11 @@ const UpdateRideTypePrices = ({
       ...prev,
       {
         ride_type: "",
-        base_fare: 0,
-        fare_per_km: 0,
-        fare_per_min: 0,
-        minimum_fare: 0,
-        waiting_charges_per_min: 0,
+        base_fare: "",
+        fare_per_km: "",
+        fare_per_min: "",
+        minimum_fare: "",
+        waiting_charges_per_min: "",
       },
     ]);
   };
@@ -361,7 +361,7 @@ const UpdateRideTypePrices = ({
         );
       })}
       <div className="flex justify-between">
-        {rideTypePrices?.length !== rideTypes?.length && (
+        {rideTypePrices?.length + newRows < rideTypes.length && (
           <Button
             startIcon={<AddCircleOutlineIcon />}
             sx={{
@@ -376,7 +376,7 @@ const UpdateRideTypePrices = ({
           </Button>
         )}
         {newRows.length > 0 && (
-          <div className="flex gap-4">
+          <div className="flex gap-4 ml-auto">
             <Button variant="outlined" onClick={handleClearNewRows}>
               Clear
             </Button>

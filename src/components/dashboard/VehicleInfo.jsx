@@ -57,7 +57,7 @@ const VehicleInfo = ({
       );
       const result = await res?.json();
       if (result?.success) {
-        setVehicleData(result?.data);
+        setVehicleData(result?.data?.vehicle);
         setVehicleDocuments(result?.data?.documents);
       } else {
         throw new Error(result?.message);

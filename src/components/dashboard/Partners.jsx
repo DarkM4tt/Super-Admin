@@ -80,15 +80,6 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
     fetchPartners();
   }, [fetchPartners, activeTab]);
 
-  const getVerificationStatus = (partner) => {
-    const totalDocs = 6;
-    const notUploadedCount = totalDocs - partner?.totalDocuments;
-    const pendingCount = partner?.unverifiedDocuments;
-    const approvedCount = partner?.verifiedDocuments;
-    const isAllApproved = approvedCount === totalDocs;
-    return { notUploadedCount, pendingCount, isAllApproved };
-  };
-
   const PartnersTable = ({ status }) => {
     return (
       <Box
@@ -130,7 +121,9 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
                     "Total drivers",
                     "Total vehicles",
                     "Listing drivers",
-                    status ? "Documents Status" : "Issues/queries",
+                    status && status !== "incomplete"
+                      ? "Documents Status"
+                      : "Issues/queries",
                   ].map((header) => (
                     <TableCell key={header}>{header}</TableCell>
                   ))}
@@ -147,9 +140,6 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
                 }}
               >
                 {allPartners.map((org, idx) => {
-                  const { notUploadedCount, pendingCount, isAllApproved } =
-                    getVerificationStatus(org);
-
                   return (
                     <TableRow
                       key={org?._id}
@@ -172,16 +162,16 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
                           <p className="text-red-200">Unknown</p>
                         )}
                       </TableCell>
-                      <TableCell>{org.totalDrivers}</TableCell>
-                      <TableCell>{org.totalVehicles}</TableCell>
-                      <TableCell>{org.listingDrivers}</TableCell>
-                      {status ? (
+                      <TableCell>{org.total_drivers || 0}</TableCell>
+                      <TableCell>{org.total_vehicles || 0}</TableCell>
+                      <TableCell>{org.listing_assignments || 0}</TableCell>
+                      {status && status !== "incomplete" ? (
                         <TableCell>
                           <div className="flex w-full justify-center items-center">
-                            {notUploadedCount > 0 && (
+                            {org?.rejected_documents > 0 && (
                               <span
                                 className={`bg-[#f9ecea] pl-4 pr-2 py-2 ${
-                                  pendingCount > 0
+                                  org?.pending_documents > 0
                                     ? "rounded-l-2xl"
                                     : "rounded-2xl"
                                 } text-[#D40038] flex items-center`}
@@ -191,13 +181,13 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
                                   alt="wrongIcon"
                                   className="mr-1"
                                 />
-                                <p>{notUploadedCount}</p>
+                                <p>{org?.rejected_documents}</p>
                               </span>
                             )}
-                            {pendingCount > 0 && (
+                            {org?.pending_documents > 0 && (
                               <span
                                 className={`bg-[#f9ecea] pl-2 pr-4 py-2 ${
-                                  notUploadedCount > 0
+                                  org?.rejected_documents > 0
                                     ? "rounded-r-2xl"
                                     : "rounded-2xl"
                                 } text-[#C07000] flex items-center`}
@@ -207,18 +197,30 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
                                   alt="infoYellow"
                                   className="mr-1"
                                 />
-                                <p>{pendingCount}</p>
+                                <p>{org?.pending_documents}</p>
                               </span>
                             )}
-                            {isAllApproved && (
-                              <p className="text-green-400 font-bold mr-20">
-                                Approved
+                            {org?.total_documents === 6 &&
+                              org?.verified_documents === 6 && (
+                                <p className="text-green-400 font-bold">
+                                  Approved
+                                </p>
+                              )}
+                            {org?.total_documents < 6 &&
+                              org?.total_documents > 0 && (
+                                <p className="text-red-400 font-bold">
+                                  {6 - org?.total_documents} not uploaded!
+                                </p>
+                              )}
+                            {org?.total_documents === 0 && (
+                              <p className="text-red-400 font-bold">
+                                Not Uploaded!
                               </p>
                             )}
                           </div>
                         </TableCell>
                       ) : (
-                        <TableCell>0</TableCell>
+                        <TableCell>{org?.issues_raised || 0}</TableCell>
                       )}
                     </TableRow>
                   );

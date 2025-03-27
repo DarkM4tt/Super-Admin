@@ -171,6 +171,7 @@ const AcceptNewRequest = ({
     } catch (error) {
       showSnackbar(error.message, "error");
     } finally {
+      fetchEntityDetails();
       setButtonLoading(false);
       setRemarks("");
       setOpen(false);

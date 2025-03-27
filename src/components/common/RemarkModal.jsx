@@ -123,7 +123,7 @@ const RemarksModal = ({
                 boxShadow: "none",
                 "&:hover": { backgroundColor: "#25B5A0" },
               }}
-              disabled={remarks?.trim()?.length < 3}
+              disabled={remarks?.trim()?.length < 10}
               onClick={handleAddRemarks}
             >
               {buttonLoading ? (
@@ -133,6 +133,11 @@ const RemarksModal = ({
               )}
             </Button>
           </div>
+          {remarks?.trim()?.length < 10 && (
+            <p className="flex flex-row-reverse text-xs mt-1">
+              at least 10 characters!
+            </p>
+          )}
         </div>
       </DialogContent>
     </Dialog>

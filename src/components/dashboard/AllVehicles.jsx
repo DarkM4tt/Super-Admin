@@ -174,7 +174,7 @@ const AllVehicles = ({
                         </TableCell>
                         {status ? (
                           <TableCell>
-                            <div className="flex w-full justify-center items-center">
+                            <div className="flex">
                               {vehicle?.rejected_documents > 0 && (
                                 <span
                                   className={`bg-[#f9ecea] pl-4 pr-2 py-2 ${

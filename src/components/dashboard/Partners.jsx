@@ -167,7 +167,7 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
                       <TableCell>{org.listing_assignments || 0}</TableCell>
                       {status && status !== "incomplete" ? (
                         <TableCell>
-                          <div className="flex w-full justify-center items-center">
+                          <div className="flex">
                             {org?.rejected_documents > 0 && (
                               <span
                                 className={`bg-[#f9ecea] pl-4 pr-2 py-2 ${

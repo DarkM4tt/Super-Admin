@@ -207,7 +207,9 @@ const Partners = ({ onPartnerClick, handleAcceptClick }) => {
                                 </p>
                               )}
                             {org?.total_documents < 6 &&
-                              org?.total_documents > 0 && (
+                              org?.total_documents > 0 &&
+                              org?.pending_documents === 0 &&
+                              org?.rejected_documents === 0 && (
                                 <p className="text-red-400 font-bold">
                                   {6 - org?.total_documents} not uploaded!
                                 </p>

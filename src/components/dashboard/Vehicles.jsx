@@ -214,7 +214,9 @@ const Vehicles = ({
                                   </p>
                                 )}
                               {vehicle?.total_documents < 4 &&
-                                vehicle?.total_documents > 0 && (
+                                vehicle?.total_documents > 0 &&
+                                vehicle?.pending_documents === 0 &&
+                                vehicle?.rejected_documents === 0 && (
                                   <p className="text-red-400 font-bold">
                                     {4 - vehicle?.total_documents} not uploaded!
                                   </p>

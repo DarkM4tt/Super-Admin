@@ -284,7 +284,9 @@ const Drivers = ({
                                 </p>
                               )}
                             {driver?.total_documents < 9 &&
-                              driver?.total_documents > 0 && (
+                              driver?.total_documents > 0 &&
+                              driver?.pending_documents === 0 &&
+                              driver?.rejected_documents === 0 && (
                                 <p className="text-red-400 font-bold">
                                   {9 - driver?.total_documents} not uploaded!
                                 </p>

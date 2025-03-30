@@ -21,6 +21,7 @@ import StatusDropdown from "../common/StatusDropdown";
 import RemarksModal from "../common/RemarkModal";
 import TickIcon from "../../assets/tick.svg";
 import { useSnackbar } from "../../context/snackbarContext";
+import AddRideTypeModal from "../common/AddRideTypeModal";
 
 const AcceptNewRequest = ({
   entityId,
@@ -31,6 +32,8 @@ const AcceptNewRequest = ({
   const [buttonLoading, setButtonLoading] = useState(false);
   const [entityDetails, setEntityDetails] = useState(null);
   const [openDocumentModal, setOpenDocumentModal] = useState(false);
+  const [openRideTypeModal, setOpenRideTypeModal] = useState(false);
+  const [rideTypes, setRideTypes] = useState([]);
   const [selectedDocument, setSelectedDocument] = useState({});
   const [open, setOpen] = useState(false);
   const [remarks, setRemarks] = useState("");
@@ -81,6 +84,28 @@ const AcceptNewRequest = ({
     [entity]
   );
 
+  const fetchRideTypes = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${
+          import.meta.env.VITE_API_RIDE_URL
+        }/super-admin/ride-types/?page=1&limit=100`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const result = await res?.json();
+      if (result?.success) {
+        setRideTypes(result?.data?.rideTypes?.results);
+      } else {
+        throw new Error(result?.message);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, []);
+
   const fetchEntityDetails = useCallback(async () => {
     try {
       const res = await fetch(getDetailsUrl(), {
@@ -111,8 +136,10 @@ const AcceptNewRequest = ({
 
   const handleEntityStatusChange = useCallback(
     async (status) => {
-      setButtonLoading(true);
+      if (entity === "vehicle" && status === "APPROVED")
+        setOpenRideTypeModal(true);
 
+      setButtonLoading(true);
       try {
         const res = await fetch(getStatusUpdateUrl(), {
           method: "PUT",
@@ -217,7 +244,8 @@ const AcceptNewRequest = ({
 
   useEffect(() => {
     fetchEntityDetails();
-  }, [fetchEntityDetails]);
+    fetchRideTypes();
+  }, [fetchEntityDetails, fetchRideTypes]);
 
   const DocumentModal = ({ open, onClose, documentUrl, documentName }) => {
     const [loading, setLoading] = useState(true);
@@ -494,6 +522,15 @@ const AcceptNewRequest = ({
           setOpen(false);
         }}
         handleAddRemarks={handleAddRemarks}
+      />
+
+      <AddRideTypeModal
+        rideTypes={rideTypes}
+        buttonLoading={buttonLoading}
+        setButtonLoading={setButtonLoading}
+        open={openRideTypeModal}
+        handleClose={() => setOpenRideTypeModal(false)}
+        vehicleId={entityId}
       />
     </>
   );

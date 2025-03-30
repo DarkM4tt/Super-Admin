@@ -1,7 +1,10 @@
 /* eslint-disable react/prop-types */
 import SearchIcon from "@mui/icons-material/Search";
 import {
+  Avatar,
   Box,
+  Dialog,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -20,6 +23,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useSnackbar } from "../../context/snackbarContext";
 import { allDocumentStatus, allDriverStatus } from "../../utils/enums";
 import RemarksModal from "../common/RemarkModal";
+import CloseIcon from "@mui/icons-material/Close";
 
 const EntityTable = ({ rideHistory, onRideClick }) => {
   return (
@@ -108,6 +112,7 @@ const DriverInfo = ({
   onRideClick,
 }) => {
   const [driverData, setDriverData] = useState(null);
+  const [openProfileModal, setOpenProfileModal] = useState(false);
   const [openRemarksModal, setOpenRemarksModal] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
   const [remarks, setRemarks] = useState("");
@@ -324,16 +329,30 @@ const DriverInfo = ({
         </div>
       </div>
 
-      <div className=" p-6 rounded-lg bg-white mt-8">
+      <div className="p-6 rounded-lg bg-white mt-8">
         <div className="flex justify-between pb-11 border-b border-[#DDDDDD]">
-          <div className="">
+          <div>
             <div className="flex gap-4">
               <div className="">
-                <img
-                  src={driverData?.profile_pic}
-                  alt="driver-pic"
-                  className="w-20 h-20 rounded-full"
-                />
+                {driverData?.profile_pic ? (
+                  <img
+                    src={driverData?.profile_pic}
+                    alt="driver-pic"
+                    className="w-20 h-20 rounded-full cursor-pointer"
+                    onClick={() => setOpenProfileModal(true)}
+                  />
+                ) : (
+                  <Avatar
+                    sx={{
+                      width: 80,
+                      height: 80,
+                      fontSize: 32,
+                      cursor: "pointer",
+                    }}
+                  >
+                    {driverData?.full_name?.charAt(0)}
+                  </Avatar>
+                )}
               </div>
               <div className="">
                 <p className="font-sans text-2xl font-semibold flex items-center">
@@ -439,6 +458,47 @@ const DriverInfo = ({
         }}
         handleAddRemarks={handleAddRemarks}
       />
+
+      <Dialog
+        open={openProfileModal}
+        onClose={() => setOpenProfileModal(false)}
+        sx={{
+          ".MuiDialog-paper": {
+            borderRadius: "50%",
+            width: 500,
+            height: 500,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+            overflow: "hidden",
+          },
+        }}
+      >
+        <IconButton
+          onClick={() => setOpenProfileModal(false)}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            color: "white",
+            "&:hover": { backgroundColor: "rgba(0, 0, 0, 0.7)" },
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+        <img
+          src={driverData?.profile_pic}
+          alt="driver-pic"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            borderRadius: "50%",
+          }}
+        />
+      </Dialog>
     </>
   );
 };
